@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRIT Prompting Framework — Ascential Technologies AI Training</title>
+  <meta name="description" content="Use CRIT (Context, Role, Interview, Task) to write prompts where you lead the thinking and AI becomes your thought partner.">
+  <style>
+    /* ============================================================
+      CRIT Prompting Framework (standalone training HTML)
+      Mirrors the look/feel of other training pages (header, sidebar,
+      typography, callouts, dark mode toggle).
+    ============================================================ */
+    :root {
+      --fg-color: #1a1a2e;
+      --fg-color-light: #555;
+      --fg-color-lighter: #999;
+      --fg-color-lightest: #ddd;
+      --bg-color: #ffffff;
+      --bg-color-alt: #f8f9fa;
+      --code-bg: #f5f5f5;
+      --code-font: "Cascadia Code", "Fira Code", "Consolas", "Monaco", monospace;
+      --primary: #5522DD;
+      --primary-dark: #3D18A8;
+      --green: #4E801F;
+      --accent: #D75A1B;
+      --link-color: #5522DD;
+      --border-radius: 6px;
+      --sidebar-width: 220px;
+      --header-height: 56px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --fg-color: #e0e0e0;
+        --fg-color-light: #aaa;
+        --fg-color-lighter: #777;
+        --fg-color-lightest: #333;
+        --bg-color: #1a1a2e;
+        --bg-color-alt: #222240;
+        --code-bg: #2a2a45;
+        --primary: #7B52E8;
+        --primary-dark: #5522DD;
+        --link-color: #9B7AEF;
+      }
+    }
+
+    [data-theme="dark"] {
+      --fg-color: #e0e0e0;
+      --fg-color-light: #aaa;
+      --fg-color-lighter: #777;
+      --fg-color-lightest: #333;
+      --bg-color: #1a1a2e;
+      --bg-color-alt: #222240;
+      --code-bg: #2a2a45;
+      --primary: #7B52E8;
+      --primary-dark: #5522DD;
+      --link-color: #9B7AEF;
+    }
+
+    [data-theme="light"] {
+      --fg-color: #1a1a2e;
+      --fg-color-light: #555;
+      --fg-color-lighter: #999;
+      --fg-color-lightest: #ddd;
+      --bg-color: #ffffff;
+      --bg-color-alt: #f8f9fa;
+      --code-bg: #f5f5f5;
+      --primary: #5522DD;
+      --primary-dark: #3D18A8;
+      --link-color: #5522DD;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--fg-color);
+      background-color: var(--bg-color);
+      transition: color 0.2s, background-color 0.2s;
+    }
+
+    a { color: var(--link-color); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    h1, h2, h3 { margin-top: 2rem; margin-bottom: 0.75rem; line-height: 1.3; }
+    h1 { font-size: 2rem; border: none; }
+    h2 { font-size: 1.4rem; border-bottom: 1px solid var(--fg-color-lightest); padding-bottom: 0.4rem; }
+    h3 { font-size: 1.15rem; }
+    p { margin: 0 0 1rem; }
+    ul, ol { padding-left: 1.5rem; margin: 0 0 1rem; }
+    li { margin-bottom: 0.35rem; }
+
+    code {
+      font-family: var(--code-font);
+      font-size: 0.85em;
+      padding: 0.15em 0.4em;
+      background: var(--code-bg);
+      border-radius: 3px;
+    }
+
+    blockquote {
+      margin: 0 0 1rem;
+      padding: 0.75rem 1rem;
+      border-left: 4px solid var(--primary);
+      background: var(--bg-color-alt);
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+
+    /* ============================================================
+      Layout: Header
+    ============================================================ */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem;
+      z-index: 100;
+      gap: 0.75rem;
+    }
+
+    .site-header__brand {
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .site-header__title {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .site-header__badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--green), var(--primary));
+      color: white;
+    }
+
+    .site-header__actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dark-toggle {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      line-height: 1;
+      transition: background 0.2s;
+    }
+
+    .dark-toggle:hover { background: rgba(255,255,255,0.15); }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      line-height: 1;
+    }
+
+    /* ============================================================
+      Layout: Sidebar + Content
+    ============================================================ */
+    .layout {
+      display: flex;
+      margin-top: var(--header-height);
+      min-height: calc(100vh - var(--header-height));
+    }
+
+    .sidebar-overlay { display: none; }
+
+    .sidebar {
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background: var(--bg-color-alt);
+      border-right: 1px solid var(--fg-color-lightest);
+      overflow-y: auto;
+      padding: 1rem 0;
+      z-index: 50;
+    }
+
+    .sidebar__label {
+      display: block;
+      padding: 0.5rem 1rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--fg-color-lighter);
+    }
+
+    .sidebar__link {
+      display: block;
+      padding: 0.4rem 1rem;
+      font-size: 0.82rem;
+      color: var(--fg-color-light);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+      line-height: 1.35;
+    }
+
+    .sidebar__link:hover {
+      color: var(--primary);
+      background: rgba(85, 34, 221, 0.04);
+      text-decoration: none;
+    }
+
+    .content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 2rem 2.5rem 4rem;
+      max-width: calc(720px + 5rem);
+    }
+
+    .section { padding: 1.5rem 0; }
+    .section + .section { border-top: 1px solid var(--fg-color-lightest); }
+
+    .callout {
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      border-radius: var(--border-radius);
+      background: rgba(85, 34, 221, 0.06);
+      border: 1px solid rgba(85, 34, 221, 0.15);
+    }
+
+    .callout__title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .crit-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 760px) {
+      .crit-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .crit-card {
+      padding: 1rem 1.25rem;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--fg-color-lightest);
+      background: var(--bg-color-alt);
+    }
+
+    .crit-card h3 {
+      margin-top: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .crit-letter {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: rgba(85, 34, 221, 0.08);
+      border: 1px solid rgba(85, 34, 221, 0.15);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+      Mobile tweaks
+    ============================================================ */
+    @media (max-width: 1023px) {
+      .sidebar { display: none; }
+      .sidebar-overlay--visible {
+        display: block;
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.3);
+        z-index: 80;
+      }
+      .hamburger { display: inline-block; }
+      .sidebar.sidebar--open {
+        display: block;
+        top: var(--header-height);
+        left: 0;
+        z-index: 90;
+      }
+      .content { margin-left: 0; padding: 1.5rem 1.5rem 4rem; }
+    }
+
+    @media (max-width: 767px) {
+      .content { padding: 1rem 1rem 3rem; }
+      .site-header__title { display: none; }
+    }
+
+    .site-footer {
+      margin-left: var(--sidebar-width);
+      padding: 1.5rem 2.5rem;
+      border-top: 1px solid var(--fg-color-lightest);
+      font-size: 0.8rem;
+      color: var(--fg-color-lighter);
+      text-align: center;
+    }
+    @media (max-width: 1023px) {
+      .site-footer { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <button class="hamburger" aria-label="Toggle navigation" type="button">&#9776;</button>
+    <span class="site-header__brand">Ascential Technologies</span>
+    <span class="site-header__title">AI Training Program</span>
+    <span class="site-header__badge">Beginner</span>
+    <div class="site-header__actions">
+      <button class="dark-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">&#9789;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay sidebar-overlay--visible" aria-hidden="true" style="display:none;"></div>
+
+  <div class="layout">
+    <nav class="sidebar" aria-label="Page sections">
+      <span class="sidebar__label">On this page</span>
+      <a class="sidebar__link" href="#welcome">Welcome</a>
+      <a class="sidebar__link" href="#flip-script">Use CRIT</a>
+      <a class="sidebar__link" href="#crit-components">C / R / I / T</a>
+      <a class="sidebar__link" href="#pro-tip">Pro Tip</a>
+      <a class="sidebar__link" href="#example">Example</a>
+      <a class="sidebar__link" href="#forklift">Forklift Problem</a>
+      <a class="sidebar__link" href="#whats-next">What's next</a>
+    </nav>
+
+    <main class="content" id="main-content">
+      <section class="section" id="welcome">
+        <h1>CRIT Prompting Framework</h1>
+        <p><strong>Use AI as your thought partner — not your search engine.</strong></p>
+        <p>
+          Most people use AI like a search engine: ask a question, get an answer.
+          That dynamic makes AI the thought leader. CRIT flips the script: <strong>you are the thought leader</strong>,
+          and AI becomes your <strong>thought partner</strong>.
+        </p>
+      </section>
+
+      <section class="section" id="flip-script">
+        <h2>Think of CRIT like cooking</h2>
+        <p>
+          A good meal depends on quality ingredients. CRIT is the set of ingredients that makes prompts produce
+          reliable, usable output.
+        </p>
+        <p>
+          <strong>C</strong> Context (carbs) feeds understanding.
+          <strong>R</strong> Role (fats) adds depth and credibility.
+          <strong>I</strong> Interview (protein) pulls gaps out of your brain.
+          <strong>T</strong> Task (seasoning) shapes the final deliverable.
+        </p>
+      </section>
+
+      <section class="section" id="crit-components">
+        <h2>The Four Ingredients</h2>
+
+        <div class="crit-grid">
+          <div class="crit-card">
+            <h3><span class="crit-letter">C</span> Context</h3>
+            <ul>
+              <li>Brain dump what you already have: background, goals, constraints, stakeholders, and what you tried.</li>
+              <li>The richer and more specific the context, the better the output.</li>
+              <li>One inaccurate detail can ruin the result. Treat inaccuracies like toxic ingredients.</li>
+            </ul>
+          </div>
+
+          <div class="crit-card">
+            <h3><span class="crit-letter">R</span> Role</h3>
+            <ul>
+              <li>Assign AI a very specific expert identity: “You are a PhD behavioral economist specializing in …”.</li>
+              <li>Specificity increases trust and improves analysis depth.</li>
+              <li>Core principle: “We don’t hire a plumber to do our taxes.” Give the right expert for the job.</li>
+            </ul>
+          </div>
+
+          <div class="crit-card">
+            <h3><span class="crit-letter">I</span> Interview</h3>
+            <ul>
+              <li>Have the expert AI ask you questions — you provide the missing inputs.</li>
+              <li>This is what separates CRIT from a simple search query.</li>
+              <li>Core principle: human drives; AI guides.</li>
+            </ul>
+          </div>
+
+          <div class="crit-card">
+            <h3><span class="crit-letter">T</span> Task</h3>
+            <ul>
+              <li>Define the exact deliverable: format, length, audience, tone, and structure.</li>
+              <li>The task is the flavor; everything else exists to support it.</li>
+              <li>Example: “1-page executive-facing summary, bullet points, for a non-technical audience.”</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout__title">Every CRIT prompt is a meal</div>
+          <p>
+            Not every situation calls for a full meal. Sometimes a snack (just Context + Task) is enough.
+            When quality matters, use all four ingredients.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="pro-tip">
+        <h2>Pro Tip: Use this Interview phrase</h2>
+        <blockquote>
+          <p>
+            Ask me five questions, one at a time, in order to pull deeper context out of my head,
+            to better achieve the stated task.
+          </p>
+        </blockquote>
+      </section>
+
+      <section class="section" id="example">
+        <h2>Example: from vague to usable</h2>
+        <div class="crit-grid" style="grid-template-columns: 1fr;">
+          <div class="crit-card">
+            <h3 style="margin-top:0;">Without CRIT</h3>
+            <blockquote>
+              <p>Write me an email to my team about the new process.</p>
+            </blockquote>
+          </div>
+
+          <div class="crit-card">
+            <h3 style="margin-top:0;">With CRIT</h3>
+            <p style="margin-bottom:0.5rem;">
+              <strong>C (Context):</strong> Team resists change. Rolling out new approval workflow Monday...
+            </p>
+            <p style="margin-bottom:0.5rem;">
+              <strong>R (Role):</strong> You are an expert in change management and internal comms,
+              with a PhD in psychology...
+            </p>
+            <p style="margin-bottom:0.5rem;">
+              <strong>I (Interview):</strong> Ask me 5 questions, one at a time, to pull deeper context...
+            </p>
+            <p style="margin-bottom:0;">
+              <strong>T (Task):</strong> 200-word team email, empathetic tone, 3 clear action items.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="forklift">
+        <h2>Your Brain on ChatGPT: Accumulation of Cognitive Debt</h2>
+        <p>
+          Research (including work discussed in “The Forklift Problem”) highlights a risk: if AI leads your thinking,
+          some cognitive muscles atrophy. You feel productive, but you reduce your own growth.
+        </p>
+        <p>
+          Letting AI do your thinking is like hearing: “Lifting weights is great for your health” — then bringing a forklift
+          to the gym. You get an outcome, but you avoid the work your brain needs.
+        </p>
+        <div class="callout">
+          <div class="callout__title">CRIT keeps you lifting</div>
+          <p>AI spots the form while you do the thinking.</p>
+        </div>
+      </section>
+
+      <section class="section" id="whats-next">
+        <h2>What's next</h2>
+        <p>
+          Pick a real task you do this week (an email, a summary, or an action plan). Write a first draft prompt using CRIT.
+          Then iterate based on the output quality.
+        </p>
+        <p>
+          Start small: add <strong>Context</strong>, then add a clear <strong>Task</strong>. Upgrade to full CRIT when quality matters.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div>&copy; 2026 Ascential Technologies</div>
+    <div style="margin-top:0.25rem;">Author: Ascential AI Training Team</div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector(".dark-toggle");
+      if (!toggle) return;
+      var html = document.documentElement;
+
+      // Restore saved preference
+      var saved = localStorage.getItem("theme");
+      if (saved === "dark" || saved === "light") {
+        html.setAttribute("data-theme", saved);
+      }
+
+      function updateIcon() {
+        var isDark = html.getAttribute("data-theme") === "dark" ||
+          (!html.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        toggle.textContent = isDark ? "☀" : "☾";
+        toggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+      }
+
+      updateIcon();
+
+      toggle.addEventListener("click", function () {
+        var current = html.getAttribute("data-theme");
+        var isDark = current === "dark" || (!current && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        var next = isDark ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+        updateIcon();
+      });
+    })();
+  </script>
+</body>
+</html>
+

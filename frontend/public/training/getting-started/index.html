@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Getting Started with AI — Ascential Technologies AI Training</title>
+<meta name="description" content="Your first 10 minutes with AI. Learn what AI is, meet Claude, and write your first prompt.">
+<style>
+/* ============================================================
+   CSS Custom Properties (replaces MkDocs Material vars)
+   ============================================================ */
+:root {
+  --fg-color: #1a1a2e;
+  --fg-color-light: #555;
+  --fg-color-lighter: #999;
+  --fg-color-lightest: #ddd;
+  --bg-color: #ffffff;
+  --bg-color-alt: #f8f9fa;
+  --code-bg: #f5f5f5;
+  --code-font: "Cascadia Code", "Fira Code", "Consolas", "Monaco", monospace;
+  --primary: #5522DD;
+  --primary-light: #7B52E8;
+  --primary-dark: #3D18A8;
+  --accent: #D75A1B;
+  --green: #4E801F;
+  --yellow: #E1CD00;
+  --link-color: #5522DD;
+  --border-radius: 6px;
+  --sidebar-width: 220px;
+  --header-height: 56px;
+}
+
+/* Dark mode: system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fg-color: #e0e0e0;
+    --fg-color-light: #aaa;
+    --fg-color-lighter: #777;
+    --fg-color-lightest: #333;
+    --bg-color: #1a1a2e;
+    --bg-color-alt: #222240;
+    --code-bg: #2a2a45;
+    --primary: #7B52E8;
+    --primary-light: #9B7AEF;
+    --primary-dark: #5522DD;
+    --link-color: #9B7AEF;
+  }
+}
+
+/* Dark mode: explicit toggle */
+[data-theme="dark"] {
+  --fg-color: #e0e0e0;
+  --fg-color-light: #aaa;
+  --fg-color-lighter: #777;
+  --fg-color-lightest: #333;
+  --bg-color: #1a1a2e;
+  --bg-color-alt: #222240;
+  --code-bg: #2a2a45;
+  --primary: #7B52E8;
+  --primary-light: #9B7AEF;
+  --primary-dark: #5522DD;
+  --link-color: #9B7AEF;
+}
+
+/* Light mode: explicit toggle */
+[data-theme="light"] {
+  --fg-color: #1a1a2e;
+  --fg-color-light: #555;
+  --fg-color-lighter: #999;
+  --fg-color-lightest: #ddd;
+  --bg-color: #ffffff;
+  --bg-color-alt: #f8f9fa;
+  --code-bg: #f5f5f5;
+  --primary: #5522DD;
+  --primary-light: #7B52E8;
+  --primary-dark: #3D18A8;
+  --link-color: #5522DD;
+}
+
+/* ============================================================
+   Reset / Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--fg-color);
+  background-color: var(--bg-color);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+a { color: var(--link-color); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+h1, h2, h3, h4 { margin-top: 2rem; margin-bottom: 0.75rem; line-height: 1.3; }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; border-bottom: 1px solid var(--fg-color-lightest); padding-bottom: 0.4rem; }
+h3 { font-size: 1.15rem; }
+
+p { margin: 0 0 1rem; }
+
+ul, ol { padding-left: 1.5rem; margin: 0 0 1rem; }
+li { margin-bottom: 0.35rem; }
+
+code {
+  font-family: var(--code-font);
+  font-size: 0.85em;
+  padding: 0.15em 0.4em;
+  background: var(--code-bg);
+  border-radius: 3px;
+}
+
+pre {
+  font-family: var(--code-font);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 1rem;
+  background: var(--code-bg);
+  border-radius: var(--border-radius);
+  overflow-x: auto;
+  margin: 0 0 1rem;
+}
+
+blockquote {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--primary);
+  background: var(--bg-color-alt);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  position: relative;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--fg-color-lightest);
+  text-align: left;
+}
+
+th {
+  background: var(--bg-color-alt);
+  font-weight: 600;
+}
+
+strong { font-weight: 700; }
+
+/* ============================================================
+   Layout: Header
+   ============================================================ */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  z-index: 100;
+  gap: 0.75rem;
+}
+
+.site-header__brand {
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.site-header__title {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site-header__badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--green);
+  color: white;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dark-toggle {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.dark-toggle:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+/* ============================================================
+   Layout: Sidebar
+   ============================================================ */
+.layout {
+  display: flex;
+  margin-top: var(--header-height);
+  min-height: calc(100vh - var(--header-height));
+}
+
+.sidebar {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--bg-color-alt);
+  border-right: 1px solid var(--fg-color-lightest);
+  overflow-y: auto;
+  padding: 1rem 0;
+  z-index: 50;
+  transition: transform 0.3s;
+}
+
+.sidebar__label {
+  display: block;
+  padding: 0.5rem 1rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-color-lighter);
+}
+
+.sidebar__link {
+  display: block;
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  color: var(--fg-color-light);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.35;
+}
+
+.sidebar__link:hover {
+  color: var(--primary);
+  background: rgba(85, 34, 221, 0.04);
+  text-decoration: none;
+}
+
+.sidebar__link--active {
+  color: var(--primary);
+  border-left-color: var(--primary);
+  font-weight: 600;
+  background: rgba(85, 34, 221, 0.06);
+}
+
+/* ============================================================
+   Layout: Main content
+   ============================================================ */
+.content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 2rem 2.5rem 4rem;
+  max-width: calc(720px + 5rem);
+}
+
+/* ============================================================
+   Layout: Footer
+   ============================================================ */
+.site-footer {
+  margin-left: var(--sidebar-width);
+  padding: 1.5rem 2.5rem;
+  border-top: 1px solid var(--fg-color-lightest);
+  font-size: 0.8rem;
+  color: var(--fg-color-lighter);
+  text-align: center;
+}
+.footer-author {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   Components: Admonitions
+   ============================================================ */
+.admonition {
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  border-left: 4px solid var(--primary);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  background: var(--bg-color-alt);
+}
+
+.admonition-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.admonition.tip { border-color: var(--green); }
+.admonition.tip .admonition-title { color: var(--green); }
+
+.admonition.warning { border-color: var(--accent); }
+.admonition.warning .admonition-title { color: var(--accent); }
+
+.admonition.info { border-color: var(--primary); }
+.admonition.info .admonition-title { color: var(--primary); }
+
+.admonition p:last-child { margin-bottom: 0; }
+
+/* ============================================================
+   Components: Collapsible details
+   ============================================================ */
+details {
+  margin: 1rem 0;
+  border: 1px solid var(--fg-color-lightest);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+details > summary {
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: var(--bg-color-alt);
+  list-style: none;
+  user-select: none;
+}
+
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before {
+  content: "\25B6";
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+details > .details-content {
+  padding: 0.75rem 1rem;
+}
+
+/* ============================================================
+   Components: Section separators
+   ============================================================ */
+.section {
+  padding: 1.5rem 0;
+}
+
+.section + .section {
+  border-top: 1px solid var(--fg-color-lightest);
+}
+
+/* ============================================================
+   Components: Hero
+   ============================================================ */
+.hero {
+  text-align: center;
+  padding: 2rem 0 1.5rem;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  border: none;
+}
+
+.hero__subtitle {
+  font-size: 1.05rem;
+  color: var(--fg-color-light);
+  max-width: 600px;
+  margin: 0 auto 1rem;
+}
+
+.hero__meta {
+  font-size: 0.8rem;
+  color: var(--fg-color-lighter);
+}
+
+/* ============================================================
+   Components: Key insight callout
+   ============================================================ */
+.callout {
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  border-radius: var(--border-radius);
+  background: rgba(85, 34, 221, 0.06);
+  border: 1px solid rgba(85, 34, 221, 0.15);
+}
+
+[data-theme="dark"] .callout,
+:root:not([data-theme="light"]) .callout {
+  background: rgba(123, 82, 232, 0.08);
+  border-color: rgba(123, 82, 232, 0.2);
+}
+
+.callout__title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary);
+  margin-bottom: 0.3rem;
+}
+
+/* ============================================================
+   Interactive: Prompt Builder
+   ============================================================ */
+.prompt-builder label,
+.template-filler__label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--fg-color);
+}
+
+.prompt-builder input,
+.prompt-builder textarea,
+.template-filler__input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--fg-color-lighter);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  background: var(--bg-color);
+  color: var(--fg-color);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.prompt-builder input:focus,
+.prompt-builder textarea:focus,
+.template-filler__input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(85, 34, 221, 0.15);
+}
+
+.prompt-builder__output,
+.template-filler__output {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--code-bg);
+  border: 1px solid var(--fg-color-lightest);
+  border-radius: var(--border-radius);
+}
+
+.prompt-builder__output-label,
+.template-filler__output-label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.prompt-builder__preview,
+.template-filler__preview {
+  margin: 0;
+  padding: 0.75rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--code-font);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  background: transparent;
+  border: none;
+}
+
+.prompt-builder__copy,
+.template-filler__copy {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.prompt-builder__copy:hover,
+.template-filler__copy:hover {
+  background-color: var(--primary-dark);
+}
+
+.prompt-builder {
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 8px;
+  background: var(--bg-color);
+}
+
+.template-filler {
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 8px;
+  background: var(--bg-color);
+}
+
+.template-filler__form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .template-filler__form {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+}
+
+/* ============================================================
+   Interactive: Blockquote Copy
+   ============================================================ */
+.blockquote-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--fg-color-light);
+  background: var(--bg-color);
+  border: 1px solid var(--fg-color-lightest);
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+  z-index: 1;
+}
+
+blockquote:hover .blockquote-copy { opacity: 1; }
+
+.blockquote-copy:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* ============================================================
+   Interactive: Step Wizard
+   ============================================================ */
+.step-wizard {
+  padding: 1.25rem;
+  margin: 1rem 0;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 8px;
+  background: var(--bg-color);
+}
+
+.step-wizard__progress {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.step-wizard__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--fg-color-lighter);
+  background: transparent;
+  color: var(--fg-color-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.step-wizard__dot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.step-wizard__dot--active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.step-wizard__dot--active:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: white;
+}
+
+.step-wizard__dot--visited {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.step-wizard__title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.step-wizard__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--fg-color-lightest);
+}
+
+.step-wizard__prev,
+.step-wizard__next {
+  padding: 0.45rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.step-wizard__prev:hover,
+.step-wizard__next:hover {
+  background-color: var(--primary-dark);
+}
+
+.step-wizard__step {
+  min-height: 4rem;
+}
+
+.step-wizard__step p:first-child { margin-top: 0; }
+
+/* Step Wizard selectable options */
+.step-wizard__options {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.75rem 0;
+}
+
+.step-wizard__option {
+  position: relative;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  margin-bottom: 0.5rem;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.step-wizard__option::before {
+  content: "";
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--fg-color-lighter);
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.step-wizard__option:hover {
+  border-color: var(--primary);
+  background-color: rgba(85, 34, 221, 0.04);
+}
+
+.step-wizard__option:hover::before {
+  border-color: var(--primary);
+}
+
+.step-wizard__option--selected {
+  border-color: var(--primary);
+  background-color: rgba(85, 34, 221, 0.08);
+}
+
+.step-wizard__option--selected::before {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  box-shadow: inset 0 0 0 3px var(--bg-color);
+}
+
+.step-wizard__option:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Step Wizard results */
+.step-wizard-results {
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  background: var(--bg-color);
+  animation: results-fadein 0.4s ease-out;
+}
+
+@keyframes results-fadein {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.step-wizard-results__header {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.step-wizard-results__tier { text-align: center; margin-bottom: 1rem; }
+
+.step-wizard-results__badge {
+  display: inline-block;
+  padding: 0.4rem 1.5rem;
+  border-radius: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.step-wizard-results__badge--beginner { background-color: var(--green); }
+.step-wizard-results__badge--intermediate { background-color: var(--primary); }
+.step-wizard-results__badge--advanced { background-color: var(--accent); }
+
+.step-wizard-results__breakdown {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--fg-color-lightest);
+  border-bottom: 1px solid var(--fg-color-lightest);
+}
+
+.step-wizard-results__row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.step-wizard-results__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg-color-light);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.step-wizard-results__count {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--fg-color);
+}
+
+.step-wizard-results__warning {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background-color: rgba(215, 90, 27, 0.08);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.step-wizard-results__suggestion {
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.step-wizard-results__action {
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.step-wizard-results__action:hover {
+  background-color: var(--primary-dark);
+}
+
+/* ============================================================
+   Components: Tier badge (inline)
+   ============================================================ */
+.badge--beginner {
+  background-color: var(--green);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: 700;
+}
+
+/* ============================================================
+   Components: Skip to content
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: white;
+  z-index: 200;
+  font-size: 0.85rem;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================================
+   Responsive: Tablet (768-1023)
+   ============================================================ */
+@media (max-width: 1023px) {
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 90;
+    box-shadow: none;
+  }
+
+  .sidebar.sidebar--open {
+    transform: translateX(0);
+    box-shadow: 4px 0 12px rgba(0,0,0,0.15);
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 80;
+  }
+
+  .sidebar-overlay--visible { display: block; }
+
+  .hamburger { display: block; }
+
+  .content {
+    margin-left: 0;
+    padding: 1.5rem 1.5rem 4rem;
+  }
+
+  .site-footer {
+    margin-left: 0;
+  }
+}
+
+/* ============================================================
+   Responsive: Mobile (<768)
+   ============================================================ */
+@media (max-width: 767px) {
+  .content {
+    padding: 1rem 1rem 3rem;
+  }
+
+  .site-footer {
+    padding: 1rem;
+  }
+
+  .hero h1 { font-size: 1.5rem; }
+  .hero__subtitle { font-size: 0.95rem; }
+
+  .step-wizard-results__breakdown {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .site-header__title { display: none; }
+}
+
+/* ============================================================
+   Print
+   ============================================================ */
+@media print {
+  .site-header, .sidebar, .sidebar-overlay, .site-footer { display: none !important; }
+  .dark-toggle, .hamburger { display: none !important; }
+  body { color: #000; background: #fff; }
+  .content { margin-left: 0; max-width: 100%; padding: 0; }
+  .layout { display: block; }
+  .prompt-builder__copy, .template-filler__copy, .blockquote-copy { display: none; }
+  .step-wizard__nav, .step-wizard__progress { display: none; }
+  .step-wizard__step { display: block !important; page-break-inside: avoid; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+  .section + .section { border-top: 1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<!-- Skip to content -->
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- Header -->
+<header class="site-header">
+  <button class="hamburger" aria-label="Toggle navigation" type="button">&#9776;</button>
+  <span class="site-header__brand">Ascential Technologies</span>
+  <span class="site-header__title">AI Training Program</span>
+  <span class="site-header__badge">Beginner</span>
+  <div class="site-header__actions">
+    <button class="dark-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">&#9789;</button>
+  </div>
+</header>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- Layout -->
+<div class="layout">
+
+  <!-- Sidebar navigation -->
+  <nav class="sidebar" aria-label="Page sections">
+    <span class="sidebar__label">On this page</span>
+    <a class="sidebar__link" href="#welcome">Welcome</a>
+    <a class="sidebar__link" href="#what-is-ai">What Is AI?</a>
+    <a class="sidebar__link" href="#meet-claude">Meet Claude</a>
+    <a class="sidebar__link" href="#other-tools">Other AI Tools</a>
+    <a class="sidebar__link" href="#first-conversation">Your First Conversation</a>
+    <a class="sidebar__link" href="#building-blocks">Five Building Blocks</a>
+    <a class="sidebar__link" href="#build-prompt">Build Your First Prompt</a>
+    <a class="sidebar__link" href="#first-week-tips">Tips for Your First Week</a>
+    <a class="sidebar__link" href="#common-questions">Common Questions</a>
+    <a class="sidebar__link" href="#whats-next">What's Next</a>
+    <span class="sidebar__label" style="margin-top:1rem">8-10 min read</span>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content" id="main-content">
+
+    <!-- Section 1: Hero -->
+    <section class="section hero" id="welcome">
+      <h1>Getting Started with AI</h1>
+      <p class="hero__subtitle">In 10 minutes, you will understand what AI is, meet Claude, and write your first prompt.</p>
+      <p class="hero__meta"><span class="badge--beginner">Beginner</span> &nbsp; No prerequisites &nbsp; 8-10 minute read</p>
+    </section>
+
+    <!-- Section 2: What Is AI? -->
+    <section class="section" id="what-is-ai">
+      <h2>What Is AI?</h2>
+
+      <p>Artificial intelligence (AI) is software that can perform tasks that normally require human thinking. That includes understanding language, spotting patterns in data, making predictions, and generating text.</p>
+
+      <p>When you type a question into an AI tool and get a clear, structured answer back, that is AI at work. The software takes your input, processes it through a trained model, and produces an output that makes sense in context.</p>
+
+      <div class="callout">
+        <div class="callout__title">The Intern Analogy</div>
+        <p>Think of AI as a very well-read intern. It is fast, eager, and has absorbed a huge amount of information. It can draft documents, answer questions, and organize data much faster than you could alone. But like any intern, it needs clear instructions to do its best work. Give it vague directions and you get vague results. Give it specific, structured instructions and you get far better output.</p>
+        <p>And like an intern, it makes mistakes. Sometimes confidently. That is why you always review its work before using it.</p>
+      </div>
+
+      <h3>What AI Is NOT</h3>
+
+      <ul>
+        <li><strong>Not conscious.</strong> AI does not have feelings, awareness, or desires. When it says "I think," it is using a language pattern, not reporting an inner experience.</li>
+        <li><strong>Not all-knowing.</strong> AI models learn from training data. They do not have access to everything ever written, and their knowledge has a cutoff date.</li>
+        <li><strong>Not a replacement for judgment.</strong> AI is a tool. It can help you draft, analyze, and brainstorm, but final decisions should always involve a human who understands the context.</li>
+      </ul>
+
+      <div class="admonition warning">
+        <div class="admonition-title">Limitation</div>
+        <p>AI can sound authoritative even when it is wrong. Confident-sounding language does not mean the content is accurate. Always verify important facts before acting on them.</p>
+      </div>
+    </section>
+
+    <!-- Section 3: Meet Claude -->
+    <section class="section" id="meet-claude">
+      <h2>Meet Claude</h2>
+
+      <p>Claude is an AI assistant built by Anthropic. It reads your text input and generates written responses. You will use it to practice the concepts in this guide.</p>
+
+      <h3>How to Access Claude</h3>
+      <ol>
+        <li>Open your browser and go to <strong><a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a></strong>.</li>
+        <li>Sign up with your email, or use Google or single sign-on (SSO) if your organization provides it.</li>
+        <li>Confirm your email if prompted, then log in.</li>
+      </ol>
+
+      <div class="admonition info">
+        <div class="admonition-title">Using a Company Account</div>
+        <p>If your organization provides a Claude Team or Enterprise account, use that instead of creating a personal account. These plans offer stronger data privacy protections. Check with your IT department if you are unsure.</p>
+      </div>
+
+      <h3>The Interface</h3>
+      <p>Once logged in, you will see a simple chat interface:</p>
+      <ul>
+        <li><strong>Message box</strong> at the bottom — type your prompts here and press Enter to send.</li>
+        <li><strong>Conversation area</strong> in the center — your messages and Claude's responses appear here.</li>
+        <li><strong>Sidebar</strong> on the left — shows your conversation history. Click any past conversation to reopen it.</li>
+        <li><strong>New Chat</strong> button — starts a fresh conversation. Each new conversation is independent.</li>
+      </ul>
+
+      <div class="admonition warning">
+        <div class="admonition-title">Each Conversation Starts Fresh</div>
+        <p>Claude does not remember previous conversations. When you start a new chat, it has no knowledge of what you discussed before. This is by design. If you need to reference earlier work, paste the relevant context into your new conversation.</p>
+      </div>
+    </section>
+
+    <!-- Section: Other AI Tools -->
+    <section class="section" id="other-tools">
+      <h2>Other AI Tools</h2>
+
+      <p>Claude is the primary tool used in this training program, but the prompting skills you learn here work across all major AI assistants. Here are the other tools you may encounter:</p>
+
+      <table>
+        <thead>
+          <tr><th>Tool</th><th>Made By</th><th>Access</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ChatGPT</strong></td>
+            <td>OpenAI</td>
+            <td><a href="https://chat.openai.com" target="_blank" rel="noopener">chat.openai.com</a></td>
+            <td>The most widely known AI chatbot. Free tier available. Uses GPT models.</td>
+          </tr>
+          <tr>
+            <td><strong>Gemini</strong></td>
+            <td>Google</td>
+            <td><a href="https://gemini.google.com" target="_blank" rel="noopener">gemini.google.com</a></td>
+            <td>Google's AI assistant. Integrates with Google Workspace. Free tier available.</td>
+          </tr>
+          <tr>
+            <td><strong>Copilot</strong></td>
+            <td>Microsoft</td>
+            <td><a href="https://copilot.microsoft.com" target="_blank" rel="noopener">copilot.microsoft.com</a></td>
+            <td>Built into Microsoft 365 and Edge browser. Free tier available.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="admonition tip">
+        <div class="admonition-title">Transferable Skills</div>
+        <p>The five building blocks (Role, Task, Context, Format, Constraints) work with every tool listed above. Learn them once and apply them everywhere.</p>
+      </div>
+    </section>
+
+    <!-- Section 4: Your First Conversation -->
+    <section class="section" id="first-conversation">
+      <h2>Your First Conversation</h2>
+
+      <p>Copy and paste this into Claude's message box, or type something similar in your own words:</p>
+
+      <blockquote>
+        <p>Hi Claude, I'm new to using AI assistants. Can you explain what kinds of tasks you can help me with at work? Please give me 5 examples with one sentence each.</p>
+      </blockquote>
+
+      <p>Press Enter. Within a few seconds, Claude responds with a structured list. Your results will vary, but you can expect a clear, organized answer.</p>
+
+      <h3>What to Notice</h3>
+      <ul>
+        <li>Claude responds quickly, usually within a few seconds.</li>
+        <li>The response follows the instructions you gave (five examples, one sentence each).</li>
+        <li>The tone is professional and direct.</li>
+      </ul>
+
+      <h3>Now Follow Up</h3>
+      <p>This is a conversation, not a one-shot query. Try a follow-up message:</p>
+
+      <blockquote>
+        <p>Can you expand on the third example? Give me a specific scenario where I might use that at work.</p>
+      </blockquote>
+
+      <p>Claude remembers everything within the current conversation and builds on what came before. You can keep going back and forth to refine the answer.</p>
+
+      <div class="callout">
+        <div class="callout__title">Key Insight</div>
+        <p>Working with AI is iterative. Your first prompt is a starting point, not a final answer. The real value comes from the back-and-forth: send, read, adjust, repeat.</p>
+      </div>
+    </section>
+
+    <!-- Section 5: Five Building Blocks — Step Wizard -->
+    <section class="section" id="building-blocks">
+      <h2>The Five Building Blocks of a Good Prompt</h2>
+
+      <p>Every effective prompt draws from five building blocks. You do not need all five every time, but knowing them gives you a framework for writing prompts that consistently produce useful results.</p>
+
+      <div class="step-wizard">
+        <div class="step-wizard__step" data-step-title="Block 1 of 5: Role">
+          <h3>Role</h3>
+          <p><strong>What it does:</strong> Tells the AI who to be. When you assign a role, you steer three things at once: the tone of the response, the depth of detail, and the vocabulary it uses.</p>
+          <p><strong>Example:</strong></p>
+          <blockquote><p>You are a senior project manager with 15 years of experience.</p></blockquote>
+          <p>Without a role, Claude defaults to a general-purpose voice. With a role, the output shifts to match. A "patient tutor" produces step-by-step explanations. A "senior analyst" produces concise, data-focused language.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Block 2 of 5: Task">
+          <h3>Task</h3>
+          <p><strong>What it does:</strong> States exactly what you need done. A strong task uses a specific action verb and leaves no room for guessing.</p>
+          <p><strong>Weak:</strong> "Help with my report."</p>
+          <p><strong>Strong:</strong> "Summarize these meeting notes into 5 bullet points, each one sentence long."</p>
+          <p><strong>Action verbs that work well:</strong> Summarize, list, compare, draft, rewrite, extract, analyze, explain, outline, translate.</p>
+          <p>If you only have time for one building block, make it this one.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Block 3 of 5: Context">
+          <h3>Context</h3>
+          <p><strong>What it does:</strong> Provides the background information the AI needs to give a relevant answer. Without context, Claude fills in the gaps with assumptions that may not match your situation.</p>
+          <p><strong>Without context:</strong> "Write a project update email."</p>
+          <p><strong>With context:</strong> "Write a project update email. The project is a website redesign. The design phase finished on schedule, but backend development is delayed by 3 days because a team member is unavailable."</p>
+          <p>Context transforms generic output into something specific and useful.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Block 4 of 5: Format">
+          <h3>Format</h3>
+          <p><strong>What it does:</strong> Tells the AI how to structure its output. Without format instructions, Claude chooses its own structure, which often defaults to paragraphs.</p>
+          <p><strong>Common format specifications:</strong></p>
+          <ul>
+            <li>"Use bullet points"</li>
+            <li>"Create a table with columns for Name, Status, and Due Date"</li>
+            <li>"Write this as an email with a subject line, greeting, body, and sign-off"</li>
+            <li>"Organize under three headers: Summary, Risks, Next Steps"</li>
+          </ul>
+          <p>Specifying format saves you the work of reformatting the output after the fact.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Block 5 of 5: Constraints">
+          <h3>Constraints</h3>
+          <p><strong>What it does:</strong> Sets boundaries and rules for the output. Constraints tell Claude what to do and what <em>not</em> to do.</p>
+          <p><strong>Types of constraints:</strong></p>
+          <ul>
+            <li><strong>Length:</strong> "Keep it under 200 words"</li>
+            <li><strong>Tone:</strong> "Use a formal, professional tone"</li>
+            <li><strong>Inclusion:</strong> "Include at least one example for each point"</li>
+            <li><strong>Exclusion:</strong> "Do not use technical jargon"</li>
+            <li><strong>Scope:</strong> "Focus only on Q3 results"</li>
+          </ul>
+          <p>Constraints prevent the AI from going off track. Without them, output can be too long, too technical, or include information you did not want.</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Block</th><th>What It Does</th><th>Example Phrase</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Role</td><td>Sets the AI's perspective and expertise</td><td>"You are a senior project manager"</td></tr>
+          <tr><td>Task</td><td>States the specific action to perform</td><td>"Summarize these notes into 5 bullet points"</td></tr>
+          <tr><td>Context</td><td>Provides background the AI needs</td><td>"The audience is non-technical executives"</td></tr>
+          <tr><td>Format</td><td>Defines the output structure</td><td>"Use a numbered list with headers"</td></tr>
+          <tr><td>Constraints</td><td>Sets boundaries and rules</td><td>"Keep it under 200 words, professional tone"</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 6: Build Your First Prompt — Prompt Builder -->
+    <section class="section" id="build-prompt">
+      <h2>Build Your First Prompt</h2>
+
+      <p>Now put those building blocks into practice. Use the interactive form below to construct a prompt. Fill in each field and watch the complete prompt assemble in the preview area. When you are satisfied, copy it and paste it into Claude.</p>
+
+      <p><strong>Scenario:</strong> You need to write an email to your team informing them about a schedule change. A recurring meeting is moving to a new day and time because the usual room is unavailable.</p>
+
+      <div class="prompt-builder" data-template="You are a {role}.
+
+{task}
+
+Context: {context}
+
+Format: {format}
+
+Constraints: {constraints}">
+        <label>Role <input type="text" data-field="role" placeholder="e.g., friendly team lead writing to direct reports"></label>
+        <label>Task <input type="text" data-field="task" placeholder="e.g., Write an email informing the team about a meeting time change"></label>
+        <label>Context <textarea data-field="context" rows="3" placeholder="e.g., Weekly meeting moving from Tuesday 10 AM to Thursday 2 PM due to room renovation. Team poll showed 6 of 8 prefer Thursday."></textarea></label>
+        <label>Format <input type="text" data-field="format" placeholder="e.g., Email with subject line, greeting, short body with bullet points, sign-off"></label>
+        <label>Constraints <input type="text" data-field="constraints" placeholder="e.g., Under 150 words. Friendly tone. Mention the poll results."></label>
+      </div>
+
+      <div class="admonition tip">
+        <div class="admonition-title">Tip</div>
+        <p>You do not need perfect answers in every field. Start with two or three building blocks and add more as you get comfortable. Even partial structure produces better results than no structure at all.</p>
+      </div>
+    </section>
+
+    <!-- Section 7: Tips for Your First Week -->
+    <section class="section" id="first-week-tips">
+      <h2>Tips for Your First Week</h2>
+
+      <p>Your first week with AI is about building comfort, not producing perfect output.</p>
+
+      <p><strong>Start simple.</strong> Do not try to write a perfectly engineered prompt on day one. Ask a straightforward question. See what comes back. Adjust from there.</p>
+
+      <p><strong>Tell Claude what to change.</strong> If the response is not what you wanted, you do not need to start over. Just say "Make it shorter," "Use bullet points instead," or "Focus more on the budget section." Claude adapts based on your feedback within the conversation.</p>
+
+      <p><strong>You cannot break anything.</strong> There is no wrong prompt. Claude does not save your mistakes, judge your questions, or lock you out for experimenting. Type freely and learn by doing.</p>
+
+      <p><strong>Be specific when it matters.</strong> Compare "Write a summary" to "Write a 3-paragraph summary of this report for my VP, focusing on risks and next steps." The second prompt gives Claude much more to work with.</p>
+
+      <div class="admonition tip">
+        <div class="admonition-title">Your First Week</div>
+        <p>Think of your first week as practice. The goal is not perfect output — it is getting comfortable typing to an AI and seeing what comes back. Your prompting skills develop through use, not study.</p>
+      </div>
+    </section>
+
+    <!-- Section 8: Common Questions -->
+    <section class="section" id="common-questions">
+      <h2>Common Questions</h2>
+
+      <details>
+        <summary>Does Claude remember previous conversations?</summary>
+        <div class="details-content">
+          <p>No. Each conversation starts fresh. Claude has no memory of past chats. If you need context from a previous conversation, copy and paste the relevant parts into your new chat.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Can Claude access the internet?</summary>
+        <div class="details-content">
+          <p>No. Claude works from its training data — the large collection of text it learned from during initial training. It cannot browse websites, check current prices, or retrieve live information. For anything that requires up-to-the-minute data, use a primary source.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Is my conversation private?</summary>
+        <div class="details-content">
+          <p>It depends on your plan. Free-tier conversations may be used to improve the model. Team and Enterprise plans offer stronger privacy protections. Check with your IT department for details on your organization's plan.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What if Claude gives a wrong answer?</summary>
+        <div class="details-content">
+          <p>That is normal. AI models sometimes produce inaccurate information — a behavior called <strong>hallucination</strong>, where the model generates plausible-sounding but incorrect content. Do not treat AI output as guaranteed fact. Always verify important claims, especially numbers, dates, and technical details.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Do I need to be polite to Claude?</summary>
+        <div class="details-content">
+          <p>No. Claude is software, not a person. Politeness does not affect the quality of the output. That said, writing clear, direct instructions is the best way to get good results. Write prompts the same way you would write a clear work email: direct, specific, and structured.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- Section 9: What's Next -->
+    <section class="section" id="whats-next">
+      <h2>What's Next</h2>
+
+      <p>You now have the foundation you need to start using AI productively:</p>
+      <ul>
+        <li>You understand what AI is and what it is not.</li>
+        <li>You know how to access Claude and navigate its interface.</li>
+        <li>You have held your first conversation and practiced follow-up prompting.</li>
+        <li>You have learned the five building blocks of an effective prompt.</li>
+        <li>You have built and copied your first structured prompt.</li>
+      </ul>
+
+      <p><strong>Your immediate next step:</strong> Open Claude and use it for a real task this week. Pick something small — drafting an email, summarizing meeting notes, or brainstorming ideas for a project. Apply the five building blocks and iterate on the output.</p>
+
+      <div class="callout">
+        <div class="callout__title">The Full Training Program</div>
+        <p>This page is a preview of the Ascential Technologies AI Training Program. The full program includes 40+ documents covering prompting skills (beginner through advanced), 12 hands-on use cases across reports, data analysis, and coding, an adoption toolkit, and a complete reference library. Contact your training coordinator for access.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div>&copy; 2026 Ascential Technologies</div>
+  <div class="footer-author">Author: John Reep, Principal Electrical Engineer &bull; Modified: 28 FEB 2026</div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+/* ============================================================
+   Dark Mode Toggle
+   ============================================================ */
+(function () {
+  var toggle = document.querySelector(".dark-toggle");
+  if (!toggle) return;
+
+  var html = document.documentElement;
+
+  // Restore saved preference
+  var saved = localStorage.getItem("theme");
+  if (saved === "dark" || saved === "light") {
+    html.setAttribute("data-theme", saved);
+  }
+
+  // Update icon based on current state
+  function updateIcon() {
+    var isDark = html.getAttribute("data-theme") === "dark" ||
+      (!html.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    toggle.textContent = isDark ? "\u2600" : "\u263D";
+    toggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+  }
+
+  updateIcon();
+
+  toggle.addEventListener("click", function () {
+    var current = html.getAttribute("data-theme");
+    var isDark = current === "dark" ||
+      (!current && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    var next = isDark ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    updateIcon();
+  });
+
+  // Listen for system preference changes
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateIcon);
+})();
+
+/* ============================================================
+   Sidebar: Hamburger Toggle (mobile/tablet)
+   ============================================================ */
+(function () {
+  var hamburger = document.querySelector(".hamburger");
+  var sidebar = document.querySelector(".sidebar");
+  var overlay = document.querySelector(".sidebar-overlay");
+  if (!hamburger || !sidebar) return;
+
+  function openSidebar() {
+    sidebar.classList.add("sidebar--open");
+    if (overlay) { overlay.classList.add("sidebar-overlay--visible"); overlay.setAttribute("aria-hidden", "false"); }
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("sidebar--open");
+    if (overlay) { overlay.classList.remove("sidebar-overlay--visible"); overlay.setAttribute("aria-hidden", "true"); }
+  }
+
+  hamburger.addEventListener("click", function () {
+    if (sidebar.classList.contains("sidebar--open")) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+
+  if (overlay) {
+    overlay.addEventListener("click", closeSidebar);
+  }
+
+  // Close sidebar when a link is clicked (mobile)
+  sidebar.querySelectorAll(".sidebar__link").forEach(function (link) {
+    link.addEventListener("click", function () {
+      if (window.innerWidth < 1024) {
+        closeSidebar();
+      }
+    });
+  });
+})();
+
+/* ============================================================
+   Scrollspy: Highlight active section in sidebar
+   ============================================================ */
+(function () {
+  var links = document.querySelectorAll(".sidebar__link");
+  var sections = [];
+
+  links.forEach(function (link) {
+    var href = link.getAttribute("href");
+    if (href && href.charAt(0) === "#") {
+      var target = document.getElementById(href.substring(1));
+      if (target) {
+        sections.push({ el: target, link: link });
+      }
+    }
+  });
+
+  if (sections.length === 0) return;
+
+  var currentActive = null;
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].el === entry.target) {
+            if (currentActive) currentActive.classList.remove("sidebar__link--active");
+            sections[i].link.classList.add("sidebar__link--active");
+            currentActive = sections[i].link;
+            break;
+          }
+        }
+      }
+    });
+  }, {
+    rootMargin: "-" + (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-height")) + 20) + "px 0px -60% 0px",
+    threshold: 0
+  });
+
+  sections.forEach(function (s) {
+    observer.observe(s.el);
+  });
+})();
+
+/* ============================================================
+   Clipboard Fallback (for file:// URLs)
+   ============================================================ */
+function copyToClipboard(text, btn, originalLabel) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = "Copied!";
+      setTimeout(function () { btn.textContent = originalLabel; }, 2000);
+    }).catch(function () {
+      fallbackCopy(text, btn, originalLabel);
+    });
+  } else {
+    fallbackCopy(text, btn, originalLabel);
+  }
+}
+
+function fallbackCopy(text, btn, originalLabel) {
+  var textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand("copy");
+    btn.textContent = "Copied!";
+  } catch (e) {
+    btn.textContent = "Copy failed";
+  }
+  document.body.removeChild(textarea);
+  setTimeout(function () { btn.textContent = originalLabel; }, 2000);
+}
+
+/* ============================================================
+   Prompt Builder
+   ============================================================ */
+function initPromptBuilders() {
+  document.querySelectorAll(".prompt-builder").forEach(function (builder) {
+    var template = builder.getAttribute("data-template") || "";
+    if (!template) return;
+
+    var output = document.createElement("div");
+    output.className = "prompt-builder__output";
+
+    var outputLabel = document.createElement("div");
+    outputLabel.className = "prompt-builder__output-label";
+    outputLabel.textContent = "Generated Prompt";
+
+    var pre = document.createElement("pre");
+    pre.className = "prompt-builder__preview";
+    pre.textContent = template;
+
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "prompt-builder__copy";
+    copyBtn.textContent = "Copy Prompt";
+    copyBtn.setAttribute("type", "button");
+    copyBtn.addEventListener("click", function () {
+      copyToClipboard(pre.textContent, copyBtn, "Copy Prompt");
+    });
+
+    output.appendChild(outputLabel);
+    output.appendChild(pre);
+    output.appendChild(copyBtn);
+    builder.appendChild(output);
+
+    var inputs = builder.querySelectorAll("[data-field]");
+    inputs.forEach(function (input) {
+      input.addEventListener("input", function () {
+        updatePromptBuilder(builder, template, pre);
+      });
+    });
+  });
+}
+
+function updatePromptBuilder(builder, template, pre) {
+  var result = template;
+  builder.querySelectorAll("[data-field]").forEach(function (input) {
+    var field = input.getAttribute("data-field");
+    var value = input.value.trim() || "{" + field + "}";
+    result = result.replace(new RegExp("\\{" + field + "\\}", "g"), value);
+  });
+  pre.textContent = result;
+}
+
+/* ============================================================
+   Template Filler
+   ============================================================ */
+function initTemplateFillers() {
+  document.querySelectorAll(".template-filler").forEach(function (filler) {
+    var template = filler.getAttribute("data-template") || "";
+    if (!template) return;
+
+    var placeholders = [];
+    var seen = {};
+    var regex = /\[([A-Z][A-Z0-9_]*)\]/g;
+    var match;
+    while ((match = regex.exec(template)) !== null) {
+      if (!seen[match[1]]) {
+        placeholders.push(match[1]);
+        seen[match[1]] = true;
+      }
+    }
+    if (placeholders.length === 0) return;
+
+    var form = document.createElement("div");
+    form.className = "template-filler__form";
+
+    placeholders.forEach(function (ph) {
+      var label = document.createElement("label");
+      label.className = "template-filler__label";
+      var readable = ph.replace(/_/g, " ").toLowerCase();
+      readable = readable.charAt(0).toUpperCase() + readable.slice(1);
+      label.textContent = readable;
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "template-filler__input";
+      input.setAttribute("data-placeholder", ph);
+      input.placeholder = "Enter " + readable.toLowerCase() + "...";
+
+      label.appendChild(input);
+      form.appendChild(label);
+    });
+
+    var output = document.createElement("div");
+    output.className = "template-filler__output";
+
+    var outputLabel = document.createElement("div");
+    outputLabel.className = "template-filler__output-label";
+    outputLabel.textContent = "Your Prompt";
+
+    var pre = document.createElement("pre");
+    pre.className = "template-filler__preview";
+    pre.textContent = template;
+
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "template-filler__copy";
+    copyBtn.textContent = "Copy Prompt";
+    copyBtn.setAttribute("type", "button");
+    copyBtn.addEventListener("click", function () {
+      copyToClipboard(pre.textContent, copyBtn, "Copy Prompt");
+    });
+
+    output.appendChild(outputLabel);
+    output.appendChild(pre);
+    output.appendChild(copyBtn);
+
+    filler.appendChild(form);
+    filler.appendChild(output);
+
+    form.querySelectorAll("[data-placeholder]").forEach(function (input) {
+      input.addEventListener("input", function () {
+        updateTemplateFiller(filler, template, pre);
+      });
+    });
+  });
+}
+
+function updateTemplateFiller(filler, template, pre) {
+  var result = template;
+  filler.querySelectorAll("[data-placeholder]").forEach(function (input) {
+    var ph = input.getAttribute("data-placeholder");
+    var value = input.value.trim() || "[" + ph + "]";
+    result = result.replace(new RegExp("\\[" + ph + "\\]", "g"), value);
+  });
+  pre.textContent = result;
+}
+
+/* ============================================================
+   Blockquote Copy Buttons
+   ============================================================ */
+function initBlockquoteCopy() {
+  var containers = document.querySelectorAll(".content details, .content .tabbed-content");
+  containers.forEach(function (container) {
+    var blockquotes = container.querySelectorAll("blockquote");
+    blockquotes.forEach(function (bq) {
+      var text = bq.textContent.trim();
+      if (text.length < 40) return;
+
+      bq.style.position = "relative";
+
+      var copyBtn = document.createElement("button");
+      copyBtn.className = "blockquote-copy";
+      copyBtn.textContent = "Copy";
+      copyBtn.setAttribute("type", "button");
+      copyBtn.setAttribute("aria-label", "Copy prompt to clipboard");
+      copyBtn.addEventListener("click", function () {
+        copyToClipboard(text, copyBtn, "Copy");
+      });
+
+      bq.appendChild(copyBtn);
+    });
+  });
+
+  // Also add copy buttons to top-level blockquotes in the main content
+  document.querySelectorAll(".content > .section blockquote").forEach(function (bq) {
+    if (bq.querySelector(".blockquote-copy")) return; // already has one
+    var text = bq.textContent.trim();
+    if (text.length < 40) return;
+
+    bq.style.position = "relative";
+
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "blockquote-copy";
+    copyBtn.textContent = "Copy";
+    copyBtn.setAttribute("type", "button");
+    copyBtn.setAttribute("aria-label", "Copy prompt to clipboard");
+    copyBtn.addEventListener("click", function () {
+      copyToClipboard(text, copyBtn, "Copy");
+    });
+
+    bq.appendChild(copyBtn);
+  });
+}
+
+/* ============================================================
+   Step Wizard
+   ============================================================ */
+function initStepWizards() {
+  document.querySelectorAll(".step-wizard").forEach(function (wizard) {
+    var steps = wizard.querySelectorAll(".step-wizard__step");
+    if (steps.length < 2) return;
+
+    var currentIndex = 0;
+    var showSummary = wizard.getAttribute("data-show-summary") === "true";
+    var resultMap = (wizard.getAttribute("data-result-map") || "").split(",").map(function (s) {
+      return s.trim().toLowerCase();
+    }).filter(function (s) { return s.length > 0; });
+    var hasResultMap = resultMap.length >= 2;
+    var selections = [];
+
+    steps.forEach(function (step, i) {
+      step.style.display = i === 0 ? "block" : "none";
+    });
+
+    var progress = document.createElement("div");
+    progress.className = "step-wizard__progress";
+
+    var dots = [];
+    for (var i = 0; i < steps.length; i++) {
+      var dot = document.createElement("button");
+      dot.className = "step-wizard__dot" + (i === 0 ? " step-wizard__dot--active" : "");
+      dot.textContent = i + 1;
+      dot.setAttribute("type", "button");
+      dot.setAttribute("aria-label", steps[i].getAttribute("data-step-title") || "Step " + (i + 1));
+      (function (idx) {
+        dot.addEventListener("click", function () { goToStep(idx); });
+      })(i);
+      dots.push(dot);
+      progress.appendChild(dot);
+    }
+
+    var titleBar = document.createElement("div");
+    titleBar.className = "step-wizard__title";
+    titleBar.textContent = steps[0].getAttribute("data-step-title") || "Step 1";
+
+    var nav = document.createElement("div");
+    nav.className = "step-wizard__nav";
+
+    var prevBtn = document.createElement("button");
+    prevBtn.className = "step-wizard__prev";
+    prevBtn.textContent = "\u2190 Previous";
+    prevBtn.setAttribute("type", "button");
+    prevBtn.style.visibility = "hidden";
+    prevBtn.addEventListener("click", function () {
+      if (currentIndex > 0) goToStep(currentIndex - 1);
+    });
+
+    var nextBtn = document.createElement("button");
+    nextBtn.className = "step-wizard__next";
+    nextBtn.textContent = "Next \u2192";
+    nextBtn.setAttribute("type", "button");
+    nextBtn.addEventListener("click", function () {
+      if (currentIndex < steps.length - 1) {
+        goToStep(currentIndex + 1);
+      } else if (showSummary && hasResultMap) {
+        showResults();
+      } else if (showSummary) {
+        var nextSibling = wizard.nextElementSibling;
+        if (nextSibling) {
+          nextSibling.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    });
+
+    nav.appendChild(prevBtn);
+    nav.appendChild(nextBtn);
+
+    wizard.insertBefore(progress, steps[0]);
+    wizard.insertBefore(titleBar, steps[0]);
+    wizard.appendChild(nav);
+
+    function goToStep(idx) {
+      steps[currentIndex].style.display = "none";
+      currentIndex = idx;
+      steps[currentIndex].style.display = "block";
+
+      dots.forEach(function (d, di) {
+        d.classList.remove("step-wizard__dot--active");
+        if (di < currentIndex) d.classList.add("step-wizard__dot--visited");
+      });
+      dots[currentIndex].classList.add("step-wizard__dot--active");
+
+      titleBar.textContent = steps[currentIndex].getAttribute("data-step-title") || "Step " + (currentIndex + 1);
+
+      prevBtn.style.visibility = currentIndex === 0 ? "hidden" : "visible";
+      if (currentIndex === steps.length - 1 && showSummary) {
+        nextBtn.textContent = "See Results \u2193";
+      } else if (currentIndex === steps.length - 1) {
+        nextBtn.style.visibility = "hidden";
+      } else {
+        nextBtn.textContent = "Next \u2192";
+        nextBtn.style.visibility = "visible";
+      }
+    }
+
+    // Selectable options
+    var selectable = wizard.getAttribute("data-selectable") === "true";
+    if (selectable) {
+      steps.forEach(function (step) {
+        var stepIndex = Array.prototype.indexOf.call(steps, step);
+        var lists = step.querySelectorAll("ul");
+        lists.forEach(function (ul) {
+          var items = ul.querySelectorAll("li");
+          if (items.length < 2) return;
+
+          var firstStrong = items[0].querySelector("strong");
+          if (!firstStrong || !/^[A-Z]\.$/.test(firstStrong.textContent.trim())) return;
+
+          ul.classList.add("step-wizard__options");
+          items.forEach(function (li) {
+            li.classList.add("step-wizard__option");
+            li.setAttribute("role", "radio");
+            li.setAttribute("aria-checked", "false");
+            li.setAttribute("tabindex", "0");
+
+            li.addEventListener("click", function () {
+              items.forEach(function (sibling) {
+                sibling.classList.remove("step-wizard__option--selected");
+                sibling.setAttribute("aria-checked", "false");
+              });
+              li.classList.add("step-wizard__option--selected");
+              li.setAttribute("aria-checked", "true");
+
+              if (hasResultMap) {
+                var optionIndex = Array.prototype.indexOf.call(items, li);
+                var tierLabel = resultMap[optionIndex] || "unknown";
+                var found = false;
+                for (var s = 0; s < selections.length; s++) {
+                  if (selections[s].stepIndex === stepIndex) {
+                    selections[s].optionIndex = optionIndex;
+                    selections[s].tierLabel = tierLabel;
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  selections.push({ stepIndex: stepIndex, optionIndex: optionIndex, tierLabel: tierLabel });
+                }
+              }
+            });
+
+            li.addEventListener("keydown", function (e) {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                li.click();
+              }
+            });
+          });
+
+          ul.setAttribute("role", "radiogroup");
+        });
+      });
+    }
+
+    function showResults() {
+      var counts = {};
+      for (var i = 0; i < resultMap.length; i++) counts[resultMap[i]] = 0;
+      for (var j = 0; j < selections.length; j++) {
+        var tier = selections[j].tierLabel;
+        if (counts.hasOwnProperty(tier)) counts[tier]++;
+      }
+
+      var winner = "";
+      var maxCount = 0;
+      var tiedCount = 0;
+      var tierKeys = Object.keys(counts);
+      for (var k = 0; k < tierKeys.length; k++) {
+        if (counts[tierKeys[k]] > maxCount) {
+          maxCount = counts[tierKeys[k]];
+          winner = tierKeys[k];
+          tiedCount = 1;
+        } else if (counts[tierKeys[k]] === maxCount && maxCount > 0) {
+          tiedCount++;
+        }
+      }
+      var isTied = tiedCount > 1 || selections.length === 0;
+      if (isTied) winner = resultMap.length >= 2 ? resultMap[1] : resultMap[0];
+
+      var unanswered = steps.length - selections.length;
+
+      var summaryId = "step-wizard-results";
+      var existing = document.getElementById(summaryId);
+      if (existing) existing.parentNode.removeChild(existing);
+
+      var summary = document.createElement("div");
+      summary.id = summaryId;
+      summary.className = "step-wizard-results";
+
+      var header = document.createElement("div");
+      header.className = "step-wizard-results__header";
+      header.textContent = "Your Assessment Result";
+      summary.appendChild(header);
+
+      if (unanswered > 0) {
+        var warning = document.createElement("div");
+        warning.className = "step-wizard-results__warning";
+        warning.textContent = "You left " + unanswered + " question" +
+          (unanswered > 1 ? "s" : "") + " unanswered.";
+        summary.appendChild(warning);
+      }
+
+      var tierDisplay = document.createElement("div");
+      tierDisplay.className = "step-wizard-results__tier";
+      var badge = document.createElement("span");
+      badge.className = "step-wizard-results__badge step-wizard-results__badge--" + winner;
+      badge.textContent = winner.charAt(0).toUpperCase() + winner.slice(1);
+      tierDisplay.appendChild(badge);
+      summary.appendChild(tierDisplay);
+
+      var breakdown = document.createElement("div");
+      breakdown.className = "step-wizard-results__breakdown";
+      for (var m = 0; m < tierKeys.length; m++) {
+        var row = document.createElement("div");
+        row.className = "step-wizard-results__row";
+        var label = document.createElement("span");
+        label.className = "step-wizard-results__label";
+        label.textContent = tierKeys[m].charAt(0).toUpperCase() + tierKeys[m].slice(1);
+        var count = document.createElement("span");
+        count.className = "step-wizard-results__count";
+        count.textContent = counts[tierKeys[m]] + " of " + steps.length;
+        row.appendChild(label);
+        row.appendChild(count);
+        breakdown.appendChild(row);
+      }
+      summary.appendChild(breakdown);
+
+      var suggestion = document.createElement("div");
+      suggestion.className = "step-wizard-results__suggestion";
+      if (selections.length === 0) {
+        suggestion.textContent = "You did not select any answers. Browse the paths below and pick the one that fits your experience level.";
+      } else if (isTied) {
+        suggestion.textContent = "Your answers are mixed. We recommend starting with the " +
+          winner.charAt(0).toUpperCase() + winner.slice(1) + " Path.";
+      } else {
+        suggestion.textContent = "Based on your answers, we recommend the " +
+          winner.charAt(0).toUpperCase() + winner.slice(1) + " Path.";
+      }
+      summary.appendChild(suggestion);
+
+      wizard.parentNode.insertBefore(summary, wizard.nextSibling);
+      summary.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+}
+
+/* ============================================================
+   Initialize on DOM ready
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", function () {
+  initPromptBuilders();
+  initTemplateFillers();
+  initStepWizards();
+  initBlockquoteCopy();
+});
+</script>
+
+</body>
+</html>

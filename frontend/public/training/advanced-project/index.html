@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Powered Project Workflows — Ascential Technologies AI Training</title>
+<meta name="description" content="Advanced AI techniques for multi-session projects. Build persistent instruction files, workflow frameworks, and lessons-learned systems.">
+<style>
+/* ============================================================
+   CSS Custom Properties
+   ============================================================ */
+:root {
+  --fg-color: #1a1a2e;
+  --fg-color-light: #555;
+  --fg-color-lighter: #999;
+  --fg-color-lightest: #ddd;
+  --bg-color: #ffffff;
+  --bg-color-alt: #f8f9fa;
+  --code-bg: #f5f5f5;
+  --code-font: "Cascadia Code", "Fira Code", "Consolas", "Monaco", monospace;
+  --primary: #5522DD;
+  --primary-light: #7B52E8;
+  --primary-dark: #3D18A8;
+  --accent: #D75A1B;
+  --green: #4E801F;
+  --yellow: #E1CD00;
+  --link-color: #5522DD;
+  --border-radius: 6px;
+  --sidebar-width: 220px;
+  --header-height: 56px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fg-color: #e0e0e0; --fg-color-light: #aaa; --fg-color-lighter: #777; --fg-color-lightest: #333;
+    --bg-color: #1a1a2e; --bg-color-alt: #222240; --code-bg: #2a2a45;
+    --primary: #7B52E8; --primary-light: #9B7AEF; --primary-dark: #5522DD; --link-color: #9B7AEF;
+  }
+}
+[data-theme="dark"] {
+  --fg-color: #e0e0e0; --fg-color-light: #aaa; --fg-color-lighter: #777; --fg-color-lightest: #333;
+  --bg-color: #1a1a2e; --bg-color-alt: #222240; --code-bg: #2a2a45;
+  --primary: #7B52E8; --primary-light: #9B7AEF; --primary-dark: #5522DD; --link-color: #9B7AEF;
+}
+[data-theme="light"] {
+  --fg-color: #1a1a2e; --fg-color-light: #555; --fg-color-lighter: #999; --fg-color-lightest: #ddd;
+  --bg-color: #ffffff; --bg-color-alt: #f8f9fa; --code-bg: #f5f5f5;
+  --primary: #5522DD; --primary-light: #7B52E8; --primary-dark: #3D18A8; --link-color: #5522DD;
+}
+
+/* ============================================================
+   Reset / Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px; line-height: 1.6; color: var(--fg-color); background-color: var(--bg-color);
+  transition: color 0.2s, background-color 0.2s;
+}
+a { color: var(--link-color); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3, h4 { margin-top: 2rem; margin-bottom: 0.75rem; line-height: 1.3; }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; border-bottom: 1px solid var(--fg-color-lightest); padding-bottom: 0.4rem; }
+h3 { font-size: 1.15rem; }
+p { margin: 0 0 1rem; }
+ul, ol { padding-left: 1.5rem; margin: 0 0 1rem; }
+li { margin-bottom: 0.35rem; }
+code { font-family: var(--code-font); font-size: 0.85em; padding: 0.15em 0.4em; background: var(--code-bg); border-radius: 3px; }
+pre { font-family: var(--code-font); font-size: 0.85rem; line-height: 1.5; padding: 1rem; background: var(--code-bg); border-radius: var(--border-radius); overflow-x: auto; margin: 0 0 1rem; }
+blockquote { margin: 0 0 1rem; padding: 0.75rem 1rem; border-left: 4px solid var(--primary); background: var(--bg-color-alt); border-radius: 0 var(--border-radius) var(--border-radius) 0; position: relative; }
+blockquote p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 0 0 1rem; font-size: 0.9rem; }
+th, td { padding: 0.5rem 0.75rem; border: 1px solid var(--fg-color-lightest); text-align: left; }
+th { background: var(--bg-color-alt); font-weight: 600; }
+strong { font-weight: 700; }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.site-header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); background: var(--primary); color: white; display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 0.75rem; }
+.site-header__brand { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; white-space: nowrap; }
+.site-header__title { font-size: 0.85rem; opacity: 0.9; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.site-header__badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; background: var(--accent); color: white; }
+.site-header__actions { display: flex; align-items: center; gap: 0.5rem; }
+.dark-toggle { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; line-height: 1; transition: background 0.2s; }
+.dark-toggle:hover { background: rgba(255,255,255,0.15); }
+.hamburger { display: none; background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; padding: 0.25rem; line-height: 1; }
+.layout { display: flex; margin-top: var(--header-height); min-height: calc(100vh - var(--header-height)); }
+.sidebar { position: fixed; top: var(--header-height); left: 0; bottom: 0; width: var(--sidebar-width); background: var(--bg-color-alt); border-right: 1px solid var(--fg-color-lightest); overflow-y: auto; padding: 1rem 0; z-index: 50; transition: transform 0.3s; }
+.sidebar__label { display: block; padding: 0.5rem 1rem; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-color-lighter); }
+.sidebar__link { display: block; padding: 0.4rem 1rem; font-size: 0.82rem; color: var(--fg-color-light); text-decoration: none; border-left: 3px solid transparent; transition: all 0.15s; line-height: 1.35; }
+.sidebar__link:hover { color: var(--primary); background: rgba(85, 34, 221, 0.04); text-decoration: none; }
+.sidebar__link--active { color: var(--primary); border-left-color: var(--primary); font-weight: 600; background: rgba(85, 34, 221, 0.06); }
+.content { flex: 1; margin-left: var(--sidebar-width); padding: 2rem 2.5rem 4rem; max-width: calc(720px + 5rem); }
+.site-footer { margin-left: var(--sidebar-width); padding: 1.5rem 2.5rem; border-top: 1px solid var(--fg-color-lightest); font-size: 0.8rem; color: var(--fg-color-lighter); text-align: center; }
+.footer-author { font-size: 0.7rem; opacity: 0.7; margin-top: 0.25rem; }
+
+/* ============================================================
+   Components
+   ============================================================ */
+.admonition { padding: 0.75rem 1rem; margin: 1rem 0; border-left: 4px solid var(--primary); border-radius: 0 var(--border-radius) var(--border-radius) 0; background: var(--bg-color-alt); }
+.admonition-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; }
+.admonition.tip { border-color: var(--green); } .admonition.tip .admonition-title { color: var(--green); }
+.admonition.warning { border-color: var(--accent); } .admonition.warning .admonition-title { color: var(--accent); }
+.admonition.info { border-color: var(--primary); } .admonition.info .admonition-title { color: var(--primary); }
+.admonition p:last-child { margin-bottom: 0; }
+
+details { margin: 1rem 0; border: 1px solid var(--fg-color-lightest); border-radius: var(--border-radius); overflow: hidden; }
+details > summary { padding: 0.6rem 1rem; font-weight: 600; font-size: 0.9rem; cursor: pointer; background: var(--bg-color-alt); list-style: none; user-select: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "\25B6"; display: inline-block; margin-right: 0.5rem; font-size: 0.7rem; transition: transform 0.2s; }
+details[open] > summary::before { transform: rotate(90deg); }
+details > .details-content { padding: 0.75rem 1rem; }
+
+.section { padding: 1.5rem 0; }
+.section + .section { border-top: 1px solid var(--fg-color-lightest); }
+
+.hero { text-align: center; padding: 2rem 0 1.5rem; }
+.hero h1 { font-size: 2rem; margin-bottom: 0.5rem; border: none; }
+.hero__subtitle { font-size: 1.05rem; color: var(--fg-color-light); max-width: 600px; margin: 0 auto 1rem; }
+.hero__meta { font-size: 0.8rem; color: var(--fg-color-lighter); }
+
+.callout { padding: 1rem 1.25rem; margin: 1rem 0; border-radius: var(--border-radius); background: rgba(85, 34, 221, 0.06); border: 1px solid rgba(85, 34, 221, 0.15); }
+[data-theme="dark"] .callout, :root:not([data-theme="light"]) .callout { background: rgba(123, 82, 232, 0.08); border-color: rgba(123, 82, 232, 0.2); }
+.callout__title { font-weight: 700; font-size: 0.85rem; color: var(--primary); margin-bottom: 0.3rem; }
+
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+.comparison__col { padding: 0.75rem 1rem; border-radius: var(--border-radius); border: 1px solid var(--fg-color-lightest); }
+.comparison__col--before { border-left: 4px solid var(--accent); }
+.comparison__col--after { border-left: 4px solid var(--green); }
+.comparison__label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
+.comparison__label--before { color: var(--accent); }
+.comparison__label--after { color: var(--green); }
+@media (max-width: 600px) { .comparison { grid-template-columns: 1fr; } }
+
+.badge--advanced { background-color: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 700; }
+
+/* Principle cards */
+.principle-card { padding: 0.75rem 1rem; margin: 0.5rem 0; border-left: 4px solid var(--primary); border-radius: 0 var(--border-radius) var(--border-radius) 0; background: var(--bg-color-alt); }
+.principle-card__name { font-weight: 700; font-size: 0.9rem; color: var(--primary); margin-bottom: 0.25rem; }
+.principle-card__rule { font-size: 0.85rem; color: var(--fg-color-light); font-style: italic; margin: 0.3rem 0 0; }
+.principle-card p:last-child { margin-bottom: 0; }
+
+.skip-link { position: absolute; top: -100%; left: 0; padding: 0.5rem 1rem; background: var(--primary); color: white; z-index: 200; font-size: 0.85rem; }
+.skip-link:focus { top: 0; }
+
+/* ============================================================
+   Interactive: Template Filler
+   ============================================================ */
+.template-filler__label { display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 0.9rem; color: var(--fg-color); }
+.template-filler__input { display: block; width: 100%; margin-top: 0.25rem; padding: 0.5rem 0.75rem; border: 1px solid var(--fg-color-lighter); border-radius: 4px; font-family: inherit; font-size: 0.875rem; background: var(--bg-color); color: var(--fg-color); transition: border-color 0.2s; box-sizing: border-box; }
+.template-filler__input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(85, 34, 221, 0.15); }
+.template-filler__output { margin-top: 1rem; padding: 1rem; background: var(--code-bg); border: 1px solid var(--fg-color-lightest); border-radius: var(--border-radius); }
+.template-filler__output-label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); margin-bottom: 0.5rem; }
+.template-filler__preview { margin: 0; padding: 0.75rem; white-space: pre-wrap; word-wrap: break-word; font-family: var(--code-font); font-size: 0.85rem; line-height: 1.6; background: transparent; border: none; }
+.template-filler__copy { display: inline-block; margin-top: 0.75rem; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 600; color: white; background-color: var(--primary); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+.template-filler__copy:hover { background-color: var(--primary-dark); }
+.template-filler { padding: 1rem; margin: 1rem 0; border: 2px solid var(--fg-color-lightest); border-radius: 8px; background: var(--bg-color); }
+.template-filler__form { display: grid; gap: 0.5rem; }
+@media (min-width: 768px) { .template-filler__form { grid-template-columns: 1fr 1fr; gap: 0.75rem; } }
+
+/* ============================================================
+   Interactive: Blockquote Copy
+   ============================================================ */
+.blockquote-copy { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600; color: var(--fg-color-light); background: var(--bg-color); border: 1px solid var(--fg-color-lightest); border-radius: 3px; cursor: pointer; opacity: 0; transition: opacity 0.2s, background-color 0.2s; z-index: 1; }
+blockquote:hover .blockquote-copy { opacity: 1; }
+.blockquote-copy:hover { background-color: var(--primary); border-color: var(--primary); color: white; }
+
+/* ============================================================
+   Interactive: Step Wizard
+   ============================================================ */
+.step-wizard { padding: 1.25rem; margin: 1rem 0; border: 2px solid var(--fg-color-lightest); border-radius: 8px; background: var(--bg-color); }
+.step-wizard__progress { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+.step-wizard__dot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--fg-color-lighter); background: transparent; color: var(--fg-color-light); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; padding: 0; }
+.step-wizard__dot:hover { border-color: var(--primary); color: var(--primary); }
+.step-wizard__dot--active { background-color: var(--primary); border-color: var(--primary); color: white; }
+.step-wizard__dot--active:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); color: white; }
+.step-wizard__dot--visited { border-color: var(--primary); color: var(--primary); }
+.step-wizard__title { text-align: center; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); margin-bottom: 1rem; }
+.step-wizard__nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--fg-color-lightest); }
+.step-wizard__prev, .step-wizard__next { padding: 0.45rem 1.2rem; font-size: 0.85rem; font-weight: 600; color: white; background-color: var(--primary); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+.step-wizard__prev:hover, .step-wizard__next:hover { background-color: var(--primary-dark); }
+.step-wizard__step { min-height: 4rem; }
+.step-wizard__step p:first-child { margin-top: 0; }
+
+/* ============================================================
+   Interactive: Content Tabs
+   ============================================================ */
+.content-tabs { margin: 1.5rem 0; }
+.content-tabs__bar { display: flex; border-bottom: 2px solid var(--fg-color-lightest); gap: 0; }
+.content-tabs__tab { padding: 0.6rem 1.25rem; font-size: 0.9rem; font-weight: 600; color: var(--fg-color-light); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 0.2s, border-color 0.2s; font-family: inherit; }
+.content-tabs__tab:hover { color: var(--primary); }
+.content-tabs__tab--active { color: var(--primary); border-bottom-color: var(--primary); }
+.content-tabs__panel { display: none; padding: 1rem 0; }
+.content-tabs__panel--active { display: block; }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1023px) {
+  .sidebar { transform: translateX(-100%); z-index: 90; box-shadow: none; }
+  .sidebar.sidebar--open { transform: translateX(0); box-shadow: 4px 0 12px rgba(0,0,0,0.15); }
+  .sidebar-overlay { display: none; position: fixed; top: var(--header-height); left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 80; }
+  .sidebar-overlay--visible { display: block; }
+  .hamburger { display: block; }
+  .content { margin-left: 0; padding: 1.5rem 1.5rem 4rem; }
+  .site-footer { margin-left: 0; }
+}
+@media (max-width: 767px) {
+  .content { padding: 1rem 1rem 3rem; }
+  .site-footer { padding: 1rem; }
+  .hero h1 { font-size: 1.5rem; }
+  .hero__subtitle { font-size: 0.95rem; }
+  .site-header__title { display: none; }
+}
+
+/* Print */
+@media print {
+  .site-header, .sidebar, .sidebar-overlay, .site-footer { display: none !important; }
+  .dark-toggle, .hamburger { display: none !important; }
+  body { color: #000; background: #fff; }
+  .content { margin-left: 0; max-width: 100%; padding: 0; }
+  .layout { display: block; }
+  .template-filler__copy, .blockquote-copy { display: none; }
+  .content-tabs__bar { display: none; }
+  .content-tabs__panel { display: block !important; }
+  .content-tabs__panel::before { content: attr(data-panel-label); display: block; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; padding-bottom: 0.25rem; }
+  .step-wizard__nav, .step-wizard__progress { display: none; }
+  .step-wizard__step { display: block !important; page-break-inside: avoid; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+  .section + .section { border-top: 1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<header class="site-header">
+  <button class="hamburger" aria-label="Toggle navigation" type="button">&#9776;</button>
+  <span class="site-header__brand">Ascential Technologies</span>
+  <span class="site-header__title">AI Training Program</span>
+  <span class="site-header__badge">Advanced</span>
+  <div class="site-header__actions">
+    <button class="dark-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">&#9789;</button>
+  </div>
+</header>
+
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="layout">
+
+  <nav class="sidebar" aria-label="Page sections">
+    <span class="sidebar__label">On this page</span>
+    <a class="sidebar__link" href="#welcome">Welcome</a>
+    <a class="sidebar__link" href="#beyond-single-prompts">Beyond Single Prompts</a>
+    <a class="sidebar__link" href="#workflow-framework">Workflow Framework</a>
+    <a class="sidebar__link" href="#instruction-file">Your Instruction File</a>
+    <a class="sidebar__link" href="#few-shot">Few-Shot Prompting</a>
+    <a class="sidebar__link" href="#self-consistency">Self-Consistency</a>
+    <a class="sidebar__link" href="#hands-on">Hands-On Exercise</a>
+    <a class="sidebar__link" href="#project-lifecycle">Project Lifecycle</a>
+    <a class="sidebar__link" href="#lessons-loop">Capturing Lessons</a>
+    <a class="sidebar__link" href="#whats-next">What's Next</a>
+    <span class="sidebar__label" style="margin-top:1rem">25-30 min read</span>
+  </nav>
+
+  <main class="content" id="main-content">
+
+    <!-- Section 1: Hero -->
+    <section class="section hero" id="welcome">
+      <h1>AI-Powered Project Workflows</h1>
+      <p class="hero__subtitle">Move beyond one-off prompts. Build persistent instruction files, workflow frameworks, and lessons-learned systems that scale across sessions and teams.</p>
+      <p class="hero__meta"><span class="badge--advanced">Advanced</span> &nbsp; Assumes prompting fundamentals &nbsp; 25-30 minute read</p>
+    </section>
+
+    <!-- Section 2: Beyond Single Prompts -->
+    <section class="section" id="beyond-single-prompts">
+      <h2>Beyond Single Prompts</h2>
+
+      <p>Single prompts work well for isolated tasks &mdash; drafting an email, summarizing a document, analyzing a dataset. But real projects involve multiple sessions, evolving requirements, and accumulated knowledge. When you close a conversation and start a new one, the AI forgets everything.</p>
+
+      <p>This creates three problems that single prompts cannot solve:</p>
+
+      <table>
+        <thead>
+          <tr><th>Problem</th><th>What Happens</th><th>Solution</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Context loss</strong></td>
+            <td>Every new session starts from zero. You re-explain project conventions, file structures, and constraints each time.</td>
+            <td>A persistent <strong>instruction file</strong> that the AI reads at the start of every session</td>
+          </tr>
+          <tr>
+            <td><strong>Inconsistency</strong></td>
+            <td>Without shared rules, the AI makes different decisions in each session &mdash; different naming conventions, formatting, tone.</td>
+            <td>A <strong>workflow framework</strong> with explicit principles the AI follows consistently</td>
+          </tr>
+          <tr>
+            <td><strong>Repeated mistakes</strong></td>
+            <td>The AI makes the same error in session 5 that you corrected in session 2. There is no institutional memory.</td>
+            <td>A <strong>lessons-learned system</strong> that captures corrections and prevents recurrence</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout__title">The Three Pillars</div>
+        <p>This page teaches three tools that solve these problems: (1) an <strong>instruction file</strong> for persistent context, (2) a <strong>workflow framework</strong> with six principles for consistent execution, and (3) a <strong>lessons loop</strong> for continuous improvement. Together, they turn AI from a conversation partner into a project collaborator.</p>
+      </div>
+    </section>
+
+    <!-- Section 3: The Workflow Framework -->
+    <section class="section" id="workflow-framework">
+      <h2>The Workflow Framework: Six Principles</h2>
+
+      <p>These six principles form a reusable framework for managing AI-assisted projects. Each one addresses a specific failure mode that emerges when projects grow beyond single-session tasks. You can adopt them individually or as a complete system.</p>
+
+      <table>
+        <thead>
+          <tr><th>#</th><th>Principle</th><th>Prevents</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Plan First</strong></td><td>Wasted effort from building the wrong thing</td></tr>
+          <tr><td>2</td><td><strong>Verify Before Done</strong></td><td>Bugs and incomplete work shipped as "finished"</td></tr>
+          <tr><td>3</td><td><strong>Capture Lessons</strong></td><td>Repeating the same mistakes across sessions</td></tr>
+          <tr><td>4</td><td><strong>Demand Elegance</strong></td><td>Hacky solutions that create technical debt</td></tr>
+          <tr><td>5</td><td><strong>Stay Autonomous</strong></td><td>Unnecessary back-and-forth that slows you down</td></tr>
+          <tr><td>6</td><td><strong>Delegate Focused Work</strong></td><td>Context window overload on complex problems</td></tr>
+        </tbody>
+      </table>
+
+      <p>Expand each principle below to see the rules and how to apply them.</p>
+
+      <details>
+        <summary>1. Plan First</summary>
+        <div class="details-content">
+          <div class="principle-card">
+            <div class="principle-card__name">Plan First</div>
+            <p>For any task with 3 or more steps or any architectural decision, write a plan before building. The plan should include goals, affected files, implementation steps, and a verification approach.</p>
+            <p class="principle-card__rule">Rule: If something goes sideways during execution, stop and re-plan immediately. Do not keep pushing on a broken approach.</p>
+          </div>
+          <p><strong>In practice:</strong> Before starting a multi-file project, ask the AI to outline its plan: what it will build, in what order, and how it will verify each piece. Review this plan before any code or content is created. A 5-minute plan review prevents hours of rework.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>2. Verify Before Done</summary>
+        <div class="details-content">
+          <div class="principle-card">
+            <div class="principle-card__name">Verify Before Done</div>
+            <p>Never accept output as complete without proving it works. Run tests, check logs, review diffs, demonstrate correctness. The standard: would a senior professional approve this?</p>
+            <p class="principle-card__rule">Rule: If you cannot verify the output yourself (e.g., it requires hardware you do not have), define what verification looks like and build automated checks where possible.</p>
+          </div>
+          <p><strong>In practice:</strong> After the AI generates code, ask it to run the tests. After it writes a report, ask it to check that every claim has a supporting data point. Verification is not a final step &mdash; it is woven into every step.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>3. Capture Lessons</summary>
+        <div class="details-content">
+          <div class="principle-card">
+            <div class="principle-card__name">Capture Lessons</div>
+            <p>After any correction, write down the pattern: what went wrong, why, and what rule prevents it next time. Review these lessons at the start of each session.</p>
+            <p class="principle-card__rule">Rule: Write rules for yourself (or your AI) that prevent the same mistake. Iterate on these rules until the mistake rate drops.</p>
+          </div>
+          <p><strong>In practice:</strong> Maintain a lessons file (e.g., <code>lessons.md</code>) alongside your project. Each entry has a date, context, what happened, and a concrete rule. When starting a new session, the AI reads this file and avoids known pitfalls. See <a href="#lessons-loop">Capturing Lessons</a> for the full pattern.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>4. Demand Elegance</summary>
+        <div class="details-content">
+          <div class="principle-card">
+            <div class="principle-card__name">Demand Elegance (Balanced)</div>
+            <p>For non-trivial changes, pause and ask: "Is there a more elegant way to do this?" If a solution feels hacky, step back and implement the clean version. But skip this for simple, obvious fixes &mdash; do not over-engineer.</p>
+            <p class="principle-card__rule">Rule: Challenge your own work before presenting it. The question is not "does it work?" but "would I be proud of this solution?"</p>
+          </div>
+          <p><strong>In practice:</strong> When the AI proposes a workaround, ask: "Knowing everything you know now, what is the elegant solution?" This often produces cleaner architecture than iterating on a patch.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>5. Stay Autonomous</summary>
+        <div class="details-content">
+          <div class="principle-card">
+            <div class="principle-card__name">Stay Autonomous</div>
+            <p>When given a problem, resolve it. Point at logs, errors, and failing tests &mdash; then fix them. The goal: zero context-switching required from the person overseeing the work.</p>
+            <p class="principle-card__rule">Rule: Do not ask for hand-holding on problems you can diagnose. Go fix failing tests without being told how.</p>
+          </div>
+          <p><strong>In practice:</strong> Include this principle in your instruction file so the AI investigates and resolves errors rather than asking you what to do. If a build fails, the AI should read the error, identify the cause, and fix it &mdash; then report what it did.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>6. Delegate Focused Work</summary>
+        <div class="details-content">
+          <div class="principle-card">
+            <div class="principle-card__name">Delegate Focused Work</div>
+            <p>For complex problems, break the work into focused sub-tasks. Each sub-task gets dedicated attention rather than competing for space in one long conversation. This keeps the main thread clean and prevents context overload.</p>
+            <p class="principle-card__rule">Rule: One task per focused thread. Offload research, exploration, and parallel analysis so the main conversation stays on track.</p>
+          </div>
+          <p><strong>In practice:</strong> When a project requires both research and implementation, do the research first in a separate conversation (or use sub-agents if your tool supports them). Bring the findings back to the main thread as a concise summary.</p>
+        </div>
+      </details>
+
+      <div class="admonition tip">
+        <div class="admonition-title">Portability</div>
+        <p>These six principles are tool-agnostic. Whether you use Claude, ChatGPT, Copilot, or another AI tool, the framework applies. The principles address human-AI collaboration patterns, not any specific tool's features.</p>
+      </div>
+    </section>
+
+    <!-- Section 4: Writing Your Instruction File -->
+    <section class="section" id="instruction-file">
+      <h2>Writing Your Instruction File</h2>
+
+      <p>An instruction file is a persistent document that the AI reads at the start of every session. It replaces the need to re-explain your project conventions, file structure, and quality standards in every conversation. Think of it as onboarding documentation for the AI &mdash; the same way you would onboard a new team member.</p>
+
+      <h3>The Four Sections</h3>
+
+      <p>A well-structured instruction file has four sections:</p>
+
+      <ol>
+        <li><strong>Project Context</strong> &mdash; What the project is, who it serves, and the current goal. This orients the AI so it makes decisions aligned with your objectives.</li>
+        <li><strong>Key Paths</strong> &mdash; Where source files, references, and outputs live. Prevents the AI from creating files in the wrong locations or guessing at directory structure.</li>
+        <li><strong>Conventions</strong> &mdash; Coding standards, formatting rules, naming patterns, style requirements. Everything the AI needs to produce output that matches your existing codebase or document style.</li>
+        <li><strong>Constraints</strong> &mdash; What NOT to do. Scope limits, quality gates, prohibited patterns. Constraints are often more powerful than instructions because they prevent entire categories of mistakes.</li>
+      </ol>
+
+      <h3>Example</h3>
+
+      <details>
+        <summary>Sample instruction file for a web application project</summary>
+        <div class="details-content">
+<pre># Project Instructions
+
+## Project Context
+- Internal dashboard for the operations team
+- Stack: React + TypeScript frontend, Python FastAPI backend
+- Current sprint goal: Add user role management
+
+## Key Paths
+| Purpose | Path |
+|---------|------|
+| Frontend source | src/frontend/components/ |
+| Backend API | src/api/routes/ |
+| Tests | tests/ (pytest for backend, vitest for frontend) |
+| Database migrations | src/api/migrations/ |
+
+## Conventions
+- TypeScript: strict mode, no `any` types
+- Python: type hints on all functions, docstrings required
+- Components: one component per file, PascalCase naming
+- API routes: snake_case, versioned under /api/v1/
+- Commits: conventional commits format
+
+## Constraints
+- Do NOT modify the authentication middleware
+- Do NOT add new dependencies without documenting why
+- All API changes require corresponding test updates
+- Keep bundle size under 250KB per chunk</pre>
+        </div>
+      </details>
+
+      <h3>Build Your Instruction File</h3>
+      <p>Fill in the fields below to generate your own project instruction file.</p>
+
+      <div class="template-filler" data-template="# Project Instructions
+
+## Project Context
+- [PROJECT_DESCRIPTION]
+- Stack: [TECH_STACK]
+- Current goal: [CURRENT_GOAL]
+
+## Key Paths
+| Purpose | Path |
+|---------|------|
+| Source code | [SOURCE_PATH] |
+| Tests | [TEST_PATH] |
+| Output / build | [OUTPUT_PATH] |
+| References | [REFERENCE_PATH] |
+
+## Conventions
+- [CONVENTION_1]
+- [CONVENTION_2]
+- [CONVENTION_3]
+
+## Constraints
+- Do NOT [CONSTRAINT_1]
+- Do NOT [CONSTRAINT_2]
+- [QUALITY_GATE]
+
+## Workflow Principles
+- Plan first: outline approach before building for any task with 3+ steps
+- Verify before done: run tests and demonstrate correctness before marking complete
+- Capture lessons: after any correction, document the pattern in lessons.md
+- Stay autonomous: diagnose and resolve errors rather than asking what to do">
+      </div>
+    </section>
+
+    <!-- Section 5: Few-Shot Prompting -->
+    <section class="section" id="few-shot">
+      <h2>Advanced Technique: Few-Shot Prompting</h2>
+
+      <p>Few-shot prompting means providing 2-3 examples of input-output pairs before your actual request. Instead of describing the format you want in abstract terms, you show the AI exactly what correct output looks like. The AI then follows the pattern for your real input.</p>
+
+      <p>This is especially useful when the format is nuanced and hard to describe in words &mdash; for example, a specific classification scheme, a particular writing style, or a structured analysis pattern.</p>
+
+      <h3>Example: Classifying Feedback</h3>
+
+      <div class="comparison">
+        <div class="comparison__col comparison__col--before">
+          <div class="comparison__label comparison__label--before">Without examples</div>
+          <blockquote>
+            <p>Classify each customer comment as product, service, or billing.</p>
+          </blockquote>
+          <p>The AI guesses at boundary cases. "The app crashed after I updated my payment method" &mdash; is that product or billing? Without examples, the AI decides inconsistently.</p>
+        </div>
+        <div class="comparison__col comparison__col--after">
+          <div class="comparison__label comparison__label--after">With few-shot examples</div>
+          <blockquote>
+            <p>Classify each comment. Here are examples:</p>
+            <p>Comment: "The dashboard loads slowly."<br>Category: Product &mdash; Performance<br><br>
+            Comment: "I was charged twice this month."<br>Category: Billing &mdash; Overcharge<br><br>
+            Comment: "Support took 3 days to respond."<br>Category: Service &mdash; Response Time</p>
+            <p>Now classify these comments: [your data]</p>
+          </blockquote>
+          <p>The AI follows the exact pattern: Category &mdash; Subcategory. Boundary cases are resolved by matching the closest example.</p>
+        </div>
+      </div>
+
+      <div class="admonition tip">
+        <div class="admonition-title">How many examples?</div>
+        <p>Two to three examples is the sweet spot. One example might be coincidence; four or more wastes tokens. Choose examples that show different categories and at least one boundary case. The AI learns format, tone, level of detail, and classification boundaries from your examples.</p>
+      </div>
+    </section>
+
+    <!-- Section 6: Self-Consistency Checking -->
+    <section class="section" id="self-consistency">
+      <h2>Advanced Technique: Self-Consistency Checking</h2>
+
+      <p>Self-consistency checking means asking the AI to review, verify, or critique its own output before you accept it. Instead of trusting the first answer, you build a verification step directly into your prompt.</p>
+
+      <h3>Three Approaches</h3>
+
+      <details>
+        <summary>Verify and Correct &mdash; for data and calculations</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>[After the AI produces analysis]</p>
+            <p>Now review your analysis. Check each calculation for accuracy. If you find any errors, correct them and explain what was wrong. Confirm that your conclusions follow logically from the data.</p>
+          </blockquote>
+          <p><strong>When to use:</strong> Financial analysis, data summaries, metric calculations &mdash; any task where numerical accuracy matters.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Argue Against &mdash; for recommendations</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>[After the AI recommends option B]</p>
+            <p>Now argue against your own recommendation. What are the strongest reasons to choose a different option? Are there risks you downplayed or benefits you overstated? After presenting the counterargument, state whether your original recommendation still stands and why.</p>
+          </blockquote>
+          <p><strong>When to use:</strong> Vendor evaluations, strategy decisions, any recommendation where confirmation bias could lead to a weak analysis.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Checklist Audit &mdash; for deliverables</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>[After the AI produces a document or code]</p>
+            <p>Audit your output against this checklist:<br>
+            1. Does every section from the requirements appear?<br>
+            2. Are all data points sourced and verifiable?<br>
+            3. Is the tone consistent throughout?<br>
+            4. Does the word count meet the constraint?<br>
+            5. Are there any claims without supporting evidence?<br>
+            Report your findings. Fix any issues you identify.</p>
+          </blockquote>
+          <p><strong>When to use:</strong> Complex deliverables with specific requirements &mdash; reports, documentation, code that must meet a spec.</p>
+        </div>
+      </details>
+
+      <div class="callout">
+        <div class="callout__title">Why This Works</div>
+        <p>AI models perform better when asked to verify their work because the verification step triggers a different reasoning path. The initial response optimizes for fluency and completeness; the verification step optimizes for accuracy and consistency. These two passes catch errors that a single pass misses.</p>
+      </div>
+    </section>
+
+    <!-- Section 7: Hands-On Exercise -->
+    <section class="section" id="hands-on">
+      <h2>Hands-On: Build a Comparison Report</h2>
+
+      <p>Time to apply what you have learned. In this exercise, you will give an AI structured reference data, ask it to produce a self-contained HTML comparison report, and save the result as a file you can open in any browser. No development tools required &mdash; just your browser and Notepad.</p>
+
+      <div class="content-tabs">
+        <div class="content-tabs__bar">
+          <button class="content-tabs__tab content-tabs__tab--active" data-tab="guided" type="button">Guided Walkthrough</button>
+          <button class="content-tabs__tab" data-tab="your-project" type="button">Your Own Comparison</button>
+        </div>
+
+        <!-- Tab 1: Guided Material Comparison -->
+        <div class="content-tabs__panel content-tabs__panel--active" data-panel="guided" data-panel-label="Guided Walkthrough">
+
+          <h3>Step 1: Gather Your Data</h3>
+          <p>Every good comparison starts with structured reference data. Below is a context block with key properties for three common engineering materials. Copy this entire block &mdash; you will paste it into your AI prompt in the next step.</p>
+
+          <blockquote>
+<pre style="margin:0; font-size:0.85rem; white-space:pre-wrap;">Material Data for Comparison:
+
+Aluminum 6061-T6:
+- Tensile Strength: 310 MPa (45 ksi)
+- Yield Strength: 276 MPa (40 ksi)
+- Density: 2.70 g/cm³
+- Elastic Modulus: 68.9 GPa
+- Corrosion Resistance: Good (forms protective oxide layer)
+- Relative Cost: Medium
+- Machinability: Excellent
+- Weldability: Good (requires proper filler alloy)
+
+A36 Structural Steel:
+- Tensile Strength: 400–550 MPa (58–80 ksi)
+- Yield Strength: 250 MPa (36 ksi)
+- Density: 7.85 g/cm³
+- Elastic Modulus: 200 GPa
+- Corrosion Resistance: Poor (requires coating or painting)
+- Relative Cost: Low
+- Machinability: Good
+- Weldability: Excellent
+
+304 Stainless Steel:
+- Tensile Strength: 515 MPa (75 ksi)
+- Yield Strength: 205 MPa (30 ksi)
+- Density: 8.00 g/cm³
+- Elastic Modulus: 193 GPa
+- Corrosion Resistance: Excellent (chromium oxide passive layer)
+- Relative Cost: High
+- Machinability: Fair (work hardens)
+- Weldability: Good (low carbon grade preferred)</pre>
+          </blockquote>
+
+          <div class="admonition info">
+            <p class="admonition__title">Where does this data come from?</p>
+            <p>These are commonly referenced properties from engineering handbooks. In a real project, you would substitute values from your company&rsquo;s approved material specifications, supplier data sheets, or resources like <a href="https://www.makeitfrom.com" target="_blank" rel="noopener">MakeItFrom.com</a>. You can also upload PDF data sheets directly if your AI tool supports file attachments.</p>
+          </div>
+
+          <h3>Step 2: Write the Comparison Prompt</h3>
+          <p>Now paste the data block above into your AI tool, followed by this prompt. The key technique: you are telling the AI exactly what output format you want and where to save it &mdash; a complete, self-contained HTML file written directly to disk.</p>
+
+          <blockquote>
+Using the material data I provided above, create a self-contained HTML comparison report and save it as comparison.html on my desktop.<br><br>
+The report should include:<br>
+1. A title and brief introduction explaining the purpose of the comparison<br>
+2. A comparison table with all properties side by side for all three materials<br>
+3. Color-coded cells: green background for best-in-category, red background for worst-in-category<br>
+4. A "Best For" summary section explaining which material suits which application type<br>
+5. Clean, professional styling using inline CSS (no external stylesheets or scripts)<br><br>
+Make the HTML complete and valid so I can open comparison.html directly in my browser.
+          </blockquote>
+
+          <div class="admonition info">
+            <p class="admonition__title">How you get the file depends on your tool</p>
+            <p><strong>IDE-integrated AI</strong> (Claude Code, Cursor, Copilot Chat): The tool writes <code>comparison.html</code> directly to your project folder. Just open it.<br>
+            <strong>Web-based AI</strong> (claude.ai, ChatGPT): The AI shows you HTML code in the chat. You will need to copy it and save the file yourself. See the steps below.</p>
+          </div>
+
+          <details>
+            <summary><strong>How to save HTML from a web-based AI chat</strong></summary>
+            <div class="details-content">
+              <ol>
+                <li><strong>Copy</strong> the AI&rsquo;s entire HTML output (everything from <code>&lt;!DOCTYPE html&gt;</code> to <code>&lt;/html&gt;</code>)</li>
+                <li><strong>Open Notepad</strong> (search &ldquo;Notepad&rdquo; in the Windows Start menu)</li>
+                <li><strong>Paste</strong> the HTML into Notepad</li>
+                <li>Go to <strong>File &rarr; Save As</strong></li>
+                <li>Change the filename to <code>comparison.html</code></li>
+                <li><strong>Important:</strong> Change the &ldquo;Save as type&rdquo; dropdown from &ldquo;Text Documents (*.txt)&rdquo; to <strong>&ldquo;All Files (*.*)&rdquo;</strong></li>
+                <li>Click <strong>Save</strong>, then double-click the file to open it in your browser</li>
+              </ol>
+              <p><em>If you skip step 6, Windows saves the file as <code>comparison.html.txt</code> and it opens as plain text instead of a styled report.</em></p>
+            </div>
+          </details>
+
+          <h3>Step 4: Verify and Refine</h3>
+          <p>Apply the <strong>self-consistency checking</strong> technique from the previous section. Paste this follow-up prompt to have the AI audit its own work:</p>
+
+          <blockquote>
+Review the HTML comparison report you just created against the original material data I provided. Check that:<br><br>
+1. All property values in the table exactly match the source data<br>
+2. The color coding is correct (green = best in each row, red = worst in each row)<br>
+3. The "Best For" recommendations are consistent with the property data<br>
+4. The HTML is valid and will render correctly as a standalone file<br><br>
+If you find any errors, explain what was wrong and provide the corrected complete HTML.
+          </blockquote>
+
+          <p><em>This is <strong>Verify Before Done</strong> in action &mdash; never accept the first output without checking it against your source data.</em></p>
+
+          <h3>Beyond the Browser: Tools That Unlock More</h3>
+          <p>This exercise was designed to work with zero setup &mdash; just a browser and a text editor. But as your projects grow in complexity, advanced AI workflows often leverage additional tools:</p>
+
+          <table>
+            <thead>
+              <tr><th>Tool</th><th>What It Enables</th><th>Example Use</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Python</strong></td>
+                <td>Data processing, automation scripts, API integrations</td>
+                <td>Parse 500 rows of test data, generate charts, automate report generation</td>
+              </tr>
+              <tr>
+                <td><strong>Node.js</strong></td>
+                <td>Build tools, web servers, file system automation</td>
+                <td>Auto-generate multiple HTML reports from a CSV of material data</td>
+              </tr>
+              <tr>
+                <td><strong>LaTeX</strong></td>
+                <td>Publication-quality documents, equations, technical papers</td>
+                <td>Produce a formal material selection report with equations and figures</td>
+              </tr>
+              <tr>
+                <td><strong>CSV / Excel</strong></td>
+                <td>Structured data input, bulk comparisons, pivot tables</td>
+                <td>Feed a 50-material dataset to the AI for automated screening</td>
+              </tr>
+              <tr>
+                <td><strong>Git</strong></td>
+                <td>Version control, collaboration, change tracking</td>
+                <td>Track prompt iterations and report versions across a team</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>You do <strong>not</strong> need these tools to be productive with AI. But if your workflow involves large datasets, repeated generation, or integration with existing engineering pipelines, learning even one of these tools dramatically expands what you can accomplish. The prompt patterns you learned here &mdash; structured context, explicit output format, self-verification &mdash; apply identically whether your output is HTML, Python, LaTeX, or a CSV transformation.</p>
+
+        </div>
+
+        <!-- Tab 2: Your Own Comparison -->
+        <div class="content-tabs__panel" data-panel="your-project" data-panel-label="Your Own Comparison">
+
+          <p>Now apply the same pattern to your own domain. Replace the materials with any items you need to compare &mdash; products, vendors, technologies, design approaches, or processes. Fill in the fields below to build your comparison prompt.</p>
+
+          <div class="template-filler" data-template="I need to compare the following items:
+1. [ITEM_1]
+2. [ITEM_2]
+3. [ITEM_3]
+
+Compare them across these criteria: [COMPARISON_CRITERIA]
+
+Create a self-contained HTML comparison report that I can save as a .html file and open directly in my browser. The report should include:
+1. A title and introduction explaining the comparison purpose
+2. A comparison table with all criteria side by side
+3. Color-coded cells highlighting strengths (green) and weaknesses (red) for each criterion
+4. A summary section with recommendations for different use cases
+
+The audience for this report is [AUDIENCE]. Use [TONE] language.
+
+Make the HTML complete and valid with inline CSS. No external dependencies." data-output-label="Your Comparison Prompt">
+          </div>
+
+          <div class="callout">
+            <div class="callout__title">Remember Your Principles</div>
+            <p><strong>Verify Before Done:</strong> Always cross-check the AI&rsquo;s comparison against your source data. Ask it to self-review before accepting the output.<br>
+            <strong>Capture Lessons:</strong> If the AI gets a value wrong or the formatting needs adjustment, note what prompt changes fixed it &mdash; that is your lessons-learned loop in action.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: Project Lifecycle (Step Wizard) -->
+    <section class="section" id="project-lifecycle">
+      <h2>The Project Lifecycle</h2>
+
+      <p>Here is a seven-step lifecycle for running an AI-assisted project. Each step integrates the workflow principles from the framework above. Walk through each phase to see what happens and which principle applies.</p>
+
+      <div class="step-wizard" data-show-summary="false">
+
+        <div class="step-wizard__step" data-step-title="Step 1: Define Scope">
+          <h3>1. Define Scope &amp; Create Workspace</h3>
+          <p>Before opening an AI tool, define what you are building. Set up a folder structure with clear locations for source files, references, and outputs.</p>
+          <p><strong>Example structure:</strong></p>
+<pre>my-project/
+  instructions.md    &larr; your instruction file
+  lessons.md         &larr; captured corrections
+  references/        &larr; specs, data, templates
+  src/               &larr; source code or content
+  output/            &larr; build artifacts</pre>
+          <p><strong>Principle applied: Plan First</strong> &mdash; Define the workspace before any AI interaction. This 5-minute setup prevents hours of file-location confusion.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Step 2: Write Instructions">
+          <h3>2. Write Your Instruction File</h3>
+          <p>Create your instruction file with the four sections: Project Context, Key Paths, Conventions, and Constraints. Include the workflow principles you want the AI to follow.</p>
+          <p>This file persists across sessions. At the start of each conversation, tell the AI to read it: <em>"Read instructions.md and follow all conventions."</em></p>
+          <p><strong>Principle applied: Plan First + Capture Lessons</strong> &mdash; The instruction file is your upfront plan. As lessons accumulate, update the Constraints section to prevent recurring issues.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Step 3: First Prompt">
+          <h3>3. Write Your First Project Prompt</h3>
+          <p>Your first prompt should reference the instruction file and describe the deliverables. Two approaches:</p>
+          <ul>
+            <li><strong>Direct prompt</strong> (fast iteration) &mdash; Type the task directly in the conversation. Best for exploratory work.</li>
+            <li><strong>Prompt file</strong> (maximum control) &mdash; Write the prompt in a file and tell the AI to read it. Best for complex requirements or team projects where the prompt needs review.</li>
+          </ul>
+          <blockquote>
+            <p>Read instructions.md and the requirements in references/spec.md. Build the following deliverables in this order:<br>
+            1. Database schema (src/schema.sql)<br>
+            2. API endpoints (src/api/)<br>
+            3. Unit tests (tests/)<br>
+            4. README with setup instructions<br><br>
+            Follow all conventions in instructions.md. After each deliverable, verify it works before moving to the next.</p>
+          </blockquote>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Step 4: Review Plan">
+          <h3>4. Review the Plan</h3>
+          <p>Before the AI starts building, ask it to present its plan. Verify:</p>
+          <ul>
+            <li>Does the scope match your requirements? Nothing added, nothing missing?</li>
+            <li>Does the file structure follow your instruction file conventions?</li>
+            <li>Does the plan include testing and verification steps?</li>
+            <li>Is the build order logical? (Dependencies built before dependents.)</li>
+          </ul>
+          <p><strong>Principle applied: Plan First</strong> &mdash; A 5-minute plan review here prevents 2 hours of rework later. If the plan is wrong, redirect now &mdash; not after 500 lines of code exist.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Step 5: Execute">
+          <h3>5. Execute and Monitor</h3>
+          <p>Let the AI build according to the approved plan. Monitor for:</p>
+          <ul>
+            <li><strong>Scope drift</strong> &mdash; Is the AI adding features you did not request?</li>
+            <li><strong>Convention violations</strong> &mdash; Are file paths, naming, and formatting matching your instruction file?</li>
+            <li><strong>Context limits</strong> &mdash; For long sessions, watch for signs that the AI is losing earlier context.</li>
+          </ul>
+          <p><strong>Principle applied: Stay Autonomous + Demand Elegance</strong> &mdash; The AI should resolve errors it encounters without asking you how. If a solution looks hacky, ask: "Is there a more elegant approach?"</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Step 6: Verify">
+          <h3>6. Verify Results</h3>
+          <p>Before accepting any deliverable as complete:</p>
+          <ul>
+            <li>Run all tests. If tests fail, fix them before moving on.</li>
+            <li>Review the diff &mdash; what changed from the starting state?</li>
+            <li>Check edge cases the AI might have missed.</li>
+            <li>Ask yourself: "Would a senior professional approve this?"</li>
+          </ul>
+          <p><strong>Principle applied: Verify Before Done</strong> &mdash; This is the principle that catches the most issues. Never mark a task complete without demonstrating correctness.</p>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Step 7: Iterate & Learn">
+          <h3>7. Iterate and Capture Lessons</h3>
+          <p>If verification reveals issues, report them specifically: what is wrong, where, and what the expected behavior should be. After the AI fixes the issue:</p>
+          <ol>
+            <li><strong>Commit the working state</strong> &mdash; Save your progress so you can roll back if needed.</li>
+            <li><strong>Capture the lesson</strong> &mdash; If the issue was a pattern (not a one-off typo), add it to your lessons file. Include: what happened, why, and the rule that prevents it.</li>
+            <li><strong>Update your instruction file</strong> &mdash; If the lesson represents a new convention or constraint, add it to instructions.md so future sessions inherit the fix.</li>
+          </ol>
+          <p><strong>Principle applied: Capture Lessons</strong> &mdash; This is how projects get better over time. Each correction makes the next session smoother.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 9: Capturing Lessons -->
+    <section class="section" id="lessons-loop">
+      <h2>Capturing Lessons: The Self-Improvement Loop</h2>
+
+      <p>The most powerful pattern in AI-assisted project work is the lessons loop. Every correction you make to AI output is an opportunity to prevent that mistake permanently. Without a lessons file, you correct the same issues in every session. With one, each session starts smarter than the last.</p>
+
+      <h3>The Pattern</h3>
+
+      <ol>
+        <li><strong>Correction happens</strong> &mdash; You notice the AI did something wrong and you fix or redirect it.</li>
+        <li><strong>Document the pattern</strong> &mdash; Write an entry in your lessons file: date, context, what went wrong, and a concrete rule.</li>
+        <li><strong>Update instruction file</strong> &mdash; If the lesson is project-wide, add it as a constraint in your instruction file.</li>
+        <li><strong>Review at session start</strong> &mdash; At the beginning of each new session, the AI reads the lessons file and avoids known pitfalls.</li>
+      </ol>
+
+      <h3>Example Entry</h3>
+
+<pre>## Button Styling Regression
+
+**Date:** 2026-02-28
+**Context:** AI changed a shared CSS class to fix one component,
+which broke button styling on three other pages.
+
+**Problem:** The AI modified `.btn-primary` globally instead of
+creating a component-specific override.
+
+**Rule:** Never modify shared CSS classes. Create a component-
+specific class that extends the shared one. Always check which
+other components use a class before changing it.</pre>
+
+      <div class="callout">
+        <div class="callout__title">The Compound Effect</div>
+        <p>A lessons file with 10 entries prevents 10 categories of mistakes across every future session. After a few weeks of active use, the AI's effective error rate drops dramatically &mdash; not because the AI improved, but because your instruction system improved. This is institutional knowledge that persists even when team members change.</p>
+      </div>
+
+      <div class="admonition warning">
+        <div class="admonition-title">Keep entries actionable</div>
+        <p>A good lesson ends with a concrete rule the AI can follow. "Be more careful with CSS" is too vague. "Never modify shared CSS classes; create component-specific overrides instead" is a rule the AI can enforce consistently.</p>
+      </div>
+    </section>
+
+    <!-- Section 10: What's Next -->
+    <section class="section" id="whats-next">
+      <h2>What's Next</h2>
+
+      <p>You now have a complete framework for AI-assisted project work:</p>
+
+      <ul>
+        <li><strong>Instruction file</strong> &mdash; Persistent context that survives across sessions (Project Context, Key Paths, Conventions, Constraints)</li>
+        <li><strong>Six workflow principles</strong> &mdash; Plan First, Verify Before Done, Capture Lessons, Demand Elegance, Stay Autonomous, Delegate Focused Work</li>
+        <li><strong>Advanced techniques</strong> &mdash; Few-shot prompting for precise pattern matching, self-consistency checking for built-in verification</li>
+        <li><strong>Seven-step project lifecycle</strong> &mdash; From scope definition through iteration and lessons capture</li>
+        <li><strong>The lessons loop</strong> &mdash; A self-improving system that gets smarter with every correction</li>
+      </ul>
+
+      <h3>Start Your First Project</h3>
+
+      <ol>
+        <li><strong>Pick a real project</strong> &mdash; Choose something you are working on this week. It does not need to be large; even a 3-file project benefits from this workflow.</li>
+        <li><strong>Create the workspace</strong> &mdash; Set up the folder structure with an instruction file and a lessons file.</li>
+        <li><strong>Write your instruction file</strong> &mdash; Use the template builder above. Focus on conventions and constraints &mdash; these have the highest impact.</li>
+        <li><strong>Run one full lifecycle</strong> &mdash; Follow the seven steps: scope, instruct, prompt, review, execute, verify, iterate. After completing the cycle, review what worked and what you would change.</li>
+      </ol>
+
+      <div class="callout">
+        <div class="callout__title">The Full AI Training Program</div>
+        <p>This page is a preview of the complete Ascential Technologies AI Training Program, which includes additional advanced techniques (multi-persona analysis, meta-prompting, structured output schemas), domain-specific workflow guides, a prompt library with tested templates, and hands-on exercises for every skill level. Contact your team lead or training coordinator for access to the full program.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div>&copy; 2026 Ascential Technologies</div>
+  <div class="footer-author">Author: John Reep, Principal Electrical Engineer &bull; Modified: 28 FEB 2026</div>
+</footer>
+
+<script>
+/* ============================================================
+   Dark Mode Toggle
+   ============================================================ */
+(function () {
+  var toggle = document.querySelector(".dark-toggle");
+  if (!toggle) return;
+  var html = document.documentElement;
+  var saved = localStorage.getItem("theme");
+  if (saved === "dark" || saved === "light") html.setAttribute("data-theme", saved);
+  function updateIcon() {
+    var isDark = html.getAttribute("data-theme") === "dark" || (!html.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    toggle.textContent = isDark ? "\u2600" : "\u263D";
+    toggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+  }
+  updateIcon();
+  toggle.addEventListener("click", function () {
+    var current = html.getAttribute("data-theme");
+    var isDark = current === "dark" || (!current && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    var next = isDark ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    updateIcon();
+  });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateIcon);
+})();
+
+/* ============================================================
+   Sidebar: Hamburger Toggle
+   ============================================================ */
+(function () {
+  var hamburger = document.querySelector(".hamburger");
+  var sidebar = document.querySelector(".sidebar");
+  var overlay = document.querySelector(".sidebar-overlay");
+  if (!hamburger || !sidebar) return;
+  function openSidebar() { sidebar.classList.add("sidebar--open"); if (overlay) { overlay.classList.add("sidebar-overlay--visible"); overlay.setAttribute("aria-hidden", "false"); } }
+  function closeSidebar() { sidebar.classList.remove("sidebar--open"); if (overlay) { overlay.classList.remove("sidebar-overlay--visible"); overlay.setAttribute("aria-hidden", "true"); } }
+  hamburger.addEventListener("click", function () { sidebar.classList.contains("sidebar--open") ? closeSidebar() : openSidebar(); });
+  if (overlay) overlay.addEventListener("click", closeSidebar);
+  sidebar.querySelectorAll(".sidebar__link").forEach(function (link) { link.addEventListener("click", function () { if (window.innerWidth < 1024) closeSidebar(); }); });
+})();
+
+/* ============================================================
+   Scrollspy
+   ============================================================ */
+(function () {
+  var links = document.querySelectorAll(".sidebar__link");
+  var sections = [];
+  links.forEach(function (link) {
+    var href = link.getAttribute("href");
+    if (href && href.charAt(0) === "#") { var target = document.getElementById(href.substring(1)); if (target) sections.push({ el: target, link: link }); }
+  });
+  if (sections.length === 0) return;
+  var currentActive = null;
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].el === entry.target) { if (currentActive) currentActive.classList.remove("sidebar__link--active"); sections[i].link.classList.add("sidebar__link--active"); currentActive = sections[i].link; break; }
+        }
+      }
+    });
+  }, { rootMargin: "-" + (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-height")) + 20) + "px 0px -60% 0px", threshold: 0 });
+  sections.forEach(function (s) { observer.observe(s.el); });
+})();
+
+/* ============================================================
+   Clipboard Fallback
+   ============================================================ */
+function copyToClipboard(text, btn, originalLabel) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { btn.textContent = "Copied!"; setTimeout(function () { btn.textContent = originalLabel; }, 2000); }).catch(function () { fallbackCopy(text, btn, originalLabel); });
+  } else { fallbackCopy(text, btn, originalLabel); }
+}
+function fallbackCopy(text, btn, originalLabel) {
+  var textarea = document.createElement("textarea"); textarea.value = text; textarea.style.position = "fixed"; textarea.style.left = "-9999px"; document.body.appendChild(textarea); textarea.select();
+  try { document.execCommand("copy"); btn.textContent = "Copied!"; } catch (e) { btn.textContent = "Copy failed"; }
+  document.body.removeChild(textarea); setTimeout(function () { btn.textContent = originalLabel; }, 2000);
+}
+
+/* ============================================================
+   Template Filler
+   ============================================================ */
+function initTemplateFillers() {
+  document.querySelectorAll(".template-filler").forEach(function (filler) {
+    var template = filler.getAttribute("data-template") || "";
+    if (!template) return;
+    var placeholders = [], seen = {}, regex = /\[([A-Z][A-Z0-9_]*)\]/g, match;
+    while ((match = regex.exec(template)) !== null) { if (!seen[match[1]]) { placeholders.push(match[1]); seen[match[1]] = true; } }
+    if (placeholders.length === 0) return;
+    var form = document.createElement("div"); form.className = "template-filler__form";
+    placeholders.forEach(function (ph) {
+      var label = document.createElement("label"); label.className = "template-filler__label";
+      var readable = ph.replace(/_/g, " ").toLowerCase(); readable = readable.charAt(0).toUpperCase() + readable.slice(1); label.textContent = readable;
+      var input = document.createElement("input"); input.type = "text"; input.className = "template-filler__input"; input.setAttribute("data-placeholder", ph); input.placeholder = "Enter " + readable.toLowerCase() + "...";
+      label.appendChild(input); form.appendChild(label);
+    });
+    var output = document.createElement("div"); output.className = "template-filler__output";
+    var outputLabel = document.createElement("div"); outputLabel.className = "template-filler__output-label"; outputLabel.textContent = filler.getAttribute("data-output-label") || "Your Instruction File";
+    var pre = document.createElement("pre"); pre.className = "template-filler__preview"; pre.textContent = template;
+    var copyBtn = document.createElement("button"); copyBtn.className = "template-filler__copy"; copyBtn.textContent = "Copy"; copyBtn.setAttribute("type", "button");
+    copyBtn.addEventListener("click", function () { copyToClipboard(pre.textContent, copyBtn, "Copy"); });
+    output.appendChild(outputLabel); output.appendChild(pre); output.appendChild(copyBtn);
+    filler.appendChild(form); filler.appendChild(output);
+    form.querySelectorAll("[data-placeholder]").forEach(function (input) { input.addEventListener("input", function () { updateTemplateFiller(filler, template, pre); }); });
+  });
+}
+function updateTemplateFiller(filler, template, pre) {
+  var result = template;
+  filler.querySelectorAll("[data-placeholder]").forEach(function (input) { var ph = input.getAttribute("data-placeholder"); var value = input.value.trim() || "[" + ph + "]"; result = result.replace(new RegExp("\\[" + ph + "\\]", "g"), value); });
+  pre.textContent = result;
+}
+
+/* ============================================================
+   Blockquote Copy Buttons
+   ============================================================ */
+function initBlockquoteCopy() {
+  document.querySelectorAll(".content details, .content .tabbed-content").forEach(function (container) {
+    container.querySelectorAll("blockquote").forEach(function (bq) {
+      var text = bq.textContent.trim(); if (text.length < 40) return;
+      bq.style.position = "relative";
+      var copyBtn = document.createElement("button"); copyBtn.className = "blockquote-copy"; copyBtn.textContent = "Copy"; copyBtn.setAttribute("type", "button"); copyBtn.setAttribute("aria-label", "Copy prompt to clipboard");
+      copyBtn.addEventListener("click", function () { copyToClipboard(text, copyBtn, "Copy"); });
+      bq.appendChild(copyBtn);
+    });
+  });
+  document.querySelectorAll(".content > .section blockquote").forEach(function (bq) {
+    if (bq.querySelector(".blockquote-copy")) return;
+    var text = bq.textContent.trim(); if (text.length < 40) return;
+    bq.style.position = "relative";
+    var copyBtn = document.createElement("button"); copyBtn.className = "blockquote-copy"; copyBtn.textContent = "Copy"; copyBtn.setAttribute("type", "button"); copyBtn.setAttribute("aria-label", "Copy prompt to clipboard");
+    copyBtn.addEventListener("click", function () { copyToClipboard(text, copyBtn, "Copy"); });
+    bq.appendChild(copyBtn);
+  });
+}
+
+/* ============================================================
+   Step Wizard
+   ============================================================ */
+function initStepWizards() {
+  document.querySelectorAll(".step-wizard").forEach(function (wizard) {
+    var steps = wizard.querySelectorAll(".step-wizard__step");
+    if (steps.length < 2) return;
+    var currentIndex = 0;
+    var showSummary = wizard.getAttribute("data-show-summary") === "true";
+    steps.forEach(function (step, i) { step.style.display = i === 0 ? "block" : "none"; });
+    var progress = document.createElement("div"); progress.className = "step-wizard__progress";
+    var dots = [];
+    for (var i = 0; i < steps.length; i++) {
+      var dot = document.createElement("button"); dot.className = "step-wizard__dot" + (i === 0 ? " step-wizard__dot--active" : ""); dot.textContent = i + 1; dot.setAttribute("type", "button"); dot.setAttribute("aria-label", steps[i].getAttribute("data-step-title") || "Step " + (i + 1));
+      (function (idx) { dot.addEventListener("click", function () { goToStep(idx); }); })(i);
+      dots.push(dot); progress.appendChild(dot);
+    }
+    var titleBar = document.createElement("div"); titleBar.className = "step-wizard__title"; titleBar.textContent = steps[0].getAttribute("data-step-title") || "Step 1";
+    var nav = document.createElement("div"); nav.className = "step-wizard__nav";
+    var prevBtn = document.createElement("button"); prevBtn.className = "step-wizard__prev"; prevBtn.textContent = "\u2190 Previous"; prevBtn.setAttribute("type", "button"); prevBtn.style.visibility = "hidden";
+    prevBtn.addEventListener("click", function () { if (currentIndex > 0) goToStep(currentIndex - 1); });
+    var nextBtn = document.createElement("button"); nextBtn.className = "step-wizard__next"; nextBtn.textContent = "Next \u2192"; nextBtn.setAttribute("type", "button");
+    nextBtn.addEventListener("click", function () {
+      if (currentIndex < steps.length - 1) goToStep(currentIndex + 1);
+      else if (showSummary) { var ns = wizard.nextElementSibling; if (ns) ns.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    });
+    nav.appendChild(prevBtn); nav.appendChild(nextBtn);
+    wizard.insertBefore(progress, steps[0]); wizard.insertBefore(titleBar, steps[0]); wizard.appendChild(nav);
+    function goToStep(idx) {
+      steps[currentIndex].style.display = "none"; currentIndex = idx; steps[currentIndex].style.display = "block";
+      dots.forEach(function (d, di) { d.classList.remove("step-wizard__dot--active"); if (di < currentIndex) d.classList.add("step-wizard__dot--visited"); });
+      dots[currentIndex].classList.add("step-wizard__dot--active");
+      titleBar.textContent = steps[currentIndex].getAttribute("data-step-title") || "Step " + (currentIndex + 1);
+      prevBtn.style.visibility = currentIndex === 0 ? "hidden" : "visible";
+      if (currentIndex === steps.length - 1) { nextBtn.style.visibility = showSummary ? "visible" : "hidden"; nextBtn.textContent = showSummary ? "See Results \u2193" : "Next \u2192"; }
+      else { nextBtn.textContent = "Next \u2192"; nextBtn.style.visibility = "visible"; }
+    }
+  });
+}
+
+/* ============================================================
+   Content Tabs
+   ============================================================ */
+function initContentTabs() {
+  document.querySelectorAll(".content-tabs").forEach(function (tabset) {
+    var tabs = tabset.querySelectorAll(".content-tabs__tab");
+    var panels = tabset.querySelectorAll(".content-tabs__panel");
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var target = tab.getAttribute("data-tab");
+        tabs.forEach(function (t) { t.classList.remove("content-tabs__tab--active"); });
+        panels.forEach(function (p) { p.classList.remove("content-tabs__panel--active"); });
+        tab.classList.add("content-tabs__tab--active");
+        var panel = tabset.querySelector('[data-panel="' + target + '"]');
+        if (panel) panel.classList.add("content-tabs__panel--active");
+      });
+    });
+  });
+}
+
+/* ============================================================
+   Initialize
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", function () { initContentTabs(); initTemplateFillers(); initStepWizards(); initBlockquoteCopy(); });
+</script>
+</body>
+</html>

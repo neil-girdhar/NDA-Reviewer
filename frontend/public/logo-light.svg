@@ -1,0 +1,13 @@
+<svg width="200" height="55" viewBox="0 0 200 55" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ascential - purple, bold -->
+  <g>
+    <!-- Checkmark A: left stroke is a checkmark -->
+    <path d="M 2 28 L 6 22 L 10 22" stroke="#9333EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M 10 22 L 16 28" stroke="#9333EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <line x1="6" y1="24" x2="14" y2="24" stroke="#9333EA" stroke-width="2" stroke-linecap="round"/>
+    <!-- Rest of "scential" -->
+    <text x="18" y="28" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#9333EA">scential</text>
+  </g>
+  <!-- Intelligence - light for dark backgrounds -->
+  <text x="0" y="42" font-family="Arial, sans-serif" font-size="15" fill="rgba(255,255,255,0.7)">Intelligence</text>
+</svg>

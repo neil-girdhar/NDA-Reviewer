@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building Your AI Skills — Ascential Technologies AI Training</title>
+<meta name="description" content="Move beyond basics to practical AI prompting skills. Learn iteration, chain-of-thought, and hands-on use cases.">
+<style>
+/* ============================================================
+   CSS Custom Properties (replaces MkDocs Material vars)
+   ============================================================ */
+:root {
+  --fg-color: #1a1a2e;
+  --fg-color-light: #555;
+  --fg-color-lighter: #999;
+  --fg-color-lightest: #ddd;
+  --bg-color: #ffffff;
+  --bg-color-alt: #f8f9fa;
+  --code-bg: #f5f5f5;
+  --code-font: "Cascadia Code", "Fira Code", "Consolas", "Monaco", monospace;
+  --primary: #5522DD;
+  --primary-light: #7B52E8;
+  --primary-dark: #3D18A8;
+  --accent: #D75A1B;
+  --green: #4E801F;
+  --yellow: #E1CD00;
+  --link-color: #5522DD;
+  --border-radius: 6px;
+  --sidebar-width: 220px;
+  --header-height: 56px;
+}
+
+/* Dark mode: system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fg-color: #e0e0e0;
+    --fg-color-light: #aaa;
+    --fg-color-lighter: #777;
+    --fg-color-lightest: #333;
+    --bg-color: #1a1a2e;
+    --bg-color-alt: #222240;
+    --code-bg: #2a2a45;
+    --primary: #7B52E8;
+    --primary-light: #9B7AEF;
+    --primary-dark: #5522DD;
+    --link-color: #9B7AEF;
+  }
+}
+
+/* Dark mode: explicit toggle */
+[data-theme="dark"] {
+  --fg-color: #e0e0e0;
+  --fg-color-light: #aaa;
+  --fg-color-lighter: #777;
+  --fg-color-lightest: #333;
+  --bg-color: #1a1a2e;
+  --bg-color-alt: #222240;
+  --code-bg: #2a2a45;
+  --primary: #7B52E8;
+  --primary-light: #9B7AEF;
+  --primary-dark: #5522DD;
+  --link-color: #9B7AEF;
+}
+
+/* Light mode: explicit toggle */
+[data-theme="light"] {
+  --fg-color: #1a1a2e;
+  --fg-color-light: #555;
+  --fg-color-lighter: #999;
+  --fg-color-lightest: #ddd;
+  --bg-color: #ffffff;
+  --bg-color-alt: #f8f9fa;
+  --code-bg: #f5f5f5;
+  --primary: #5522DD;
+  --primary-light: #7B52E8;
+  --primary-dark: #3D18A8;
+  --link-color: #5522DD;
+}
+
+/* ============================================================
+   Reset / Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--fg-color);
+  background-color: var(--bg-color);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+a { color: var(--link-color); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+h1, h2, h3, h4 { margin-top: 2rem; margin-bottom: 0.75rem; line-height: 1.3; }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; border-bottom: 1px solid var(--fg-color-lightest); padding-bottom: 0.4rem; }
+h3 { font-size: 1.15rem; }
+
+p { margin: 0 0 1rem; }
+
+ul, ol { padding-left: 1.5rem; margin: 0 0 1rem; }
+li { margin-bottom: 0.35rem; }
+
+code {
+  font-family: var(--code-font);
+  font-size: 0.85em;
+  padding: 0.15em 0.4em;
+  background: var(--code-bg);
+  border-radius: 3px;
+}
+
+pre {
+  font-family: var(--code-font);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 1rem;
+  background: var(--code-bg);
+  border-radius: var(--border-radius);
+  overflow-x: auto;
+  margin: 0 0 1rem;
+}
+
+blockquote {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--primary);
+  background: var(--bg-color-alt);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  position: relative;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--fg-color-lightest);
+  text-align: left;
+}
+
+th {
+  background: var(--bg-color-alt);
+  font-weight: 600;
+}
+
+strong { font-weight: 700; }
+
+/* ============================================================
+   Layout: Header
+   ============================================================ */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  z-index: 100;
+  gap: 0.75rem;
+}
+
+.site-header__brand {
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.site-header__title {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site-header__badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, var(--green), var(--primary));
+  color: white;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dark-toggle {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.dark-toggle:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+/* ============================================================
+   Layout: Sidebar
+   ============================================================ */
+.layout {
+  display: flex;
+  margin-top: var(--header-height);
+  min-height: calc(100vh - var(--header-height));
+}
+
+.sidebar {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--bg-color-alt);
+  border-right: 1px solid var(--fg-color-lightest);
+  overflow-y: auto;
+  padding: 1rem 0;
+  z-index: 50;
+  transition: transform 0.3s;
+}
+
+.sidebar__label {
+  display: block;
+  padding: 0.5rem 1rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-color-lighter);
+}
+
+.sidebar__link {
+  display: block;
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  color: var(--fg-color-light);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.35;
+}
+
+.sidebar__link:hover {
+  color: var(--primary);
+  background: rgba(85, 34, 221, 0.04);
+  text-decoration: none;
+}
+
+.sidebar__link--active {
+  color: var(--primary);
+  border-left-color: var(--primary);
+  font-weight: 600;
+  background: rgba(85, 34, 221, 0.06);
+}
+
+/* ============================================================
+   Layout: Main content
+   ============================================================ */
+.content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 2rem 2.5rem 4rem;
+  max-width: calc(720px + 5rem);
+}
+
+/* ============================================================
+   Layout: Footer
+   ============================================================ */
+.site-footer {
+  margin-left: var(--sidebar-width);
+  padding: 1.5rem 2.5rem;
+  border-top: 1px solid var(--fg-color-lightest);
+  font-size: 0.8rem;
+  color: var(--fg-color-lighter);
+  text-align: center;
+}
+.footer-author {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   Components: Admonitions
+   ============================================================ */
+.admonition {
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  border-left: 4px solid var(--primary);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  background: var(--bg-color-alt);
+}
+
+.admonition-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.admonition.tip { border-color: var(--green); }
+.admonition.tip .admonition-title { color: var(--green); }
+
+.admonition.warning { border-color: var(--accent); }
+.admonition.warning .admonition-title { color: var(--accent); }
+
+.admonition.info { border-color: var(--primary); }
+.admonition.info .admonition-title { color: var(--primary); }
+
+.admonition p:last-child { margin-bottom: 0; }
+
+/* ============================================================
+   Components: Collapsible details
+   ============================================================ */
+details {
+  margin: 1rem 0;
+  border: 1px solid var(--fg-color-lightest);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+details > summary {
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: var(--bg-color-alt);
+  list-style: none;
+  user-select: none;
+}
+
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before {
+  content: "\25B6";
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+details > .details-content {
+  padding: 0.75rem 1rem;
+}
+
+/* ============================================================
+   Components: Section separators
+   ============================================================ */
+.section {
+  padding: 1.5rem 0;
+}
+
+.section + .section {
+  border-top: 1px solid var(--fg-color-lightest);
+}
+
+/* ============================================================
+   Components: Hero
+   ============================================================ */
+.hero {
+  text-align: center;
+  padding: 2rem 0 1.5rem;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  border: none;
+}
+
+.hero__subtitle {
+  font-size: 1.05rem;
+  color: var(--fg-color-light);
+  max-width: 600px;
+  margin: 0 auto 1rem;
+}
+
+.hero__meta {
+  font-size: 0.8rem;
+  color: var(--fg-color-lighter);
+}
+
+/* ============================================================
+   Components: Key insight callout
+   ============================================================ */
+.callout {
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  border-radius: var(--border-radius);
+  background: rgba(85, 34, 221, 0.06);
+  border: 1px solid rgba(85, 34, 221, 0.15);
+}
+
+[data-theme="dark"] .callout,
+:root:not([data-theme="light"]) .callout {
+  background: rgba(123, 82, 232, 0.08);
+  border-color: rgba(123, 82, 232, 0.2);
+}
+
+.callout__title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary);
+  margin-bottom: 0.3rem;
+}
+
+/* ============================================================
+   Components: Cycle / Process diagram
+   ============================================================ */
+.cycle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.cycle__step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  background: var(--bg-color-alt);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 100px;
+  text-align: center;
+}
+
+.cycle__arrow {
+  font-size: 1.2rem;
+  color: var(--fg-color-lighter);
+  font-weight: 700;
+}
+
+/* ============================================================
+   Components: Before/After comparison
+   ============================================================ */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.comparison__col {
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--fg-color-lightest);
+}
+
+.comparison__col--before {
+  border-left: 4px solid var(--accent);
+}
+
+.comparison__col--after {
+  border-left: 4px solid var(--green);
+}
+
+.comparison__label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+.comparison__label--before { color: var(--accent); }
+.comparison__label--after { color: var(--green); }
+
+@media (max-width: 600px) {
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   Interactive: Prompt Builder
+   ============================================================ */
+.prompt-builder label,
+.template-filler__label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--fg-color);
+}
+
+.prompt-builder input,
+.prompt-builder textarea,
+.template-filler__input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--fg-color-lighter);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  background: var(--bg-color);
+  color: var(--fg-color);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.prompt-builder input:focus,
+.prompt-builder textarea:focus,
+.template-filler__input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(85, 34, 221, 0.15);
+}
+
+.prompt-builder__output,
+.template-filler__output {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--code-bg);
+  border: 1px solid var(--fg-color-lightest);
+  border-radius: var(--border-radius);
+}
+
+.prompt-builder__output-label,
+.template-filler__output-label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.prompt-builder__preview,
+.template-filler__preview {
+  margin: 0;
+  padding: 0.75rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--code-font);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  background: transparent;
+  border: none;
+}
+
+.prompt-builder__copy,
+.template-filler__copy {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.prompt-builder__copy:hover,
+.template-filler__copy:hover {
+  background-color: var(--primary-dark);
+}
+
+.prompt-builder {
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 8px;
+  background: var(--bg-color);
+}
+
+.template-filler {
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 8px;
+  background: var(--bg-color);
+}
+
+.template-filler__form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .template-filler__form {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+}
+
+/* ============================================================
+   Interactive: Blockquote Copy
+   ============================================================ */
+.blockquote-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--fg-color-light);
+  background: var(--bg-color);
+  border: 1px solid var(--fg-color-lightest);
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+  z-index: 1;
+}
+
+blockquote:hover .blockquote-copy { opacity: 1; }
+
+.blockquote-copy:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* ============================================================
+   Interactive: Step Wizard
+   ============================================================ */
+.step-wizard {
+  padding: 1.25rem;
+  margin: 1rem 0;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 8px;
+  background: var(--bg-color);
+}
+
+.step-wizard__progress {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.step-wizard__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--fg-color-lighter);
+  background: transparent;
+  color: var(--fg-color-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.step-wizard__dot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.step-wizard__dot--active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.step-wizard__dot--active:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: white;
+}
+
+.step-wizard__dot--visited {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.step-wizard__title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.step-wizard__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--fg-color-lightest);
+}
+
+.step-wizard__prev,
+.step-wizard__next {
+  padding: 0.45rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.step-wizard__prev:hover,
+.step-wizard__next:hover {
+  background-color: var(--primary-dark);
+}
+
+.step-wizard__step {
+  min-height: 4rem;
+}
+
+.step-wizard__step p:first-child { margin-top: 0; }
+
+/* Step Wizard selectable options */
+.step-wizard__options {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.75rem 0;
+}
+
+.step-wizard__option {
+  position: relative;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  margin-bottom: 0.5rem;
+  border: 2px solid var(--fg-color-lightest);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.step-wizard__option::before {
+  content: "";
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--fg-color-lighter);
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.step-wizard__option:hover {
+  border-color: var(--primary);
+  background-color: rgba(85, 34, 221, 0.04);
+}
+
+.step-wizard__option:hover::before {
+  border-color: var(--primary);
+}
+
+.step-wizard__option--selected {
+  border-color: var(--primary);
+  background-color: rgba(85, 34, 221, 0.08);
+}
+
+.step-wizard__option--selected::before {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  box-shadow: inset 0 0 0 3px var(--bg-color);
+}
+
+.step-wizard__option:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Step Wizard results */
+.step-wizard-results {
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  background: var(--bg-color);
+  animation: results-fadein 0.4s ease-out;
+}
+
+@keyframes results-fadein {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.step-wizard-results__header {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.step-wizard-results__tier { text-align: center; margin-bottom: 1rem; }
+
+.step-wizard-results__badge {
+  display: inline-block;
+  padding: 0.4rem 1.5rem;
+  border-radius: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.step-wizard-results__badge--beginner { background-color: var(--green); }
+.step-wizard-results__badge--intermediate { background-color: var(--primary); }
+.step-wizard-results__badge--advanced { background-color: var(--accent); }
+
+.step-wizard-results__breakdown {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--fg-color-lightest);
+  border-bottom: 1px solid var(--fg-color-lightest);
+}
+
+.step-wizard-results__row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.step-wizard-results__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg-color-light);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.step-wizard-results__count {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--fg-color);
+}
+
+.step-wizard-results__warning {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background-color: rgba(215, 90, 27, 0.08);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.step-wizard-results__suggestion {
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.step-wizard-results__action {
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.step-wizard-results__action:hover {
+  background-color: var(--primary-dark);
+}
+
+/* ============================================================
+   Components: Tier badge (inline)
+   ============================================================ */
+.badge--beginner-intermediate {
+  background: linear-gradient(135deg, var(--green), var(--primary));
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: 700;
+}
+
+/* ============================================================
+   Components: Skip to content
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: white;
+  z-index: 200;
+  font-size: 0.85rem;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================================
+   Responsive: Tablet (768-1023)
+   ============================================================ */
+@media (max-width: 1023px) {
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 90;
+    box-shadow: none;
+  }
+
+  .sidebar.sidebar--open {
+    transform: translateX(0);
+    box-shadow: 4px 0 12px rgba(0,0,0,0.15);
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 80;
+  }
+
+  .sidebar-overlay--visible { display: block; }
+
+  .hamburger { display: block; }
+
+  .content {
+    margin-left: 0;
+    padding: 1.5rem 1.5rem 4rem;
+  }
+
+  .site-footer {
+    margin-left: 0;
+  }
+}
+
+/* ============================================================
+   Responsive: Mobile (<768)
+   ============================================================ */
+@media (max-width: 767px) {
+  .content {
+    padding: 1rem 1rem 3rem;
+  }
+
+  .site-footer {
+    padding: 1rem;
+  }
+
+  .hero h1 { font-size: 1.5rem; }
+  .hero__subtitle { font-size: 0.95rem; }
+
+  .step-wizard-results__breakdown {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .site-header__title { display: none; }
+
+  .cycle {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .cycle__arrow {
+    transform: rotate(90deg);
+  }
+}
+
+/* ============================================================
+   Print
+   ============================================================ */
+@media print {
+  .site-header, .sidebar, .sidebar-overlay, .site-footer { display: none !important; }
+  .dark-toggle, .hamburger { display: none !important; }
+  body { color: #000; background: #fff; }
+  .content { margin-left: 0; max-width: 100%; padding: 0; }
+  .layout { display: block; }
+  .prompt-builder__copy, .template-filler__copy, .blockquote-copy { display: none; }
+  .step-wizard__nav, .step-wizard__progress { display: none; }
+  .step-wizard__step { display: block !important; page-break-inside: avoid; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+  .section + .section { border-top: 1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<!-- Skip to content -->
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- Header -->
+<header class="site-header">
+  <button class="hamburger" aria-label="Toggle navigation" type="button">&#9776;</button>
+  <span class="site-header__brand">Ascential Technologies</span>
+  <span class="site-header__title">AI Training Program</span>
+  <span class="site-header__badge">Beginner&ndash;Intermediate</span>
+  <div class="site-header__actions">
+    <button class="dark-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">&#9789;</button>
+  </div>
+</header>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- Layout -->
+<div class="layout">
+
+  <!-- Sidebar navigation -->
+  <nav class="sidebar" aria-label="Page sections">
+    <span class="sidebar__label">On this page</span>
+    <a class="sidebar__link" href="#welcome">Welcome</a>
+    <a class="sidebar__link" href="#building-blocks">Quick Review</a>
+    <a class="sidebar__link" href="#progressive-prompt">Progressive Prompting</a>
+    <a class="sidebar__link" href="#common-mistakes">Common Mistakes</a>
+    <a class="sidebar__link" href="#iteration-mindset">Iteration Mindset</a>
+    <a class="sidebar__link" href="#chain-of-thought">Chain-of-Thought</a>
+    <a class="sidebar__link" href="#use-case-research">Use Case: Research</a>
+    <a class="sidebar__link" href="#self-assessment">Self-Assessment</a>
+    <a class="sidebar__link" href="#whats-next">What's Next</a>
+    <span class="sidebar__label" style="margin-top:1rem">15-20 min read</span>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content" id="main-content">
+
+    <!-- Section 1: Hero -->
+    <section class="section hero" id="welcome">
+      <h1>Building Your AI Skills</h1>
+      <p class="hero__subtitle">You know the basics. Now make AI useful for your daily work with practical techniques and hands-on exercises.</p>
+      <p class="hero__meta"><span class="badge--beginner-intermediate">Beginner&ndash;Intermediate</span> &nbsp; Assumes basic AI familiarity &nbsp; 15-20 minute read</p>
+    </section>
+
+    <!-- Section 2: Quick Review — Five Building Blocks -->
+    <section class="section" id="building-blocks">
+      <h2>Quick Review: The Five Building Blocks</h2>
+
+      <p>Every effective prompt uses some combination of these five elements. Think of them as ingredients in a recipe &mdash; you do not always need all five, but knowing what each one does helps you diagnose problems and improve results.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Building Block</th>
+            <th>What It Does</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Role</strong></td>
+            <td>Sets the AI's perspective and expertise level</td>
+            <td>"You are a senior project manager..."</td>
+          </tr>
+          <tr>
+            <td><strong>Task</strong></td>
+            <td>States exactly what you want the AI to produce</td>
+            <td>"Write a status update summarizing this week's progress"</td>
+          </tr>
+          <tr>
+            <td><strong>Context</strong></td>
+            <td>Provides background information the AI needs</td>
+            <td>"Here are the raw notes from three team members..."</td>
+          </tr>
+          <tr>
+            <td><strong>Format</strong></td>
+            <td>Specifies how the output should be structured</td>
+            <td>"Use bullet points, keep it under 200 words"</td>
+          </tr>
+          <tr>
+            <td><strong>Constraints</strong></td>
+            <td>Sets boundaries on tone, length, or content</td>
+            <td>"Professional tone. No jargon. Flag metrics over 15%"</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="admonition tip">
+        <div class="admonition-title">When to use each block</div>
+        <p><strong>Role</strong> and <strong>Task</strong> are the minimum for any prompt. Add <strong>Context</strong> when the AI needs data to work with. Add <strong>Format</strong> when you have a specific structure in mind. Add <strong>Constraints</strong> when you need to control tone, length, or quality thresholds.</p>
+      </div>
+    </section>
+
+    <!-- Section 3: Progressive Prompt Example -->
+    <section class="section" id="progressive-prompt">
+      <h2>Progressive Prompting: From Vague to Polished</h2>
+
+      <p>The difference between a disappointing AI response and a useful one usually comes down to how you write the prompt. Here is the same task &mdash; writing a project update &mdash; with five progressively better prompts. Expand each attempt to see the prompt and what changes.</p>
+
+      <details>
+        <summary>Attempt 1: The vague request</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>Write a project update.</p>
+          </blockquote>
+          <p><strong>Problem:</strong> No audience, no data, no structure. The AI has to guess everything. You will get a generic template filled with placeholder text.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Attempt 2: Adding a task and audience</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>Write a project update for my manager about the website redesign project.</p>
+          </blockquote>
+          <p><strong>Better:</strong> The AI now knows the audience (manager) and the topic (website redesign). But it still has no data to work with, so the content will be invented.</p>
+          <p><strong>What changed:</strong> Added <strong>Task</strong> specificity and <strong>audience</strong>.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Attempt 3: Providing context</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>Write a project update for my manager about the website redesign project.</p>
+            <p>This week we completed the homepage mockups, started user testing with 6 participants, and discovered a navigation issue on mobile. The vendor delivered the CMS integration two days late. Next week we plan to finalize the mockups and begin front-end development.</p>
+          </blockquote>
+          <p><strong>Better:</strong> The AI now has real data. The output will reflect what actually happened rather than generic filler.</p>
+          <p><strong>What changed:</strong> Added <strong>Context</strong> with specific accomplishments, blockers, and next steps.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Attempt 4: Specifying format</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>Write a project update for my manager about the website redesign project.</p>
+            <p>This week we completed the homepage mockups, started user testing with 6 participants, and discovered a navigation issue on mobile. The vendor delivered the CMS integration two days late. Next week we plan to finalize the mockups and begin front-end development.</p>
+            <p>Use this structure:</p>
+            <p>1. Summary (2-3 sentences)<br>
+            2. Completed this week (bullet list)<br>
+            3. Blockers (bullet list with severity)<br>
+            4. Next week (numbered priorities)</p>
+          </blockquote>
+          <p><strong>Better:</strong> The output will match the exact structure your manager expects. No more reformatting.</p>
+          <p><strong>What changed:</strong> Added <strong>Format</strong> with named sections and expected content types.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Attempt 5: The polished prompt</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>You are a project manager writing a weekly update for a director-level audience.</p>
+            <p>This week we completed the homepage mockups, started user testing with 6 participants, and discovered a navigation issue on mobile. The vendor delivered the CMS integration two days late. Next week we plan to finalize the mockups and begin front-end development.</p>
+            <p>Use this structure:</p>
+            <p>1. Summary (2-3 sentences with overall status: green/yellow/red)<br>
+            2. Completed this week (bullet list)<br>
+            3. Blockers (bullet list with severity: high/medium/low)<br>
+            4. Next week priorities (numbered, top 3)</p>
+            <p>Constraints: Under 200 words. Professional tone. Flag the vendor delay as a risk.</p>
+          </blockquote>
+          <p><strong>This prompt uses all five building blocks:</strong> Role (project manager), Task (weekly update), Context (this week's data), Format (four named sections), Constraints (word limit, tone, flagging rule).</p>
+          <p>The output from this prompt is structured, specific, and ready to send with minimal editing.</p>
+        </div>
+      </details>
+
+      <div class="callout">
+        <div class="callout__title">Key Insight</div>
+        <p>You do not need to write a perfect prompt on your first attempt. Start with a simple version and add building blocks one at a time. Each addition gives the AI more guidance and produces better output. This is called <strong>progressive prompting</strong>.</p>
+      </div>
+    </section>
+
+    <!-- Section 4: Common Beginner Mistakes -->
+    <section class="section" id="common-mistakes">
+      <h2>Five Common Beginner Mistakes</h2>
+
+      <p>If your AI output is not useful, one of these five patterns is usually the cause. Click each one to see the fix.</p>
+
+      <details>
+        <summary>1. Being too vague</summary>
+        <div class="details-content">
+          <div class="comparison">
+            <div class="comparison__col comparison__col--before">
+              <div class="comparison__label comparison__label--before">Instead of</div>
+              <p>"Help me with my presentation."</p>
+            </div>
+            <div class="comparison__col comparison__col--after">
+              <div class="comparison__label comparison__label--after">Try</div>
+              <p>"Write 5 bullet points summarizing our Q3 sales results for a 10-minute team meeting."</p>
+            </div>
+          </div>
+          <p><strong>Why it matters:</strong> Vague prompts force the AI to guess your intent. It will produce generic output that requires heavy editing. Specific prompts produce output you can use.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>2. Skipping the context</summary>
+        <div class="details-content">
+          <div class="comparison">
+            <div class="comparison__col comparison__col--before">
+              <div class="comparison__label comparison__label--before">Instead of</div>
+              <p>"Analyze our customer feedback."</p>
+            </div>
+            <div class="comparison__col comparison__col--after">
+              <div class="comparison__label comparison__label--after">Try</div>
+              <p>"Here are 15 customer comments from this week's survey. Identify the top 3 themes and a representative quote for each." [paste the comments]</p>
+            </div>
+          </div>
+          <p><strong>Why it matters:</strong> AI cannot read your mind or access your files. If you want analysis of specific data, you need to provide that data directly in your prompt.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>3. Accepting the first response</summary>
+        <div class="details-content">
+          <p>Your first prompt rarely produces a perfect result. Beginners often assume the AI gave its best answer and move on. Experienced users treat the first response as a draft.</p>
+          <p><strong>What to do instead:</strong> Read the output, identify what is off (too long? wrong tone? missing details?), and send a follow-up: "Shorten this to 100 words" or "Make the tone more formal" or "Add a section on risks."</p>
+          <p>Two rounds of refinement typically gets you 90% of the way to a usable result.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>4. Writing overly long prompts</summary>
+        <div class="details-content">
+          <p>More words do not always equal better results. A 500-word prompt with scattered instructions confuses the AI as much as a 5-word prompt with no instructions.</p>
+          <p><strong>What to do instead:</strong> Organize your prompt with clear sections. Use labels like "Context:", "Task:", "Format:", "Constraints:" so the AI knows the purpose of each block. A structured 150-word prompt outperforms an unstructured 500-word one.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>5. Not specifying the output format</summary>
+        <div class="details-content">
+          <div class="comparison">
+            <div class="comparison__col comparison__col--before">
+              <div class="comparison__label comparison__label--before">Instead of</div>
+              <p>"Summarize this meeting."</p>
+            </div>
+            <div class="comparison__col comparison__col--after">
+              <div class="comparison__label comparison__label--after">Try</div>
+              <p>"Summarize this meeting with: 1) Key decisions (bullet list), 2) Action items (table: item, owner, due date), 3) Next meeting date."</p>
+            </div>
+          </div>
+          <p><strong>Why it matters:</strong> Without format instructions, the AI picks its own structure. Sometimes that works. Often it does not match what you need, and you spend time reformatting. Specifying structure upfront saves you that time.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- Section 5: The Iteration Mindset -->
+    <section class="section" id="iteration-mindset">
+      <h2>The Iteration Mindset</h2>
+
+      <p>The most important skill in working with AI is not writing the perfect prompt. It is knowing how to improve a prompt that is almost right. Think of prompting as a four-step cycle:</p>
+
+      <div class="cycle">
+        <div class="cycle__step">1. Draft</div>
+        <span class="cycle__arrow">&rarr;</span>
+        <div class="cycle__step">2. Evaluate</div>
+        <span class="cycle__arrow">&rarr;</span>
+        <div class="cycle__step">3. Refine</div>
+        <span class="cycle__arrow">&rarr;</span>
+        <div class="cycle__step">4. Apply</div>
+      </div>
+
+      <ol>
+        <li><strong>Draft</strong> &mdash; Write your prompt and send it. Do not overthink the first version. Get something out there.</li>
+        <li><strong>Evaluate</strong> &mdash; Read the output critically. Ask: Is the content accurate? Is the tone right? Is the structure what I need? Is anything missing?</li>
+        <li><strong>Refine</strong> &mdash; Send a targeted follow-up to fix what is wrong. Be specific: "Shorten the introduction to 2 sentences" is better than "make it shorter."</li>
+        <li><strong>Apply</strong> &mdash; Use the output. If you found a prompt that works well, save it as a template for next time.</li>
+      </ol>
+
+      <div class="callout">
+        <div class="callout__title">Refinement Commands That Work</div>
+        <p>Instead of vague feedback, use specific refinement instructions:</p>
+        <ul>
+          <li><strong>"Make it better"</strong> &rarr; "Shorten the intro to 2 sentences and add a concrete example in paragraph 3"</li>
+          <li><strong>"Fix the tone"</strong> &rarr; "Rewrite using a formal, third-person tone suitable for a board presentation"</li>
+          <li><strong>"Too long"</strong> &rarr; "Cut this to 200 words. Remove the background section and keep the recommendations"</li>
+          <li><strong>"Add more detail"</strong> &rarr; "Add revenue figures and percentage changes to each of the three key findings"</li>
+        </ul>
+      </div>
+
+      <div class="admonition warning">
+        <div class="admonition-title">When to start over</div>
+        <p>After 3-4 rounds of refinement, the output often drifts from your original intent. At that point, start fresh with a new prompt that incorporates everything you learned from the previous rounds. It is usually faster than continuing to refine.</p>
+      </div>
+    </section>
+
+    <!-- Section 6: Technique Spotlight — Chain-of-Thought -->
+    <section class="section" id="chain-of-thought">
+      <h2>Technique Spotlight: Chain-of-Thought</h2>
+
+      <p>Chain-of-thought prompting asks the AI to show its reasoning step by step before giving a final answer. Instead of jumping to a conclusion, the AI walks through the logic one step at a time. This makes it easier to spot errors and produces more accurate results.</p>
+
+      <p>Think of it like asking a colleague to "show their work" on a calculation. When someone writes down each step, you can see where they went right and where they went wrong.</p>
+
+      <h3>When to Use It</h3>
+      <ul>
+        <li>Analyzing data and explaining what the numbers mean</li>
+        <li>Comparing options and recommending one over others</li>
+        <li>Diagnosing a problem by working through possible causes</li>
+        <li>Making a decision that depends on weighing multiple factors</li>
+      </ul>
+
+      <h3>Example: Budget Analysis</h3>
+
+      <div class="comparison">
+        <div class="comparison__col comparison__col--before">
+          <div class="comparison__label comparison__label--before">Without chain-of-thought</div>
+          <blockquote>
+            <p>Analyze these budget numbers.</p>
+          </blockquote>
+          <p>The AI jumps straight to a surface-level summary. No calculations shown, no reasoning visible, no way to verify.</p>
+        </div>
+        <div class="comparison__col comparison__col--after">
+          <div class="comparison__label comparison__label--after">With chain-of-thought</div>
+          <blockquote>
+            <p>You are a financial analyst reviewing quarterly performance.</p>
+            <p>Here are the Q3 figures for three departments:<br>
+            - Marketing: budgeted $120K, actual $145K<br>
+            - Engineering: budgeted $300K, actual $285K<br>
+            - Support: budgeted $75K, actual $102K</p>
+            <p>Think through this step by step:<br>
+            1. Calculate variance for each department<br>
+            2. Identify the largest overages<br>
+            3. Explain likely causes<br>
+            4. Recommend which need immediate attention</p>
+          </blockquote>
+          <p>The AI shows calculations, reasoning, and a final recommendation you can verify at every step.</p>
+        </div>
+      </div>
+
+      <p>The phrase <strong>"Think through this step by step"</strong> is the key trigger. Follow it with numbered steps that guide the reasoning in the order you want.</p>
+
+      <div class="admonition tip">
+        <div class="admonition-title">Pair it with format constraints</div>
+        <p>Chain-of-thought can make the AI verbose. Pair it with length limits: "Think through this step by step, then present your findings in a table followed by a 2-paragraph summary under 150 words."</p>
+      </div>
+    </section>
+
+    <!-- Section 7: Use Case — Research Survey (Template Filler) -->
+    <section class="section" id="use-case-research">
+      <h2>Use Case: Research Survey</h2>
+
+      <p>One of the most practical ways to use AI at work is as a research assistant. Instead of spending an hour searching through documentation, vendor sites, or regulatory guides, you can ask AI to survey a topic and organize what it knows into a structured summary.</p>
+
+      <h3>The Scenario</h3>
+      <p>You need to quickly get up to speed on a topic &mdash; maybe your team is evaluating new software features, you need to understand what regulations apply to a process, or you are comparing approaches before making a recommendation. AI can give you a structured starting point in minutes instead of hours.</p>
+
+      <h3>Example Prompts</h3>
+
+      <details>
+        <summary>Surveying software features</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>You are a technology analyst helping a team evaluate project management tools.</p>
+            <p>List the 8 most important features to look for when choosing a project management tool for a team of 25 people. For each feature, explain in one sentence why it matters and rate its importance as must-have, nice-to-have, or optional.</p>
+            <p>Format: A table with columns for Feature, Why It Matters, and Importance Level.</p>
+          </blockquote>
+        </div>
+      </details>
+
+      <details>
+        <summary>Understanding regulatory requirements</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>You are a compliance specialist helping a team understand data handling requirements.</p>
+            <p>What are the key requirements a company should consider when storing customer personal data? Cover data retention, access controls, encryption, and breach notification. For each area, provide a one-sentence summary and note whether it is a legal requirement or a best practice.</p>
+            <p>Format: A numbered list with the area name in bold, followed by the summary and classification.</p>
+          </blockquote>
+        </div>
+      </details>
+
+      <details>
+        <summary>Comparing approaches</summary>
+        <div class="details-content">
+          <blockquote>
+            <p>You are a technical lead helping a team choose between three deployment strategies: blue-green deployment, canary release, and rolling update.</p>
+            <p>Compare these three approaches. For each one, explain how it works in 2 sentences, list one key advantage and one key risk, and state what team size or project type it fits best.</p>
+            <p>Format: A comparison table, then a 2-sentence recommendation for a team of 10 deploying a customer-facing web application.</p>
+          </blockquote>
+        </div>
+      </details>
+
+      <h3>What Makes These Prompts Work</h3>
+      <ul>
+        <li><strong>Assigns a relevant role</strong> &mdash; "technology analyst" or "compliance specialist" focuses the AI on the right domain</li>
+        <li><strong>Scopes the request</strong> &mdash; asking for a specific number of items (8 features, 3 approaches) prevents sprawling output</li>
+        <li><strong>Requests structured output</strong> &mdash; tables and numbered lists make the result immediately usable</li>
+        <li><strong>Asks for classification</strong> &mdash; "must-have vs. optional" or "legal requirement vs. best practice" adds a layer of analysis beyond a simple list</li>
+      </ul>
+
+      <h3>Build Your Research Prompt</h3>
+      <p>Fill in the fields below to generate a customized research prompt for your topic.</p>
+
+      <div class="template-filler" data-template="You are a [ROLE] helping a team understand [TOPIC].
+
+[RESEARCH_QUESTION]
+
+For each item, provide:
+- A brief explanation (1-2 sentences)
+- [CLASSIFICATION_CRITERIA]
+
+Format: [OUTPUT_FORMAT]
+
+Constraints:
+- Cover at least [ITEM_COUNT] items.
+- Keep the total under [WORD_LIMIT] words.
+- Use [TONE] language appropriate for [AUDIENCE].
+- Flag anything that requires further expert review.">
+      </div>
+
+      <div class="admonition warning">
+        <div class="admonition-title">Limitation</div>
+        <p>AI knowledge has a cutoff date and may not reflect the latest regulations, product features, or pricing. Use AI-generated research as a starting point, then verify critical details against official sources before making decisions.</p>
+      </div>
+
+      <div class="admonition tip">
+        <div class="admonition-title">Save what works</div>
+        <p>When you find a research prompt structure that gives good results, save it as a template. Next time you need to survey a different topic, swap in the new subject and reuse the same structure.</p>
+      </div>
+    </section>
+
+    <!-- Section 8: Self-Assessment -->
+    <section class="section" id="self-assessment">
+      <h2>Self-Assessment: Check Your Skills</h2>
+
+      <p>Answer the three questions below to gauge where you stand. Select the option that best matches your current experience.</p>
+
+      <div class="step-wizard" data-show-summary="true" data-selectable="true" data-result-map="beginner,intermediate,advanced">
+
+        <div class="step-wizard__step" data-step-title="Question 1 of 3">
+          <p><strong>When you write a prompt and the AI gives you a mediocre response, what do you do?</strong></p>
+          <ul>
+            <li><strong>A.</strong> Accept the result and try to work with it as-is</li>
+            <li><strong>B.</strong> Send a follow-up asking for changes, though I am not always sure what to ask for</li>
+            <li><strong>C.</strong> Diagnose exactly what is wrong (tone, format, missing data) and send a targeted refinement</li>
+          </ul>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Question 2 of 3">
+          <p><strong>How do you structure your prompts?</strong></p>
+          <ul>
+            <li><strong>A.</strong> I write a sentence or two describing what I need</li>
+            <li><strong>B.</strong> I usually include the task and some context, but I do not always specify format or constraints</li>
+            <li><strong>C.</strong> I consistently use role, task, context, format, and constraints &mdash; and I adjust them based on the output quality</li>
+          </ul>
+        </div>
+
+        <div class="step-wizard__step" data-step-title="Question 3 of 3">
+          <p><strong>Have you used techniques like chain-of-thought reasoning or prompt templates in your work?</strong></p>
+          <ul>
+            <li><strong>A.</strong> I have not heard of these techniques before this page</li>
+            <li><strong>B.</strong> I have heard of them and tried one or two, but they are not part of my regular workflow</li>
+            <li><strong>C.</strong> I use these techniques regularly and can explain when each one is most effective</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 9: What's Next -->
+    <section class="section" id="whats-next">
+      <h2>What's Next</h2>
+
+      <p>You now have a practical toolkit for getting better results from AI:</p>
+
+      <ul>
+        <li><strong>Five building blocks</strong> &mdash; Role, Task, Context, Format, Constraints</li>
+        <li><strong>Progressive prompting</strong> &mdash; Start simple and add building blocks iteratively</li>
+        <li><strong>The iteration cycle</strong> &mdash; Draft, Evaluate, Refine, Apply</li>
+        <li><strong>Chain-of-thought</strong> &mdash; Guide the AI through step-by-step reasoning</li>
+        <li><strong>Template-based prompts</strong> &mdash; Reusable structures for recurring tasks</li>
+      </ul>
+
+      <h3>Put It Into Practice</h3>
+      <p>Pick one task you do this week &mdash; a status update, a meeting follow-up, an email draft &mdash; and try using the techniques from this page. Start with the five building blocks: assign a role, state the task, provide context, specify the format, and set constraints.</p>
+
+      <p>If the first result is not quite right, use the iteration cycle. Send a targeted follow-up instead of rewriting from scratch. After two or three rounds, you will likely have output you can use with minimal editing.</p>
+
+      <div class="callout">
+        <div class="callout__title">The Full AI Training Program</div>
+        <p>This page is a preview of the complete Ascential Technologies AI Training Program, which includes advanced techniques, domain-specific workflow guides, a prompt library with tested templates, and hands-on exercises for every skill level. Contact your team lead or training coordinator for access to the full program.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div>&copy; 2026 Ascential Technologies</div>
+  <div class="footer-author">Author: John Reep, Principal Electrical Engineer &bull; Modified: 28 FEB 2026</div>
+</footer>
+
+<script>
+/* ============================================================
+   Dark Mode Toggle
+   ============================================================ */
+(function () {
+  var toggle = document.querySelector(".dark-toggle");
+  if (!toggle) return;
+
+  var html = document.documentElement;
+
+  // Restore saved preference
+  var saved = localStorage.getItem("theme");
+  if (saved === "dark" || saved === "light") {
+    html.setAttribute("data-theme", saved);
+  }
+
+  // Update icon based on current state
+  function updateIcon() {
+    var isDark = html.getAttribute("data-theme") === "dark" ||
+      (!html.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    toggle.textContent = isDark ? "\u2600" : "\u263D";
+    toggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+  }
+
+  updateIcon();
+
+  toggle.addEventListener("click", function () {
+    var current = html.getAttribute("data-theme");
+    var isDark = current === "dark" ||
+      (!current && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    var next = isDark ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    updateIcon();
+  });
+
+  // Listen for system preference changes
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateIcon);
+})();
+
+/* ============================================================
+   Sidebar: Hamburger Toggle (mobile/tablet)
+   ============================================================ */
+(function () {
+  var hamburger = document.querySelector(".hamburger");
+  var sidebar = document.querySelector(".sidebar");
+  var overlay = document.querySelector(".sidebar-overlay");
+  if (!hamburger || !sidebar) return;
+
+  function openSidebar() {
+    sidebar.classList.add("sidebar--open");
+    if (overlay) { overlay.classList.add("sidebar-overlay--visible"); overlay.setAttribute("aria-hidden", "false"); }
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("sidebar--open");
+    if (overlay) { overlay.classList.remove("sidebar-overlay--visible"); overlay.setAttribute("aria-hidden", "true"); }
+  }
+
+  hamburger.addEventListener("click", function () {
+    if (sidebar.classList.contains("sidebar--open")) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+
+  if (overlay) {
+    overlay.addEventListener("click", closeSidebar);
+  }
+
+  // Close sidebar when a link is clicked (mobile)
+  sidebar.querySelectorAll(".sidebar__link").forEach(function (link) {
+    link.addEventListener("click", function () {
+      if (window.innerWidth < 1024) {
+        closeSidebar();
+      }
+    });
+  });
+})();
+
+/* ============================================================
+   Scrollspy: Highlight active section in sidebar
+   ============================================================ */
+(function () {
+  var links = document.querySelectorAll(".sidebar__link");
+  var sections = [];
+
+  links.forEach(function (link) {
+    var href = link.getAttribute("href");
+    if (href && href.charAt(0) === "#") {
+      var target = document.getElementById(href.substring(1));
+      if (target) {
+        sections.push({ el: target, link: link });
+      }
+    }
+  });
+
+  if (sections.length === 0) return;
+
+  var currentActive = null;
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].el === entry.target) {
+            if (currentActive) currentActive.classList.remove("sidebar__link--active");
+            sections[i].link.classList.add("sidebar__link--active");
+            currentActive = sections[i].link;
+            break;
+          }
+        }
+      }
+    });
+  }, {
+    rootMargin: "-" + (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-height")) + 20) + "px 0px -60% 0px",
+    threshold: 0
+  });
+
+  sections.forEach(function (s) {
+    observer.observe(s.el);
+  });
+})();
+
+/* ============================================================
+   Clipboard Fallback (for file:// URLs)
+   ============================================================ */
+function copyToClipboard(text, btn, originalLabel) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = "Copied!";
+      setTimeout(function () { btn.textContent = originalLabel; }, 2000);
+    }).catch(function () {
+      fallbackCopy(text, btn, originalLabel);
+    });
+  } else {
+    fallbackCopy(text, btn, originalLabel);
+  }
+}
+
+function fallbackCopy(text, btn, originalLabel) {
+  var textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand("copy");
+    btn.textContent = "Copied!";
+  } catch (e) {
+    btn.textContent = "Copy failed";
+  }
+  document.body.removeChild(textarea);
+  setTimeout(function () { btn.textContent = originalLabel; }, 2000);
+}
+
+/* ============================================================
+   Template Filler
+   ============================================================ */
+function initTemplateFillers() {
+  document.querySelectorAll(".template-filler").forEach(function (filler) {
+    var template = filler.getAttribute("data-template") || "";
+    if (!template) return;
+
+    var placeholders = [];
+    var seen = {};
+    var regex = /\[([A-Z][A-Z0-9_]*)\]/g;
+    var match;
+    while ((match = regex.exec(template)) !== null) {
+      if (!seen[match[1]]) {
+        placeholders.push(match[1]);
+        seen[match[1]] = true;
+      }
+    }
+    if (placeholders.length === 0) return;
+
+    var form = document.createElement("div");
+    form.className = "template-filler__form";
+
+    placeholders.forEach(function (ph) {
+      var label = document.createElement("label");
+      label.className = "template-filler__label";
+      var readable = ph.replace(/_/g, " ").toLowerCase();
+      readable = readable.charAt(0).toUpperCase() + readable.slice(1);
+      label.textContent = readable;
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "template-filler__input";
+      input.setAttribute("data-placeholder", ph);
+      input.placeholder = "Enter " + readable.toLowerCase() + "...";
+
+      label.appendChild(input);
+      form.appendChild(label);
+    });
+
+    var output = document.createElement("div");
+    output.className = "template-filler__output";
+
+    var outputLabel = document.createElement("div");
+    outputLabel.className = "template-filler__output-label";
+    outputLabel.textContent = "Your Prompt";
+
+    var pre = document.createElement("pre");
+    pre.className = "template-filler__preview";
+    pre.textContent = template;
+
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "template-filler__copy";
+    copyBtn.textContent = "Copy Prompt";
+    copyBtn.setAttribute("type", "button");
+    copyBtn.addEventListener("click", function () {
+      copyToClipboard(pre.textContent, copyBtn, "Copy Prompt");
+    });
+
+    output.appendChild(outputLabel);
+    output.appendChild(pre);
+    output.appendChild(copyBtn);
+
+    filler.appendChild(form);
+    filler.appendChild(output);
+
+    form.querySelectorAll("[data-placeholder]").forEach(function (input) {
+      input.addEventListener("input", function () {
+        updateTemplateFiller(filler, template, pre);
+      });
+    });
+  });
+}
+
+function updateTemplateFiller(filler, template, pre) {
+  var result = template;
+  filler.querySelectorAll("[data-placeholder]").forEach(function (input) {
+    var ph = input.getAttribute("data-placeholder");
+    var value = input.value.trim() || "[" + ph + "]";
+    result = result.replace(new RegExp("\\[" + ph + "\\]", "g"), value);
+  });
+  pre.textContent = result;
+}
+
+/* ============================================================
+   Blockquote Copy Buttons
+   ============================================================ */
+function initBlockquoteCopy() {
+  var containers = document.querySelectorAll(".content details, .content .tabbed-content");
+  containers.forEach(function (container) {
+    var blockquotes = container.querySelectorAll("blockquote");
+    blockquotes.forEach(function (bq) {
+      var text = bq.textContent.trim();
+      if (text.length < 40) return;
+
+      bq.style.position = "relative";
+
+      var copyBtn = document.createElement("button");
+      copyBtn.className = "blockquote-copy";
+      copyBtn.textContent = "Copy";
+      copyBtn.setAttribute("type", "button");
+      copyBtn.setAttribute("aria-label", "Copy prompt to clipboard");
+      copyBtn.addEventListener("click", function () {
+        copyToClipboard(text, copyBtn, "Copy");
+      });
+
+      bq.appendChild(copyBtn);
+    });
+  });
+
+  // Also add copy buttons to top-level blockquotes in the main content
+  document.querySelectorAll(".content > .section blockquote").forEach(function (bq) {
+    if (bq.querySelector(".blockquote-copy")) return;
+    var text = bq.textContent.trim();
+    if (text.length < 40) return;
+
+    bq.style.position = "relative";
+
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "blockquote-copy";
+    copyBtn.textContent = "Copy";
+    copyBtn.setAttribute("type", "button");
+    copyBtn.setAttribute("aria-label", "Copy prompt to clipboard");
+    copyBtn.addEventListener("click", function () {
+      copyToClipboard(text, copyBtn, "Copy");
+    });
+
+    bq.appendChild(copyBtn);
+  });
+}
+
+/* ============================================================
+   Step Wizard
+   ============================================================ */
+function initStepWizards() {
+  document.querySelectorAll(".step-wizard").forEach(function (wizard) {
+    var steps = wizard.querySelectorAll(".step-wizard__step");
+    if (steps.length < 2) return;
+
+    var currentIndex = 0;
+    var showSummary = wizard.getAttribute("data-show-summary") === "true";
+    var resultMap = (wizard.getAttribute("data-result-map") || "").split(",").map(function (s) {
+      return s.trim().toLowerCase();
+    }).filter(function (s) { return s.length > 0; });
+    var hasResultMap = resultMap.length >= 2;
+    var selections = [];
+
+    steps.forEach(function (step, i) {
+      step.style.display = i === 0 ? "block" : "none";
+    });
+
+    var progress = document.createElement("div");
+    progress.className = "step-wizard__progress";
+
+    var dots = [];
+    for (var i = 0; i < steps.length; i++) {
+      var dot = document.createElement("button");
+      dot.className = "step-wizard__dot" + (i === 0 ? " step-wizard__dot--active" : "");
+      dot.textContent = i + 1;
+      dot.setAttribute("type", "button");
+      dot.setAttribute("aria-label", steps[i].getAttribute("data-step-title") || "Step " + (i + 1));
+      (function (idx) {
+        dot.addEventListener("click", function () { goToStep(idx); });
+      })(i);
+      dots.push(dot);
+      progress.appendChild(dot);
+    }
+
+    var titleBar = document.createElement("div");
+    titleBar.className = "step-wizard__title";
+    titleBar.textContent = steps[0].getAttribute("data-step-title") || "Step 1";
+
+    var nav = document.createElement("div");
+    nav.className = "step-wizard__nav";
+
+    var prevBtn = document.createElement("button");
+    prevBtn.className = "step-wizard__prev";
+    prevBtn.textContent = "\u2190 Previous";
+    prevBtn.setAttribute("type", "button");
+    prevBtn.style.visibility = "hidden";
+    prevBtn.addEventListener("click", function () {
+      if (currentIndex > 0) goToStep(currentIndex - 1);
+    });
+
+    var nextBtn = document.createElement("button");
+    nextBtn.className = "step-wizard__next";
+    nextBtn.textContent = "Next \u2192";
+    nextBtn.setAttribute("type", "button");
+    nextBtn.addEventListener("click", function () {
+      if (currentIndex < steps.length - 1) {
+        goToStep(currentIndex + 1);
+      } else if (showSummary && hasResultMap) {
+        showResults();
+      } else if (showSummary) {
+        var nextSibling = wizard.nextElementSibling;
+        if (nextSibling) {
+          nextSibling.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    });
+
+    nav.appendChild(prevBtn);
+    nav.appendChild(nextBtn);
+
+    wizard.insertBefore(progress, steps[0]);
+    wizard.insertBefore(titleBar, steps[0]);
+    wizard.appendChild(nav);
+
+    function goToStep(idx) {
+      steps[currentIndex].style.display = "none";
+      currentIndex = idx;
+      steps[currentIndex].style.display = "block";
+
+      dots.forEach(function (d, di) {
+        d.classList.remove("step-wizard__dot--active");
+        if (di < currentIndex) d.classList.add("step-wizard__dot--visited");
+      });
+      dots[currentIndex].classList.add("step-wizard__dot--active");
+
+      titleBar.textContent = steps[currentIndex].getAttribute("data-step-title") || "Step " + (currentIndex + 1);
+
+      prevBtn.style.visibility = currentIndex === 0 ? "hidden" : "visible";
+      if (currentIndex === steps.length - 1 && showSummary) {
+        nextBtn.textContent = "See Results \u2193";
+      } else if (currentIndex === steps.length - 1) {
+        nextBtn.style.visibility = "hidden";
+      } else {
+        nextBtn.textContent = "Next \u2192";
+        nextBtn.style.visibility = "visible";
+      }
+    }
+
+    // Selectable options
+    var selectable = wizard.getAttribute("data-selectable") === "true";
+    if (selectable) {
+      steps.forEach(function (step) {
+        var stepIndex = Array.prototype.indexOf.call(steps, step);
+        var lists = step.querySelectorAll("ul");
+        lists.forEach(function (ul) {
+          var items = ul.querySelectorAll("li");
+          if (items.length < 2) return;
+
+          var firstStrong = items[0].querySelector("strong");
+          if (!firstStrong || !/^[A-Z]\.$/.test(firstStrong.textContent.trim())) return;
+
+          ul.classList.add("step-wizard__options");
+          items.forEach(function (li) {
+            li.classList.add("step-wizard__option");
+            li.setAttribute("role", "radio");
+            li.setAttribute("aria-checked", "false");
+            li.setAttribute("tabindex", "0");
+
+            li.addEventListener("click", function () {
+              items.forEach(function (sibling) {
+                sibling.classList.remove("step-wizard__option--selected");
+                sibling.setAttribute("aria-checked", "false");
+              });
+              li.classList.add("step-wizard__option--selected");
+              li.setAttribute("aria-checked", "true");
+
+              if (hasResultMap) {
+                var optionIndex = Array.prototype.indexOf.call(items, li);
+                var tierLabel = resultMap[optionIndex] || "unknown";
+                var found = false;
+                for (var s = 0; s < selections.length; s++) {
+                  if (selections[s].stepIndex === stepIndex) {
+                    selections[s].optionIndex = optionIndex;
+                    selections[s].tierLabel = tierLabel;
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  selections.push({ stepIndex: stepIndex, optionIndex: optionIndex, tierLabel: tierLabel });
+                }
+              }
+            });
+
+            li.addEventListener("keydown", function (e) {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                li.click();
+              }
+            });
+          });
+
+          ul.setAttribute("role", "radiogroup");
+        });
+      });
+    }
+
+    function showResults() {
+      var counts = {};
+      for (var i = 0; i < resultMap.length; i++) counts[resultMap[i]] = 0;
+      for (var j = 0; j < selections.length; j++) {
+        var tier = selections[j].tierLabel;
+        if (counts.hasOwnProperty(tier)) counts[tier]++;
+      }
+
+      var winner = "";
+      var maxCount = 0;
+      var tiedCount = 0;
+      var tierKeys = Object.keys(counts);
+      for (var k = 0; k < tierKeys.length; k++) {
+        if (counts[tierKeys[k]] > maxCount) {
+          maxCount = counts[tierKeys[k]];
+          winner = tierKeys[k];
+          tiedCount = 1;
+        } else if (counts[tierKeys[k]] === maxCount && maxCount > 0) {
+          tiedCount++;
+        }
+      }
+      var isTied = tiedCount > 1 || selections.length === 0;
+      if (isTied) winner = resultMap.length >= 2 ? resultMap[1] : resultMap[0];
+
+      var unanswered = steps.length - selections.length;
+
+      var summaryId = "step-wizard-results";
+      var existing = document.getElementById(summaryId);
+      if (existing) existing.parentNode.removeChild(existing);
+
+      var summary = document.createElement("div");
+      summary.id = summaryId;
+      summary.className = "step-wizard-results";
+
+      var header = document.createElement("div");
+      header.className = "step-wizard-results__header";
+      header.textContent = "Your Assessment Result";
+      summary.appendChild(header);
+
+      if (unanswered > 0) {
+        var warning = document.createElement("div");
+        warning.className = "step-wizard-results__warning";
+        warning.textContent = "You left " + unanswered + " question" +
+          (unanswered > 1 ? "s" : "") + " unanswered.";
+        summary.appendChild(warning);
+      }
+
+      var tierDisplay = document.createElement("div");
+      tierDisplay.className = "step-wizard-results__tier";
+      var badge = document.createElement("span");
+      badge.className = "step-wizard-results__badge step-wizard-results__badge--" + winner;
+      badge.textContent = winner.charAt(0).toUpperCase() + winner.slice(1);
+      tierDisplay.appendChild(badge);
+      summary.appendChild(tierDisplay);
+
+      var breakdown = document.createElement("div");
+      breakdown.className = "step-wizard-results__breakdown";
+      for (var m = 0; m < tierKeys.length; m++) {
+        var row = document.createElement("div");
+        row.className = "step-wizard-results__row";
+        var label = document.createElement("span");
+        label.className = "step-wizard-results__label";
+        label.textContent = tierKeys[m].charAt(0).toUpperCase() + tierKeys[m].slice(1);
+        var count = document.createElement("span");
+        count.className = "step-wizard-results__count";
+        count.textContent = counts[tierKeys[m]] + " of " + steps.length;
+        row.appendChild(label);
+        row.appendChild(count);
+        breakdown.appendChild(row);
+      }
+      summary.appendChild(breakdown);
+
+      var suggestion = document.createElement("div");
+      suggestion.className = "step-wizard-results__suggestion";
+      if (selections.length === 0) {
+        suggestion.textContent = "You did not select any answers. Consider your experience level and explore the full training program for your recommended path.";
+      } else if (isTied) {
+        suggestion.textContent = "Your answers are mixed. We recommend the " +
+          winner.charAt(0).toUpperCase() + winner.slice(1) + " tier of the full training program.";
+      } else {
+        suggestion.textContent = "Based on your answers, we recommend the " +
+          winner.charAt(0).toUpperCase() + winner.slice(1) + " tier of the full training program.";
+      }
+      summary.appendChild(suggestion);
+
+      wizard.parentNode.insertBefore(summary, wizard.nextSibling);
+      summary.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+}
+
+/* ============================================================
+   Initialize on DOM ready
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", function () {
+  initTemplateFillers();
+  initStepWizards();
+  initBlockquoteCopy();
+});
+</script>
+
+</body>
+</html>

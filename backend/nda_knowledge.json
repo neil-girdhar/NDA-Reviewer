@@ -1,0 +1,93 @@
+{
+  "ascential_template_clauses": {
+    "description": "Verbatim/near-verbatim key phrases from Ascential's own standard form (the BPG Holdings IV Corp / Titan, Inc. / D&K Engineering 'Confidentiality and Non-Disclosure Agreement' form). This form recurs across the Goldentop Cornerstone, Galileo TP, Triumph Gear, Timken/Philly Gear, and AutoStore agreements and is recognisable by the broad 'Confidential Information' definition, the three-part carve-out, and the recipient burden-of-proof sentence.",
+    "confidential_information_definition": "\"When used in this Agreement, 'Confidential Information' means all confidential and/or proprietary information, including trade secrets, related in any way to the business or business plans, experiences or ideas of Disclosing Party and/or any of its subsidiaries and/or affiliates, and any of their respective shareholders, directors, members, managers, officers, employees, agents, and representatives, and their respective successors and assigns, as applicable (collectively, the 'Related Parties').\" The definition is expressly stated to be 'intended to be broad in scope and is not to be limited by the extent to which Disclosing Party or any Related Party uses or protects any particular information,' and includes 'the existence of this Agreement and the matters discussed in this Agreement, and the terms, conditions, status, and other facts related to the potential Purpose.'",
+    "carve_outs": "\"The only information disclosed by Disclosing Party or any Related Party to Recipient that does not constitute Confidential Information is (i) information that is already publicly available at the time of disclosure, (ii) information that is already known to Recipient as of the date of this Agreement, as evidenced by prior documentation thereof, or (iii) information that subsequently becomes publicly available through no default by Recipient of the terms of this Agreement, provided that such information shall be deemed Confidential Information until such time as it becomes publicly available.\" (AutoStore variant adds a fourth carve-out for independently developed information; the pure BPG/Titan form typically uses only the three exceptions.)",
+    "term_and_survival": "Not visible in the provided excerpts of the BPG/Titan form (text truncated before the term/survival section). Cannot be stated verbatim from the corpus.",
+    "permitted_disclosure": "Recipient \"will only disclose the Confidential Information to those of its employees, attorneys, accountants, and financial advisors who need the information to perform their duties in connection with the Purpose,\" must inform such persons of the confidential nature and direct them to treat it confidentially, and \"shall be liable for all actions taken by any such person with respect to any Confidential Information.\" Reproduction requires \"the prior express written consent of Disclosing Party, which Recipient shall have the burden of proving was obtained.\" Includes a Defend Trade Secrets Act of 2016 immunity notice ('Notwithstanding the above ... Recipient shall not ... have criminal or civil liability ... for the disclosure of a trade secret that ... is made (i) in confidence to a federal, state, or local government official ... and (ii) is made solely for the purpose of reporting or investigating a suspected violation of law').",
+    "return_of_materials": "Not fully visible in the provided excerpts of the BPG/Titan form. (A return-of-materials obligation does appear in counterparty forms such as G.I. View: 'Upon such termination or upon request ... Recipient shall forthwith return ... any information disclosed in any tangible form, and all copies'.)",
+    "injunctive_relief": "Not visible verbatim in the provided excerpts of the BPG/Titan form (text truncated before the remedies section).",
+    "governing_law": "Not visible in the provided excerpts; no governing-law clause text appears in the truncated BPG/Titan form documents.",
+    "burden_of_proof": "\"Recipient agrees that it will bear the burden of proving that any information is not Confidential Information pursuant to the exception in the preceding sentence.\" This recipient-side burden-of-proof sentence is a hallmark of the Ascential/BPG/Titan form. A parallel burden appears on consent: reproduction allowed only with consent 'which Recipient shall have the burden of proving was obtained.'"
+  },
+  "historical_accepted_ranges": {
+    "description": "Ranges actually observed in the corpus. Many documents are truncated, so several parameters could not be confirmed from the text provided.",
+    "confidentiality_term_years": {
+      "min": null,
+      "max": null,
+      "most_common": null,
+      "notes": "No explicit confidentiality term/duration was visible in the provided excerpts of the NDAs. The Lockton services agreement (not an NDA) ran from Feb 1, 2024 to July 31, 2024; the InterVision Master Agreement ran 60 months. These are commercial-agreement terms, not confidentiality survival periods."
+    },
+    "survival_after_termination": {
+      "observations": "Not determinable from the provided excerpts; survival/term sections were truncated in the BPG/Titan form documents."
+    },
+    "governing_law_states": [],
+    "non_solicit_duration_years": {
+      "observations": "No non-solicitation clause was observed in any document in the corpus."
+    },
+    "carve_outs_present": {
+      "notes": "Standard carve-outs (publicly available, previously known, subsequently public through no fault, and\u2014in some forms\u2014independently developed) are present in essentially every NDA. The BPG/Titan form uses a three-part carve-out with a recipient burden-of-proof; counterparty forms (SAP, Boston Scientific, Halozyme, G.I. View) add an independent-development and/or lawful-third-party-receipt exception."
+    }
+  },
+  "common_counterparty_patterns": [
+    {
+      "pattern": "Independent development / lawful third-party receipt added as a fourth carve-out",
+      "counterparty_language": "'is independently developed by the Receiving Party without use or reference of the Confidential Information' and 'is lawfully acquired free of restriction by the Receiving Party from a third party having the right to furnish such Confidential Information' (SAP, Boston Scientific, Halozyme, AutoStore variant).",
+      "ascential_accepted": true,
+      "notes": "Ascential's pure BPG/Titan form often omits the independent-development carve-out; counterparties routinely add it. Generally acceptable and standard, but watch that it does not eliminate the recipient burden-of-proof requirement."
+    },
+    {
+      "pattern": "Marking / identification requirement for Confidential Information",
+      "counterparty_language": "Boston Scientific: information is 'confidential only to the extent ... conspicuously marked \"Confidential\"' for written disclosures, and for oral disclosures a 'written memorandum detailing the scope and subject matter ... is prepared by the Discloser within thirty (30) days.'",
+      "ascential_accepted": true,
+      "notes": "This materially narrows protection compared to Ascential's 'broad in scope ... whether or not marked' definition. Watch for inadvertent loss of protection over unmarked/oral disclosures."
+    },
+    {
+      "pattern": "Flow-down obligations on Representatives 'at least as restrictive'",
+      "counterparty_language": "Halozyme: Representatives must 'be bound by confidentiality, non-use and non-disclosure obligations at least as restrictive as those contained in this Agreement'; SAP: 'under obligations of confidentiality substantially similar to those set forth herein.'",
+      "ascential_accepted": true,
+      "notes": "Standard and accepted. Ascential's own form uses a 'liable for all actions taken by any such person' formulation rather than a flow-down standard."
+    },
+    {
+      "pattern": "Compelled-disclosure notice and cooperation",
+      "counterparty_language": "SAP/Boston Scientific/G.I. View: receiving party uses 'reasonable efforts to give the Disclosing Party reasonable prior notice' and provides cooperation in seeking a protective order; JLG requires 'at least fourteen (14) days notice.'",
+      "ascential_accepted": true,
+      "notes": "Generally acceptable. JLG's fixed 14-day notice can be impractical where a subpoena demands faster compliance\u2014watch the carve-out for legally-required shorter periods."
+    },
+    {
+      "pattern": "One-way / acquisition-evaluation 'Evaluation Material' structure (M&A context)",
+      "counterparty_language": "Piper Sandler: BPG as recipient of 'Evaluation Material'; prohibition on disclosing 'the fact that Evaluation Material has been made available ... that discussions or negotiations are taking place,' and restrictions on contacting Company personnel.",
+      "ascential_accepted": true,
+      "notes": "Acquisition-side NDAs impose broad non-disclosure of the existence of discussions and may carry standstill/no-contact restrictions. Review for standstill obligations and limits on use of deal-team Representatives."
+    },
+    {
+      "pattern": "Reverse-engineering prohibition",
+      "counterparty_language": "SAP: 'must not reverse engineer, disassemble, decompile, or attempt to derive any underlying source code, ideas or methods from the Confidential Information.'",
+      "ascential_accepted": true,
+      "notes": "Standard for technology counterparties; acceptable."
+    }
+  ],
+  "red_flags_seen_in_real_agreements": [
+    {
+      "clause_type": "Asymmetric / one-way obligations on counterparty's paper",
+      "example_language": "JLG Industries form: 'In consideration of the disclosure of JLG Confidential Information and Trade Secrets, Recipient agrees not to disclose ... or use for itself ...' with a separate elevated 'Trade Secrets' category and 'Any such Confidential Information and Trade Secrets shall remain the property of JLG.'",
+      "why_problematic": "The JLG form is structured entirely in JLG's favour with Titan as 'Recipient' only \u2014 no reciprocal protection for Titan/Ascential information, and a perpetual trade-secret category. Where Ascential will also disclose, this should be made mutual."
+    },
+    {
+      "clause_type": "Marking-dependent definition of Confidential Information",
+      "example_language": "Boston Scientific: information is confidential 'only to the extent ... conspicuously marked \"Confidential\"' and oral disclosures require a written memorandum within 30 days.",
+      "why_problematic": "Unmarked or oral technical disclosures lose protection if the marking/memorialisation steps are missed, which is inconsistent with Ascential's broad 'whether or not marked' definition."
+    },
+    {
+      "clause_type": "Fixed short notice period for compelled disclosure",
+      "example_language": "JLG: 'Recipient shall provide JLG with at least fourteen (14) days notice ... prior to disclosing any such requested Confidential Information.'",
+      "why_problematic": "A rigid 14-day pre-disclosure notice may be impossible to honour against fast-moving subpoenas or court orders, exposing the recipient to breach even when disclosure is legally compelled."
+    },
+    {
+      "clause_type": "Recipient liability for all acts of its personnel/advisors",
+      "example_language": "BPG/Titan form: 'Recipient shall be liable for all actions taken by any such person with respect to any Confidential Information.'",
+      "why_problematic": "When Ascential is the receiving party on its own form, this makes Ascential strictly liable for its employees/advisors; acceptable when reciprocal but a risk if Ascential is predominantly the recipient."
+    }
+  ],
+  "entity_naming_observations": "Multiple distinct legal entities are used across the corpus and naming is inconsistent. The corporate / holding entity is 'BPG Holdings IV Corp.' (a Delaware corporation), expressly described in the MaxCyte NDA as 'a Delaware corporation, branded as Ascential Technologies,' with an address at 975 Spaulding Avenue, Suite C, Ada, Michigan 49301 (also seen as a Shelby Parkway, Shelby Township, MI address). The Test & Measurement operating entity is 'Titan, Inc.', a Wisconsin corporation, 1340 Grandview Parkway, Suite 200, Sturtevant, WI 53177. The medical/life-sciences entity is 'NACS, Inc.', a Minnesota corporation, 14640 Buchanan St NE, Ham Lake, MN 55304, and 'D&K Engineering, Inc.', a California corporation (San Diego addresses). Note the address inconsistency: BPG's Ada postcode appears both as 49301 and (incorrectly) as 49310 in the Piper Sandler letter. Most notably, the G.I. View agreement names the counterparty's contracting party as 'Ascential Technologies Inc.' at 14640 Buchanan Street NE, Ham Lake, MN 55304 \u2014 but that address is NACS, Inc.'s registered address, so 'Ascential Technologies Inc.' appears to be an informal/incorrect entity name layered over the NACS entity. Reviewers should confirm the correct legal entity (BPG Holdings IV Corp., Titan, Inc., NACS, Inc., or D&K Engineering, Inc.) rather than accepting the marketing brand 'Ascential Technologies' as the contracting party, since 'Ascential Technologies Inc.' does not appear to be a consistently used registered entity in the corpus."
+}

@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;0,9..144,700;1,9..144,500&family=Outfit:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="icon" type="image/png" href="/assets/ascential-ai-mark.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NDA Reviewer | Ascential Intelligence</title>
+  <style>
+    /* ── Ascential design tokens ── */
+    :root {
+      font-family: 'Outfit', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      font-weight: 400;
+
+      --sidebar-width: 300px;
+      --app-topbar-height: 80px;
+      --app-content-padding-x: 20px;
+      --app-card-padding-x: 20px;
+
+      color-scheme: light;
+      color: #1a1a1a;
+      background-color: #f7f6fa;
+
+      --color-bg: #f7f6fa;
+      --color-bg-elevated: #ffffff;
+      --color-bg-subtle: #fafafa;
+      --color-text: #1a1a1a;
+      --color-text-muted: #374151;
+      --color-border: #e5e7eb;
+      --color-border-hover: #d1d5db;
+      --color-dropzone-bg: #f3f0fd;
+      --color-dropzone-bg-hover: #ede9fe;
+      --color-accent: #6B46C1;
+      --color-accent-hover: #7C3AED;
+      --color-accent-subtle: rgba(107, 70, 193, 0.08);
+      --color-accent-glow: rgba(107, 70, 193, 0.12);
+      --color-error-bg: #fef2f2;
+      --color-error-border: #fecaca;
+      --color-error-text: #b91c1c;
+      --color-success-text: #16a34a;
+
+      /* RAG severity colors — semantic, not design tokens */
+      --red-ink:      #b91c1c;
+      --amber-ink:    #92400e;
+      --green-ink:    #166534;
+      --red-bg:       #fef2f2;
+      --amber-bg:     #fffbeb;
+      --green-bg:     #f0fdf4;
+      --red-bar:      #ef4444;
+      --amber-bar:    #f59e0b;
+      --green-bar:    #22c55e;
+      --red-border:   #fecaca;
+      --amber-border: #fde68a;
+      --green-border: #bbf7d0;
+
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    [data-theme='dark'] {
+      color-scheme: dark;
+      color: #e5e7eb;
+      background-color: #111827;
+
+      --color-bg: #111827;
+      --color-bg-elevated: #1f2937;
+      --color-bg-subtle: #374151;
+      --color-text: #f9fafb;
+      --color-text-muted: #9ca3af;
+      --color-border: #374151;
+      --color-border-hover: #4b5563;
+      --color-dropzone-bg: rgba(107, 70, 193, 0.18);
+      --color-dropzone-bg-hover: rgba(107, 70, 193, 0.25);
+      --color-accent: #a78bfa;
+      --color-accent-hover: #c4b5fd;
+      --color-accent-subtle: rgba(167, 139, 250, 0.12);
+      --color-accent-glow: rgba(167, 139, 250, 0.18);
+      --color-error-bg: rgba(220, 38, 38, 0.12);
+      --color-error-border: rgba(220, 38, 38, 0.3);
+      --color-error-text: #fca5a5;
+      --color-success-text: #4ade80;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-width: 320px;
+      min-height: 100vh;
+    }
+
+    body {
+      font-family: 'Outfit', Inter, system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+    }
+
+    /* ── App content wrapper (platform mounts app inside route outlet) ── */
+    .app-content {
+      background: var(--color-bg);
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.75rem 1.5rem 5rem;
+    }
+
+    /* ── Upload card ── */
+    .upload-card {
+      background: var(--color-bg-elevated);
+      border: 2px dashed var(--color-border-hover);
+      border-radius: 18px;
+      padding: 3.75rem 2.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.22s, background 0.22s, transform 0.22s, box-shadow 0.22s;
+    }
+    .upload-card:hover, .upload-card.drag-over {
+      border-color: var(--color-accent);
+      background: var(--color-dropzone-bg-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px var(--color-accent-glow);
+    }
+    .upload-card input[type=file] { display: none; }
+
+    .upload-icon-wrap {
+      width: 76px;
+      height: 76px;
+      background: linear-gradient(145deg, var(--color-bg), var(--color-bg-subtle));
+      border-radius: 50%;
+      border: 1.5px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2.1rem;
+    }
+    .upload-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 650;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.3px;
+    }
+    .upload-sub {
+      color: var(--color-text-muted);
+      font-size: 0.9rem;
+    }
+    .browse {
+      color: var(--color-accent);
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .upload-meta {
+      display: inline-block;
+      margin-top: 0.85rem;
+      font-size: 0.72rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--color-text-muted);
+      background: var(--color-bg);
+      padding: 0.2rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Options row ── */
+    .options-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.35rem;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.6rem;
+      border: none;
+      border-radius: 9px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.1px;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-accent) 0%, #9333EA 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--color-accent-glow);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--color-accent-hover) 0%, #A855F7 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(107, 70, 193, 0.5);
+    }
+    .btn-secondary {
+      background: var(--color-bg-elevated);
+      color: var(--color-text-muted);
+      border: 1.5px solid var(--color-border-hover);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--color-text-muted);
+      background: var(--color-bg);
+    }
+
+    /* ── Status bar ── */
+    #status-bar {
+      margin-top: 1.25rem;
+      min-height: 2rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+    }
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2.5px solid var(--color-border);
+      border-top-color: var(--color-accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.45rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Results ── */
+    #results { margin-top: 2.5rem; display: none; animation: fadeUp 0.35s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.35rem;
+      border-bottom: 1px solid var(--color-border);
+      flex-wrap: wrap;
+    }
+    .result-meta h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.35rem;
+      font-weight: 650;
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+      margin-bottom: 0.3rem;
+    }
+    .result-meta .filename {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.76rem;
+      color: var(--color-text-muted);
+    }
+
+    .overall-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.55rem 1.3rem 0.6rem;
+      border-radius: 10px;
+      flex-shrink: 0;
+      gap: 1px;
+    }
+    .ov-label {
+      font-size: 0.58rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+      opacity: 0.65;
+      font-family: 'Outfit', sans-serif;
+    }
+    .ov-value {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      line-height: 1.1;
+    }
+    .badge-Red   { background: var(--red-bg);   color: var(--red-ink);   border: 1.5px solid var(--red-border); }
+    .badge-Amber { background: var(--amber-bg); color: var(--amber-ink); border: 1.5px solid var(--amber-border); }
+    .badge-Green { background: var(--green-bg); color: var(--green-ink); border: 1.5px solid var(--green-border); }
+
+    /* ── Group headings ── */
+    .group-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin: 1.85rem 0 0.9rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+      color: var(--color-text-muted);
+      font-family: 'Outfit', sans-serif;
+    }
+    .group-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+
+    /* ── Finding cards ── */
+    .finding {
+      background: var(--color-bg-elevated);
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      margin-bottom: 0.9rem;
+      display: flex;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .finding:hover {
+      box-shadow: 0 5px 20px rgba(0,0,0,0.09);
+      transform: translateY(-1px);
+    }
+    .finding-bar { width: 5px; flex-shrink: 0; }
+    .finding.Red   .finding-bar { background: var(--red-bar); }
+    .finding.Amber .finding-bar { background: var(--amber-bar); }
+    .finding.Green .finding-bar { background: var(--green-bar); }
+    .finding-body { padding: 1.15rem 1.4rem; flex: 1; min-width: 0; }
+
+    .finding-top {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.55rem;
+    }
+    .rag-pill {
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.2px;
+      flex-shrink: 0;
+    }
+    .rag-pill.Red   { background: var(--red-bg);   color: var(--red-ink);   border: 1px solid var(--red-border); }
+    .rag-pill.Amber { background: var(--amber-bg); color: var(--amber-ink); border: 1px solid var(--amber-border); }
+    .rag-pill.Green { background: var(--green-bg); color: var(--green-ink); border: 1px solid var(--green-border); }
+
+    .finding-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 650;
+      font-size: 0.97rem;
+      color: var(--color-text);
+      letter-spacing: -0.1px;
+    }
+    .finding-summary {
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 0.45rem;
+      line-height: 1.6;
+    }
+    .finding-risk {
+      color: var(--color-text-muted);
+      font-size: 0.82rem;
+      margin-bottom: 0.65rem;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    /* ── Redline block ── */
+    .redline-block {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: 9px;
+      padding: 0.8rem 1rem;
+      margin-top: 0.5rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.77rem;
+      line-height: 1.7;
+    }
+    .redline-block .label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+      color: var(--color-text-muted);
+      margin-bottom: 0.2rem;
+      display: block;
+    }
+    .redline-block .original {
+      color: var(--color-error-text);
+      text-decoration: line-through;
+      text-decoration-color: rgba(185,28,28,0.4);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+    .redline-block .replacement {
+      color: var(--color-success-text);
+      display: block;
+    }
+
+    /* ── Inline editing ── */
+    .edit-icon-btn {
+      background: none;
+      border: 1px solid var(--color-border-hover);
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      font-size: 0.7rem;
+      padding: 0.09rem 0.32rem;
+      margin-left: 0.45rem;
+      vertical-align: middle;
+      line-height: 1;
+      transition: color 0.12s, border-color 0.12s, background 0.12s;
+      font-family: 'Outfit', sans-serif;
+    }
+    .edit-icon-btn:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      background: var(--color-accent-subtle);
+    }
+
+    .inline-editor {
+      width: 100%;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.77rem;
+      line-height: 1.7;
+      border: 2px solid var(--color-accent);
+      border-radius: 6px;
+      padding: 0.45rem 0.65rem;
+      resize: vertical;
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-accent-glow);
+      margin-top: 0.2rem;
+      background: var(--color-bg-elevated);
+      color: var(--color-text);
+    }
+    .inline-editor.edit-replacement { color: var(--color-success-text); background: var(--color-bg-elevated); }
+    .inline-editor.edit-tp          { color: var(--color-accent-hover); background: var(--color-dropzone-bg); font-family: 'Outfit', sans-serif; font-size: 0.82rem; }
+
+    .edit-actions {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+    }
+    .btn-xs {
+      padding: 0.25rem 0.65rem;
+      font-size: 0.74rem;
+      border-radius: 5px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.12s, background 0.12s;
+      font-family: 'Outfit', sans-serif;
+    }
+    .btn-xs:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-xs-save   { background: var(--color-accent); color: #fff; }
+    .btn-xs-save:hover:not(:disabled)   { background: var(--color-accent-hover); }
+    .btn-xs-cancel { background: var(--color-bg-subtle); color: var(--color-text-muted); }
+    .btn-xs-cancel:hover:not(:disabled) { background: var(--color-border); }
+
+    .save-flash {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-success-text);
+      margin-left: 0.4rem;
+      animation: fadeout 1.5s forwards;
+      font-family: 'Outfit', sans-serif;
+    }
+    @keyframes fadeout {
+      0%, 60% { opacity: 1; }
+      100%     { opacity: 0; }
+    }
+
+    /* ── Talking points ── */
+    .tp-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.7rem;
+      font-size: 0.77rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+      transition: color 0.15s;
+    }
+    .tp-toggle:hover { color: var(--color-accent-hover); }
+    .tp-body {
+      display: none;
+      margin-top: 0.55rem;
+      background: var(--color-dropzone-bg);
+      border: 1px solid var(--color-accent-glow);
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: var(--color-accent-hover);
+      white-space: pre-wrap;
+      font-family: 'Outfit', sans-serif;
+    }
+    .tp-body.open { display: block; }
+
+    /* ── Downloads ── */
+    .actions {
+      margin-top: 2.25rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--color-border);
+    }
+    .actions-label {
+      font-size: 0.66rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+      color: var(--color-text-muted);
+      margin-bottom: 1rem;
+      font-family: 'Outfit', sans-serif;
+    }
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 620px) { .dl-grid { grid-template-columns: 1fr; } }
+
+    .dl-card {
+      background: var(--color-bg-elevated);
+      border: 1.5px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.1rem 1.15rem 1rem;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+      text-align: left;
+      font-family: 'Outfit', sans-serif;
+    }
+    .dl-card:hover:not(:disabled) {
+      box-shadow: 0 6px 22px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+      border-color: var(--color-border-hover);
+    }
+    .dl-card:disabled { opacity: 0.45; cursor: not-allowed; }
+    .dl-card.report      { border-top: 3px solid var(--red-bar); }
+    .dl-card.negotiation { border-top: 3px solid var(--color-accent); }
+    .dl-card.clean       { border-top: 3px solid var(--green-bar); }
+
+    .dl-icon { font-size: 1.4rem; margin-bottom: 0.15rem; }
+    .dl-name {
+      font-family: 'Fraunces', serif;
+      font-weight: 650;
+      font-size: 0.95rem;
+      color: var(--color-text);
+      display: block;
+    }
+    .dl-desc {
+      font-size: 0.74rem;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+      display: block;
+    }
+    .dl-action {
+      margin-top: 0.55rem;
+      font-size: 0.77rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .dl-spinner {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 2px solid var(--color-border);
+      border-top-color: var(--color-text);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-content">
+<main>
+
+  <!-- Upload area -->
+  <div class="upload-card" id="drop-zone">
+    <input type="file" id="file-input" accept=".pdf,.docx" />
+    <div class="upload-icon-wrap">📄</div>
+    <div class="upload-title">Drop your NDA here</div>
+    <p class="upload-sub">or <span class="browse" id="browse-link">browse to upload</span></p>
+    <span class="upload-meta">PDF · DOCX · max 20 MB</span>
+  </div>
+
+  <div class="options-row">
+    <button class="btn btn-primary" id="analyse-btn" disabled>Analyse NDA</button>
+  </div>
+
+  <div id="status-bar"></div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="result-header">
+      <div class="result-meta">
+        <h2 id="res-title">Review complete</h2>
+        <div class="filename" id="res-filename"></div>
+      </div>
+      <div class="overall-badge" id="overall-badge"></div>
+    </div>
+
+    <div id="findings-list"></div>
+
+    <div class="actions">
+      <div class="actions-label">Download reports</div>
+      <div class="dl-grid">
+        <button class="dl-card report" id="download-report-btn">
+          <div class="dl-icon">📋</div>
+          <span class="dl-name">Issues Report</span>
+          <span class="dl-desc">Red &amp; amber findings with redlines, sorted by contract position</span>
+          <div class="dl-action">↓ Download DOCX</div>
+        </button>
+        <button class="dl-card negotiation" id="download-negotiation-btn">
+          <div class="dl-icon">💬</div>
+          <span class="dl-name">Negotiation Pack</span>
+          <span class="dl-desc">Redlines + talking points for BD and project managers</span>
+          <div class="dl-action">↓ Download DOCX</div>
+        </button>
+        <button class="dl-card clean" id="download-clean-btn">
+          <div class="dl-icon">✅</div>
+          <span class="dl-name">Clean Copy</span>
+          <span class="dl-desc">Full NDA with all Ascential changes applied, ready to send</span>
+          <div class="dl-action">↓ Download DOCX</div>
+        </button>
+      </div>
+      <button class="btn btn-secondary" id="new-btn">↩ Review another NDA</button>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+const API = '/api';
+let selectedFile    = null;
+let currentReviewId = null;
+
+const dropZone            = document.getElementById('drop-zone');
+const fileInput           = document.getElementById('file-input');
+const browseLink          = document.getElementById('browse-link');
+const analyseBtn          = document.getElementById('analyse-btn');
+const statusBar           = document.getElementById('status-bar');
+const resultsEl           = document.getElementById('results');
+const findingsList        = document.getElementById('findings-list');
+const overallBadge        = document.getElementById('overall-badge');
+const resFilename         = document.getElementById('res-filename');
+const downloadReportBtn      = document.getElementById('download-report-btn');
+const downloadNegotiationBtn = document.getElementById('download-negotiation-btn');
+const downloadCleanBtn       = document.getElementById('download-clean-btn');
+const newBtn                 = document.getElementById('new-btn');
+
+browseLink.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) selectFile(fileInput.files[0]); });
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) selectFile(e.dataTransfer.files[0]);
+});
+
+function selectFile(file) {
+  selectedFile = file;
+  dropZone.querySelector('.upload-title').textContent = file.name;
+  dropZone.querySelector('.upload-sub').textContent   = (file.size / 1024).toFixed(0) + ' KB';
+  analyseBtn.disabled = false;
+  setStatus('');
+}
+
+analyseBtn.addEventListener('click', runAnalysis);
+
+async function runAnalysis() {
+  if (!selectedFile) return;
+  analyseBtn.disabled = true;
+  resultsEl.style.display = 'none';
+  setStatus('<span class="spinner"></span> Uploading…');
+
+  const form = new FormData();
+  form.append('file', selectedFile);
+  let uploadRes;
+  try {
+    const r = await fetch(`${API}/upload`, { method: 'POST', body: form });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.detail || r.statusText); }
+    uploadRes = await r.json();
+  } catch (err) {
+    setStatus('Upload failed: ' + err.message);
+    analyseBtn.disabled = false;
+    return;
+  }
+
+  setStatus('<span class="spinner"></span> Analysing clauses with Claude Opus — this takes 30–60 seconds…');
+
+  let reviewRes;
+  try {
+    const r = await fetch(`${API}/review`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ document_id: uploadRes.document_id }),
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.detail || r.statusText); }
+    reviewRes = await r.json();
+  } catch (err) {
+    setStatus('Analysis failed: ' + err.message);
+    analyseBtn.disabled = false;
+    return;
+  }
+
+  setStatus('');
+  currentReviewId = reviewRes.id;
+  renderResults(reviewRes);
+}
+
+function renderResults(review) {
+  resFilename.textContent = review.filename;
+  overallBadge.innerHTML  = `<span class="ov-label">Overall Risk</span><span class="ov-value">${escHtml(review.overall_risk)}</span>`;
+  overallBadge.className  = 'overall-badge badge-' + review.overall_risk;
+
+  const order  = { Red: 0, Amber: 1, Green: 2 };
+  const sorted = [...review.findings].sort((a, b) => (order[a.rag_rating] ?? 3) - (order[b.rag_rating] ?? 3));
+
+  findingsList.innerHTML = '';
+  let lastRating = null;
+
+  for (const f of sorted) {
+    if (f.rag_rating !== lastRating) {
+      const gh = document.createElement('div');
+      gh.className = 'group-heading';
+      gh.innerHTML = {
+        Red:   '<span style="color:var(--red-bar)">●</span> Red — Must resolve',
+        Amber: '<span style="color:var(--amber-bar)">●</span> Amber — Push back if possible',
+        Green: '<span style="color:var(--green-bar)">●</span> Green — Acceptable as written',
+      }[f.rag_rating] || escHtml(f.rag_rating);
+      findingsList.appendChild(gh);
+      lastRating = f.rag_rating;
+    }
+
+    const el = document.createElement('div');
+    el.className = 'finding ' + f.rag_rating;
+    const tpId = 'tp-' + Math.random().toString(36).slice(2);
+
+    el.innerHTML = `
+      <div class="finding-bar"></div>
+      <div class="finding-body">
+        <div class="finding-top">
+          <span class="rag-pill ${f.rag_rating}">${escHtml(f.rag_rating)}</span>
+          <span class="finding-title">${escHtml(f.clause_type)}</span>
+        </div>
+        <div class="finding-summary">${escHtml(f.plain_english_summary)}</div>
+        <div class="finding-risk">${escHtml(f.risk_reason)}</div>
+        ${f.suggested_redline ? `
+        <div class="redline-block">
+          <span class="label">Remove</span>
+          <span class="original js-original">${escHtml(f.suggested_redline)}</span>
+          <span class="label">Replace with</span>
+          <span class="replacement js-replacement">${escHtml(f.replacement_language)}</span>
+        </div>` : ''}
+        ${f.talking_points && f.rag_rating !== 'Green' ? `
+        <button class="tp-toggle" onclick="(function(btn){var el=document.getElementById('${tpId}');el.classList.toggle('open');btn.textContent=el.classList.contains('open')?'▲ Hide talking points':'💬 Talking points';})(this)">
+          💬 Talking points
+        </button>
+        <div class="tp-body js-tp" id="${tpId}">${escHtml(f.talking_points)}</div>` : ''}
+      </div>
+    `;
+    findingsList.appendChild(el);
+
+    const replEl = el.querySelector('.js-replacement');
+    const tpEl   = el.querySelector('.js-tp');
+    if (replEl) addEditButton(replEl, f.id, 'replacement_language', 'edit-replacement');
+    if (tpEl)   addEditButton(tpEl,   f.id, 'talking_points',       'edit-tp');
+  }
+
+  resultsEl.style.display = 'block';
+  resultsEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Download handlers ──────────────────────────────────────────────────────
+
+downloadReportBtn.addEventListener('click', () => {
+  if (!currentReviewId) return;
+  window.location.href = `${API}/download/${currentReviewId}/report`;
+});
+
+downloadNegotiationBtn.addEventListener('click', () => {
+  if (!currentReviewId) return;
+  window.location.href = `${API}/download/${currentReviewId}/negotiation`;
+});
+
+downloadCleanBtn.addEventListener('click', async () => {
+  if (!currentReviewId) return;
+  const origHtml = downloadCleanBtn.innerHTML;
+  downloadCleanBtn.disabled = true;
+  downloadCleanBtn.innerHTML = `
+    <div class="dl-icon"><span class="dl-spinner"></span></div>
+    <span class="dl-name">Clean Copy</span>
+    <span class="dl-desc">Generating — please wait…</span>
+  `;
+  try {
+    const r = await fetch(`${API}/download/${currentReviewId}/clean`);
+    if (!r.ok) { const e = await r.json(); throw new Error(e.detail || r.statusText); }
+    const blob = await r.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    const cd   = r.headers.get('Content-Disposition') || '';
+    const m    = cd.match(/filename="([^"]+)"/);
+    a.download = m ? m[1] : 'clean_nda.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert('Clean copy generation failed: ' + err.message);
+  } finally {
+    downloadCleanBtn.disabled = false;
+    downloadCleanBtn.innerHTML = origHtml;
+  }
+});
+
+newBtn.addEventListener('click', () => {
+  selectedFile    = null;
+  currentReviewId = null;
+  fileInput.value = '';
+  dropZone.querySelector('.upload-title').textContent = 'Drop your NDA here';
+  dropZone.querySelector('.upload-sub').innerHTML = 'or <span class="browse" id="browse-link">browse to upload</span>';
+  document.getElementById('browse-link').addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+  analyseBtn.disabled = true;
+  resultsEl.style.display = 'none';
+  setStatus('');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function setStatus(html) { statusBar.innerHTML = html; }
+function escHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── Inline editing ─────────────────────────────────────────────────────────
+
+function addEditButton(displayEl, findingId, field, editorClass) {
+  const btn = document.createElement('button');
+  btn.className   = 'edit-icon-btn';
+  btn.title       = 'Edit this suggestion';
+  btn.textContent = '✎ Edit';
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    startInlineEdit(displayEl, findingId, field, editorClass);
+  });
+  displayEl.insertAdjacentElement('afterend', btn);
+}
+
+function startInlineEdit(displayEl, findingId, field, editorClass) {
+  if (displayEl._editing) return;
+  displayEl._editing = true;
+
+  const original = displayEl.textContent;
+
+  const ta = document.createElement('textarea');
+  ta.className = 'inline-editor ' + editorClass;
+  ta.value     = original;
+  ta.rows      = Math.max(2, Math.ceil(original.length / 60) + 1);
+
+  const saveBtn   = document.createElement('button');
+  saveBtn.className   = 'btn-xs btn-xs-save';
+  saveBtn.textContent = '✓ Save';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className   = 'btn-xs btn-xs-cancel';
+  cancelBtn.textContent = '✕ Cancel';
+
+  const actions = document.createElement('div');
+  actions.className = 'edit-actions';
+  actions.append(saveBtn, cancelBtn);
+
+  displayEl.style.display = 'none';
+  displayEl.insertAdjacentElement('afterend', actions);
+  displayEl.insertAdjacentElement('afterend', ta);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = ta.value.length;
+
+  const close = restoreText => {
+    ta.remove();
+    actions.remove();
+    if (restoreText !== undefined) displayEl.textContent = restoreText;
+    displayEl.style.display = '';
+    delete displayEl._editing;
+  };
+
+  cancelBtn.addEventListener('click', () => close(original));
+
+  saveBtn.addEventListener('click', async () => {
+    const newVal = ta.value;
+    saveBtn.disabled   = true;
+    cancelBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    try {
+      const r = await fetch(`${API}/finding/${findingId}`, {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ [field]: newVal }),
+      });
+      if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).detail) || r.statusText);
+      close(newVal);
+      const flash = document.createElement('span');
+      flash.className   = 'save-flash';
+      flash.textContent = ' ✓ Saved';
+      displayEl.insertAdjacentElement('afterend', flash);
+      setTimeout(() => flash.remove(), 1600);
+    } catch (err) {
+      saveBtn.disabled   = false;
+      cancelBtn.disabled = false;
+      saveBtn.textContent = '✓ Save';
+      ta.style.borderColor = '#ef4444';
+      ta.title = 'Save failed: ' + err.message;
+    }
+  });
+
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Escape')             { close(original);   e.preventDefault(); }
+    if (e.key === 'Enter' && e.ctrlKey) { saveBtn.click();   e.preventDefault(); }
+  });
+}
+</script>
+</body>
+</html>

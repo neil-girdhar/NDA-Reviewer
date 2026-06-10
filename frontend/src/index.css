@@ -1,0 +1,83 @@
+:root {
+  font-family: 'Outfit', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  --sidebar-width: 300px;
+  --app-topbar-height: 80px;
+  --app-content-padding-x: 20px;
+  --app-card-padding-x: 20px;
+
+  color-scheme: light;
+  color: #1a1a1a;
+  background-color: #f7f6fa;
+
+  --color-bg: #f7f6fa;
+  --color-bg-elevated: #ffffff;
+  --color-bg-subtle: #fafafa;
+  --color-text: #1a1a1a;
+  --color-text-muted: #374151;
+  --color-border: #e5e7eb;
+  --color-border-hover: #d1d5db;
+  --color-dropzone-bg: #f3f0fd;
+  --color-dropzone-bg-hover: #ede9fe;
+  --color-accent: #6B46C1;
+  --color-accent-hover: #7C3AED;
+  --color-accent-subtle: rgba(107, 70, 193, 0.08);
+  --color-accent-glow: rgba(107, 70, 193, 0.12);
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fecaca;
+  --color-error-text: #b91c1c;
+  --color-success-text: #16a34a;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  color: #e5e7eb;
+  background-color: #111827;
+
+  --color-bg: #111827;
+  --color-bg-elevated: #1f2937;
+  --color-bg-subtle: #374151;
+  --color-text: #f9fafb;
+  --color-text-muted: #9ca3af;
+  --color-border: #374151;
+  --color-border-hover: #4b5563;
+  --color-dropzone-bg: rgba(107, 70, 193, 0.18);
+  --color-dropzone-bg-hover: rgba(107, 70, 193, 0.25);
+  --color-accent: #a78bfa;
+  --color-accent-hover: #c4b5fd;
+  --color-accent-subtle: rgba(167, 139, 250, 0.12);
+  --color-accent-glow: rgba(167, 139, 250, 0.18);
+  --color-error-bg: rgba(220, 38, 38, 0.12);
+  --color-error-border: rgba(220, 38, 38, 0.3);
+  --color-error-text: #fca5a5;
+  --color-success-text: #4ade80;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Outfit', Inter, system-ui, sans-serif;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+}

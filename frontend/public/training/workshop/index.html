@@ -1,0 +1,2507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Getting Started with AI — Workshop Presentation</title>
+<meta name="description" content="Ascential Technologies AI Training Workshop. 45-minute interactive session for all departments.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS Custom Properties — Ascential Brand
+   ============================================================ */
+:root {
+  --purple: #5522DD;
+  --purple-light: #7B52E8;
+  --purple-dark: #3D18A8;
+  --purple-glow: rgba(85, 34, 221, 0.25);
+  --orange: #DD7722;
+  --green: #4E801F;
+  --yellow: #E1CD00;
+  --gray: #555555;
+  --black: #000000;
+  --white: #ffffff;
+  --off-white: #f8f9fa;
+  --dark-bg: #0a0a18;
+  --dark-card: #161630;
+  --slide-padding: 4rem 5rem;
+  --border-radius: 8px;
+}
+
+/* ============================================================
+   Reset / Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Inter Tight", Arial, sans-serif;
+  font-weight: 300;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: #1a1a2e;
+  background: var(--dark-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 { font-weight: 700; font-size: 3rem; line-height: 1.15; margin-bottom: 0.5rem; }
+h2 { font-weight: 700; font-size: 2.25rem; line-height: 1.2; margin-bottom: 1rem; }
+h3 { font-weight: 700; font-size: 1.5rem; line-height: 1.3; margin-bottom: 0.75rem; }
+h4 { font-weight: 700; font-size: 1.15rem; margin-bottom: 0.5rem; }
+
+a { color: var(--purple-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+strong { font-weight: 700; }
+
+/* ============================================================
+   Slide Layout
+   ============================================================ */
+.slide {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--slide-padding);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide--dark {
+  background: var(--dark-bg);
+  color: var(--white);
+}
+
+.slide--light {
+  background: var(--white);
+  color: #1a1a2e;
+}
+
+.slide--light-alt {
+  background: linear-gradient(160deg, #f8f7ff 0%, #f0eef9 40%, #e8e4f4 100%);
+  color: #1a1a2e;
+}
+.slide--light-alt .slide__number { color: #1a1a2e; }
+
+.slide--purple {
+  background: linear-gradient(135deg, #1a0a40 0%, var(--purple-dark) 50%, #1a0a40 100%);
+  color: var(--white);
+}
+
+.slide__number {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 2rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  opacity: 0.4;
+}
+
+.slide--light .slide__number { color: #1a1a2e; }
+.slide--dark .slide__number, .slide--purple .slide__number { color: var(--white); }
+
+/* Fade-in animation */
+.slide__inner {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  width: 100%;
+  max-width: min(960px, 100%);
+  margin: 0 auto;
+}
+
+@media (min-width: 1600px) {
+  .slide__inner { max-width: 1100px; }
+}
+
+.slide.is-visible .slide__inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Progress Dots (right edge)
+   ============================================================ */
+.progress {
+  position: fixed;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 100;
+}
+
+.progress__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.4);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 0;
+}
+
+.progress__dot:hover {
+  border-color: var(--purple-light);
+  background: rgba(123, 82, 232, 0.3);
+}
+
+.progress__dot--active {
+  background: var(--purple);
+  border-color: var(--purple);
+  transform: scale(1.3);
+}
+
+/* Slide counter */
+.slide-counter {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  z-index: 100;
+  pointer-events: none;
+  transition: color 0.3s;
+}
+
+.slide-counter--light {
+  color: rgba(0,0,0,0.3);
+}
+
+/* ============================================================
+   Title Slide
+   ============================================================ */
+.title-slide {
+  background: var(--black);
+  position: relative;
+  text-align: left;
+}
+
+.title-slide__gradient {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(160deg, var(--purple) 0%, var(--purple-dark) 40%, transparent 70%);
+  clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
+  opacity: 0.7;
+}
+
+.title-slide__watermark {
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+  opacity: 0.08;
+}
+
+.title-slide__content {
+  position: relative;
+  z-index: 2;
+}
+
+.title-slide__logo {
+  margin-bottom: 2rem;
+}
+
+.brand-logo {
+  display: block;
+  width: min(420px, 55vw);
+  height: auto;
+}
+
+.title-slide h1 {
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  color: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.title-slide__subtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--purple-light);
+  margin-bottom: 2.5rem;
+}
+
+.title-slide__meta {
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.8;
+  margin-top: 0.5rem;
+}
+
+.title-slide__meta-name {
+  font-weight: 700;
+  color: var(--white);
+  font-size: 1.25rem;
+}
+
+.title-slide__meta-date {
+  font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  font-size: 1rem;
+}
+
+.title-slide__accent-line {
+  width: 80px;
+  height: 3px;
+  background: var(--orange);
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================================
+   Agenda Timeline
+   ============================================================ */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.55rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  background: rgba(255,255,255,0.15);
+}
+
+.timeline__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 0.75rem 0;
+  position: relative;
+}
+
+.timeline__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.35rem;
+  position: absolute;
+  left: -1.7rem;
+}
+
+.timeline__text {
+  flex: 1;
+}
+
+.timeline__label {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.timeline__time {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+.timeline__desc {
+  font-size: 0.95rem;
+  opacity: 0.7;
+  font-weight: 300;
+}
+
+/* ============================================================
+   Card Grid
+   ============================================================ */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.slide--light .card, .slide--light-alt .card {
+  background: var(--off-white);
+}
+
+.slide--dark .card, .slide--purple .card {
+  background: var(--dark-card);
+  border-color: rgba(255,255,255,0.08);
+}
+
+.card--green { border-left: 4px solid var(--green); }
+.card--red { border-left: 4px solid #c0392b; }
+.card--purple { border-left: 4px solid var(--purple); }
+.card--orange { border-left: 4px solid var(--orange); }
+
+.card__title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.card--green .card__title { color: var(--green); }
+.card--red .card__title { color: #c0392b; }
+
+.card__list {
+  list-style: none;
+  padding: 0;
+}
+
+.card__list li {
+  padding: 0.3rem 0;
+  font-size: 1.05rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.card__list li::before {
+  position: absolute;
+  left: 0;
+  font-size: 1rem;
+}
+
+.card--green .card__list li::before { content: "\2713"; color: var(--green); }
+.card--red .card__list li::before { content: "\2717"; color: #c0392b; }
+
+/* ============================================================
+   SVG Flow Diagram
+   ============================================================ */
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.flow-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 1.5rem;
+  border: 2px solid var(--purple);
+  border-radius: var(--border-radius);
+  background: rgba(85, 34, 221, 0.06);
+  min-width: 140px;
+  text-align: center;
+}
+
+.slide--dark .flow-box {
+  background: var(--dark-card);
+  border-color: var(--purple-light);
+}
+
+.flow-box__icon {
+  font-size: 1.8rem;
+}
+
+.flow-box__label {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.flow-box__desc {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  font-weight: 300;
+}
+
+.flow-arrow {
+  font-size: 1.5rem;
+  padding: 0 0.75rem;
+  color: var(--purple-light);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Building Blocks Diagram
+   ============================================================ */
+.blocks-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.block-card {
+  padding: 1.25rem 1rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  border-top: 4px solid;
+}
+
+.slide--light .block-card, .slide--light-alt .block-card {
+  background: var(--off-white);
+}
+
+.block-card--role { border-top-color: var(--purple); }
+.block-card--task { border-top-color: var(--orange); }
+.block-card--context { border-top-color: var(--green); }
+.block-card--format { border-top-color: var(--yellow); }
+.block-card--constraints { border-top-color: var(--gray); }
+
+.block-card__icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.block-card__name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+.block-card--role .block-card__name { color: var(--purple); }
+.block-card--task .block-card__name { color: var(--orange); }
+.block-card--context .block-card__name { color: var(--green); }
+.block-card--format .block-card__name { color: #b5a300; }
+.block-card--constraints .block-card__name { color: var(--gray); }
+
+.block-card__desc {
+  font-size: 0.9rem;
+  font-weight: 300;
+  opacity: 0.75;
+}
+
+/* ============================================================
+   Comparison (Before / After)
+   ============================================================ */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.comparison__col {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--border-radius);
+  background: var(--off-white);
+}
+
+.comparison__col--before {
+  border-left: 4px solid var(--orange);
+}
+
+.comparison__col--after {
+  border-left: 4px solid var(--green);
+}
+
+.comparison__label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.comparison__label--before { color: var(--orange); }
+.comparison__label--after { color: var(--green); }
+
+.comparison__col p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.comparison__col .block-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--white);
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+.block-label--role { background: var(--purple); }
+.block-label--task { background: var(--orange); }
+.block-label--context { background: var(--green); }
+.block-label--format { background: #b5a300; }
+.block-label--constraints { background: var(--gray); }
+
+/* Inline background highlights — color-code text by building block */
+.block-hl { padding: 1px 4px; border-radius: 3px; font-weight: 400; }
+.block-hl--role { background: rgba(85,34,221,0.12); }
+.block-hl--task { background: rgba(221,119,34,0.12); }
+.block-hl--context { background: rgba(78,128,31,0.12); }
+.block-hl--format { background: rgba(181,163,0,0.12); }
+.block-hl--constraints { background: rgba(85,85,85,0.12); }
+
+/* ============================================================
+   Prompt Cards (copyable)
+   ============================================================ */
+.prompt-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.prompt-card {
+  background: var(--off-white);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  position: relative;
+}
+
+.prompt-card__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.prompt-card__title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.prompt-card__text {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: #444;
+  line-height: 1.5;
+  font-style: italic;
+  margin-bottom: 0.75rem;
+}
+
+.prompt-card__copy {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--purple);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.prompt-card__copy:hover {
+  background: var(--purple-light);
+}
+
+/* Full-width variant for 5th card */
+.prompt-cards .prompt-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* ============================================================
+   Two-Column Layout
+   ============================================================ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+/* ============================================================
+   Blockquote + Copy
+   ============================================================ */
+blockquote {
+  border-left: 4px solid var(--purple);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  background: rgba(85, 34, 221, 0.05);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  position: relative;
+  font-style: italic;
+  font-weight: 300;
+}
+
+.slide--dark blockquote, .slide--purple blockquote {
+  background: rgba(85, 34, 221, 0.15);
+  border-left-color: var(--purple-light);
+}
+
+blockquote p { margin: 0; }
+
+.blockquote-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--purple);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+blockquote:hover .blockquote-copy { opacity: 1; }
+.blockquote-copy:hover { background: var(--purple-light); }
+
+/* ============================================================
+   Prompt Builder (ported from standalone)
+   ============================================================ */
+.prompt-builder label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+.prompt-builder input[type="text"],
+.prompt-builder textarea {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 300;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+  background: var(--white);
+  color: #1a1a2e;
+  transition: border-color 0.2s;
+}
+
+.prompt-builder input:focus,
+.prompt-builder textarea:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 2px var(--purple-glow);
+}
+
+.prompt-builder__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.prompt-builder__fields label:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.prompt-builder__output {
+  margin-top: 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.prompt-builder__output-label {
+  background: var(--purple);
+  color: var(--white);
+  padding: 0.4rem 0.75rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.prompt-builder__preview {
+  padding: 0.75rem;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f5f5f5;
+  color: #1a1a2e;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+/* Two-column hands-on layout */
+.hands-on-columns {
+  display: grid;
+  grid-template-columns: 55% 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.hands-on-columns .prompt-builder__output { margin-top: 0.5rem; }
+#slide-9 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+.hands-on-columns .prompt-builder__preview { max-height: 120px; }
+.hands-on-columns .prompt-builder__fields { gap: 0.5rem; }
+.hands-on-columns .prompt-builder label { margin-bottom: 0.5rem; font-size: 0.85rem; }
+.hands-on-columns .prompt-builder input { padding: 0.4rem 0.6rem; font-size: 0.9rem; }
+.hands-on-right h3 { margin-top: 0; border-top: none; padding-top: 0; font-size: 1.05rem; }
+.hands-on-right blockquote { margin: 0.75rem 0; font-size: 1.1rem; }
+.hands-on-right .callout { margin-top: 0.75rem; }
+.hands-on-right .callout p { font-size: 0.9rem; }
+
+.prompt-builder__copy {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: var(--purple);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.prompt-builder__copy:hover {
+  background: var(--purple-light);
+}
+
+/* ============================================================
+   Details / Collapsible
+   ============================================================ */
+details {
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.slide--dark details, .slide--purple details {
+  border-color: rgba(255,255,255,0.15);
+}
+
+summary {
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  background: var(--off-white);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.slide--dark summary, .slide--purple summary {
+  background: var(--dark-card);
+  color: var(--white);
+}
+
+summary::before {
+  content: "\25B6";
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+summary::-webkit-details-marker { display: none; }
+
+.details-content {
+  padding: 1rem;
+}
+
+.slide--dark .details-content, .slide--purple .details-content {
+  color: rgba(255,255,255,0.85);
+}
+
+/* ============================================================
+   Callout / Tip / Warning
+   ============================================================ */
+.callout {
+  padding: 1rem 1.25rem;
+  border-radius: var(--border-radius);
+  margin: 1.25rem 0;
+  border-left: 4px solid;
+}
+
+.callout--tip {
+  border-color: var(--green);
+  background: rgba(78, 128, 31, 0.06);
+}
+
+.callout--warning {
+  border-color: var(--orange);
+  background: rgba(221, 119, 34, 0.06);
+}
+
+.callout--info {
+  border-color: var(--purple);
+  background: rgba(85, 34, 221, 0.06);
+}
+
+.callout__title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.callout--tip .callout__title { color: var(--green); }
+.callout--warning .callout__title { color: var(--orange); }
+.callout--info .callout__title { color: var(--purple); }
+
+.callout p {
+  font-size: 1rem;
+  margin: 0.3rem 0 0;
+}
+
+/* ============================================================
+   Department Suggestions (Slide 9)
+   ============================================================ */
+.dept-suggestions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.dept-chip {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  background: var(--off-white);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.dept-chip:hover {
+  border-color: var(--purple);
+  background: rgba(85, 34, 221, 0.05);
+}
+
+.dept-chip strong {
+  color: var(--purple);
+}
+
+/* ============================================================
+   Quick Reference Card (Slide 14)
+   ============================================================ */
+.ref-card {
+  border: 2px solid var(--purple);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  background: var(--white);
+}
+
+.ref-card__section {
+  margin-bottom: 1.25rem;
+}
+
+.ref-card__section:last-child {
+  margin-bottom: 0;
+}
+
+.ref-card__section-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--purple);
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.25rem;
+}
+
+.ref-prompts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.ref-prompts li {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* ============================================================
+   Copilot Badge
+   ============================================================ */
+.copilot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #0078d4, #00bcf2);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+/* ============================================================
+   Claude Badge
+   ============================================================ */
+.claude-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--orange), #b5611a);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+.claude-badge svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* ============================================================
+   Tool Row — side-by-side badge layout (Slide 6)
+   ============================================================ */
+.tool-row {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  align-items: flex-start;
+}
+
+.tool-row__primary {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================================
+   Project Cards (Slide 18)
+   ============================================================ */
+.project-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-left: 4px solid;
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+}
+
+.project-card__subtitle {
+  font-size: 0.85rem;
+  font-weight: 300;
+  opacity: 0.6;
+  margin-bottom: 0.75rem;
+}
+
+.project-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.55;
+  margin-bottom: 0.75rem;
+}
+
+.project-card__stats span {
+  white-space: nowrap;
+}
+
+.project-card__summary {
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+/* ============================================================
+   Spectrum Bar (Slide 17)
+   ============================================================ */
+.spectrum-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.5rem auto;
+  max-width: 800px;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.spectrum-bar::before {
+  content: "";
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 50%;
+  height: 3px;
+  background: linear-gradient(to right, var(--purple), var(--orange));
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.spectrum-bar__point {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  background: var(--dark-card);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  color: rgba(255,255,255,0.6);
+}
+
+.spectrum-bar__point--active {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: #34252e;
+}
+
+/* ============================================================
+   Card Footer Label (Slide 17)
+   ============================================================ */
+.card-footer-label {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1599px) {
+  .blocks-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1024px) {
+  .slide { padding: 3rem 3rem; }
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 1.8rem; }
+  .title-slide h1 { font-size: 2.8rem; }
+  .blocks-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .slide { padding: 2rem 1.5rem; }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  .title-slide h1 { font-size: 2rem; }
+  .card-grid, .comparison, .two-col, .prompt-cards, .prompt-builder__fields, .dept-suggestions, .ref-prompts, .hands-on-columns {
+    grid-template-columns: 1fr;
+  }
+  .blocks-grid { grid-template-columns: repeat(2, 1fr); }
+  .flow-diagram { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); padding: 0.25rem 0; }
+  .progress { display: none; }
+  .tool-row { flex-direction: column; }
+  .spectrum-bar { flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+  .spectrum-bar::before { display: none; }
+}
+
+/* ============================================================
+   Print Styles
+   ============================================================ */
+@media print {
+  /* Force browsers to render backgrounds */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+
+  html {
+    scroll-snap-type: none;
+  }
+
+  body {
+    font-size: 11pt;
+    background: var(--dark-bg);
+  }
+
+  /* Each slide = one printed page, full bleed */
+  .slide {
+    min-height: 100vh;
+    height: 100vh;
+    page-break-after: always;
+    page-break-inside: avoid;
+    break-after: page;
+    break-inside: avoid;
+    padding: 2.5rem 3rem;
+    overflow: hidden;
+  }
+
+  .slide:last-child {
+    page-break-after: auto;
+  }
+
+  /* Preserve slide background styling */
+  .slide--dark {
+    background: var(--dark-bg) !important;
+    color: var(--white) !important;
+  }
+
+  .slide--purple {
+    background: linear-gradient(135deg, #1a0a40 0%, var(--purple-dark) 50%, #1a0a40 100%) !important;
+    color: var(--white) !important;
+  }
+
+  .slide--light-alt {
+    background: linear-gradient(160deg, #f8f7ff 0%, #f0eef9 40%, #e8e4f4 100%) !important;
+    color: #1a1a2e !important;
+  }
+
+  /* Show all content immediately (no scroll animations) */
+  .slide__inner { opacity: 1 !important; transform: none !important; }
+
+  /* Keep title slide visual elements */
+  .title-slide__gradient { opacity: 0.7 !important; }
+  .title-slide__watermark { opacity: 0.06 !important; }
+
+  /* Force all details/expanders open */
+  details { open: true; }
+  details:not([open]) > summary ~ * { display: block !important; }
+  details[open] > summary ~ * { display: block !important; }
+  details > summary::after { content: none !important; }
+
+  /* Slide 9 — keep side-by-side layout in print */
+  .hands-on-columns { grid-template-columns: 55% 1fr; gap: 1.5rem; }
+  .hands-on-columns .prompt-builder__preview { max-height: 100px; }
+  .hands-on-columns .prompt-builder label { font-size: 0.75rem; margin-bottom: 0.3rem; }
+  .hands-on-columns .prompt-builder input { padding: 0.3rem 0.5rem; font-size: 0.8rem; }
+  #slide-9 { padding-top: 2rem; padding-bottom: 1.5rem; }
+  #slide-9 h2 { margin-bottom: 0.5rem; }
+  #slide-9 details[open] > .details-content { max-height: none; }
+  #slide-9 .callout { margin-top: 0.5rem; padding: 0.5rem 0.75rem; }
+  #slide-9 .callout p { font-size: 0.8rem !important; }
+  #slide-9 blockquote { margin: 0.5rem 0; }
+
+  /* Slide 8 — compact merged content for print */
+  #slide-8 { padding-top: 2rem; padding-bottom: 1.5rem; }
+  #slide-8 h2 { margin-bottom: 0.3rem; }
+  #slide-8 .blocks-grid { margin: 0.75rem 0; gap: 0.5rem; }
+  #slide-8 .block-card { padding: 0.6rem 0.5rem; }
+  #slide-8 .block-card__icon { font-size: 1.2rem; margin-bottom: 0.2rem; }
+  #slide-8 .block-card__name { font-size: 0.85rem; }
+  #slide-8 .block-card__desc { font-size: 0.75rem; }
+  #slide-8 .callout { margin-top: 0.5rem; padding: 0.5rem 0.75rem; }
+  #slide-8 .callout p { font-size: 0.8rem !important; }
+  #slide-8 h3 { margin-top: 0.75rem !important; padding-top: 0.5rem !important; font-size: 1rem !important; }
+  #slide-8 .comparison { margin: 0.75rem 0; gap: 1rem; }
+  #slide-8 .comparison p { font-size: 0.85rem !important; }
+
+  /* Hide interactive-only elements */
+  .progress, .slide-counter { display: none !important; }
+  .blockquote-copy, .prompt-builder__copy, .prompt-card__copy { display: none; }
+  .dept-chip { pointer-events: none; }
+
+  /* Slide numbers — keep visible */
+  .slide__number { opacity: 1 !important; color: rgba(255,255,255,0.5) !important; }
+  .slide--light .slide__number,
+  .slide--light-alt .slide__number { color: rgba(26,26,46,0.4) !important; }
+
+  /* Typography: eliminate opacity on text, use solid colors instead.
+     Opacity causes compositing artifacts in PDF renderers. */
+  h1 { font-size: 20pt; }
+  h2 { font-size: 16pt; }
+
+  /* Dark slide text: replace opacity with solid colors */
+  .slide--dark p, .slide--purple p {
+    opacity: 1 !important;
+    color: #b0b4c0 !important;
+  }
+  .slide--dark h2, .slide--dark h3, .slide--dark h4,
+  .slide--purple h2, .slide--purple h3, .slide--purple h4 {
+    opacity: 1 !important;
+  }
+  .slide--dark summary, .slide--purple summary {
+    opacity: 1 !important;
+    color: var(--white) !important;
+  }
+  .slide--dark .details-content p, .slide--purple .details-content p {
+    color: #c0c4d0 !important;
+  }
+  .slide--dark .callout p, .slide--purple .callout p {
+    color: #d0d4e0 !important;
+  }
+
+  /* Light slide text */
+  .slide--light p, .slide--light-alt p {
+    opacity: 1 !important;
+    color: #1a1a2e !important;
+  }
+
+  /* Inline style opacity overrides — catch [style*="opacity"] */
+  .slide--dark [style*="opacity"], .slide--purple [style*="opacity"] {
+    opacity: 1 !important;
+  }
+
+  /* Building block highlights — boost opacity for print legibility */
+  .block-hl--role { background: rgba(85,34,221,0.18) !important; }
+  .block-hl--task { background: rgba(221,119,34,0.18) !important; }
+  .block-hl--context { background: rgba(78,128,31,0.18) !important; }
+  .block-hl--format { background: rgba(181,163,0,0.18) !important; }
+  .block-hl--constraints { background: rgba(85,85,85,0.18) !important; }
+
+  /* New component print overrides */
+  .claude-badge { background: var(--purple) !important; }
+  .spectrum-bar__point { border-color: rgba(255,255,255,0.3) !important; }
+  .spectrum-bar__point--active { border-color: var(--orange) !important; }
+  .project-card { border-left-width: 4px !important; }
+
+  /* Better text rendering for PDF */
+  * {
+    text-rendering: geometricPrecision !important;
+    -webkit-font-smoothing: antialiased !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Hidden SVG sprite for brand logos -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+  <defs>
+    <linearGradient id="gemini-grad" x1="210" y1="52" x2="262" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#439DDF"/>
+      <stop offset="0.52" stop-color="#4F87ED"/>
+      <stop offset="0.78" stop-color="#9476C5"/>
+      <stop offset="1" stop-color="#D6645D"/>
+    </linearGradient>
+  </defs>
+  <symbol id="logo-claude" viewBox="0 0 200 148.18">
+    <g transform="translate(-75.96,-223.53)">
+      <path fill="#d97757" d="m 105.01,322.07 29.14,-16.35 0.49,-1.42 -0.49,-0.79 h -1.42 l -4.87,-0.3 -16.65,-0.45 -14.44,-0.6 -13.99,-0.75 -3.52,-0.75 -3.3,-4.35 0.34,-2.17 2.96,-1.99 4.24,0.37 9.37,0.64 14.06,0.97 10.2,0.6 15.11,1.57 h 2.4 l 0.34,-0.97 -0.82,-0.6 -0.64,-0.6 -14.55,-9.86 -15.75,-10.42 -8.25,-6 -4.46,-3.04 -2.25,-2.85 -0.97,-6.22 4.05,-4.46 5.44,0.37 1.39,0.37 5.51,4.24 11.77,9.11 15.37,11.32 2.25,1.87 0.9,-0.64 0.11,-0.45 -1.01,-1.69 -8.36,-15.11 -8.92,-15.37 -3.97,-6.37 -1.05,-3.82 c -0.37,-1.57 -0.64,-2.89 -0.64,-4.5 l 4.61,-6.26 2.55,-0.82 6.15,0.82 2.59,2.25 3.82,8.74 6.19,13.76 9.6,18.71 2.81,5.55 1.5,5.14 0.56,1.57 h 0.97 v -0.9 l 0.79,-10.54 1.46,-12.94 1.42,-16.65 0.49,-4.69 2.32,-5.62 4.61,-3.04 3.6,1.72 2.96,4.24 -0.41,2.74 -1.76,11.44 -3.45,17.92 -2.25,12 h 1.31 l 1.5,-1.5 6.07,-8.06 10.2,-12.75 4.5,-5.06 5.25,-5.59 3.37,-2.66 h 6.37 l 4.69,6.97 -2.1,7.2 -6.56,8.32 -5.44,7.05 -7.8,10.5 -4.87,8.4 0.45,0.67 1.16,-0.11 17.62,-3.75 9.52,-1.72 11.36,-1.95 5.14,2.4 0.56,2.44 -2.02,4.99 -12.15,3 -14.25,2.85 -21.22,5.02 -0.26,0.19 0.3,0.37 9.56,0.9 4.09,0.22 h 10.01 l 18.64,1.39 4.87,3.22 2.92,3.94 -0.49,3 -7.5,3.82 -10.12,-2.4 -23.62,-5.62 -8.1,-2.02 h -1.12 v 0.67 l 6.75,6.6 12.37,11.17 15.49,14.4 0.79,3.56 -1.99,2.81 -2.1,-0.3 -13.61,-10.24 -5.25,-4.61 -11.89,-10.01 h -0.79 v 1.05 l 2.74,4.01 14.47,21.75 0.75,6.67 -1.05,2.17 -3.75,1.31 -4.12,-0.75 -8.47,-11.89 -8.74,-13.39 -7.05,-12 -0.86,0.49 -4.16,44.81 -1.95,2.29 -4.5,1.72 -3.75,-2.85 -1.99,-4.61 1.99,-9.11 2.4,-11.89 1.95,-9.45 1.76,-11.74 1.05,-3.9 -0.07,-0.26 -0.86,0.11 -8.85,12.15 -13.46,18.19 -10.65,11.4 -2.55,1.01 -4.42,-2.29 0.41,-4.09 2.47,-3.64 14.74,-18.75 8.89,-11.62 5.74,-6.71 -0.04,-0.97 h -0.34 l -39.15,25.42 -6.97,0.9 -3,-2.81 0.37,-4.61 1.42,-1.5 11.77,-8.1 -0.04,0.04 z"/>
+    </g>
+  </symbol>
+  <symbol id="logo-chatgpt" viewBox="0 0 320 320">
+    <path d="m297.06 130.97c7.26-21.79 4.76-45.66-6.85-65.48-17.46-30.4-52.56-46.04-86.84-38.68-15.25-17.18-37.16-26.95-60.13-26.81-35.04-.08-66.13 22.48-76.91 55.82-22.51 4.61-41.94 18.7-53.31 38.67-17.59 30.32-13.58 68.54 9.92 94.54-7.26 21.79-4.76 45.66 6.85 65.48 17.46 30.4 52.56 46.04 86.84 38.68 15.24 17.18 37.16 26.95 60.13 26.8 35.06.09 66.16-22.49 76.94-55.86 22.51-4.61 41.94-18.7 53.31-38.67 17.57-30.32 13.55-68.51-9.94-94.51zm-120.28 168.11c-14.03.02-27.62-4.89-38.39-13.88.49-.26 1.34-.73 1.89-1.07l63.72-36.8c3.26-1.85 5.26-5.32 5.24-9.07v-89.83l26.93 15.55c.29.14.48.42.52.74v74.39c-.04 33.08-26.83 59.9-59.91 59.97zm-128.84-55.03c-7.03-12.14-9.56-26.37-7.15-40.18.47.28 1.3.79 1.89 1.13l63.72 36.8c3.23 1.89 7.23 1.89 10.47 0l77.79-44.92v31.1c.02.32-.13.63-.38.83l-64.41 37.19c-28.69 16.52-65.33 6.7-81.92-21.95zm-16.77-139.09c7-12.16 18.05-21.46 31.21-26.29 0 .55-.03 1.52-.03 2.2v73.61c-.02 3.74 1.98 7.21 5.23 9.06l77.79 44.91-26.93 15.55c-.27.18-.61.21-.91.08l-64.42-37.22c-28.63-16.58-38.45-53.21-21.95-81.89zm221.26 51.49-77.79-44.92 26.93-15.54c.27-.18.61-.21.91-.08l64.42 37.19c28.68 16.57 38.51 53.26 21.94 81.94-7.01 12.14-18.05 21.44-31.2 26.28v-75.81c.03-3.74-1.96-7.2-5.2-9.06zm26.8-40.34c-.47-.29-1.3-.79-1.89-1.13l-63.72-36.8c-3.23-1.89-7.23-1.89-10.47 0l-77.79 44.92v-31.1c-.02-.32.13-.63.38-.83l64.41-37.16c28.69-16.55 65.37-6.7 81.91 22 6.99 12.12 9.52 26.31 7.15 40.1zm-168.51 55.43-26.94-15.55c-.29-.14-.48-.42-.52-.74v-74.39c.02-33.12 26.89-59.96 60.01-59.94 14.01 0 27.57 4.92 38.34 13.88-.49.26-1.33.73-1.89 1.07l-63.72 36.8c-3.26 1.85-5.26 5.31-5.24 9.06l-.04 89.79zm14.63-31.54 34.65-20.01 34.65 20v40.01l-34.65 20-34.65-20z"/>
+  </symbol>
+  <symbol id="logo-gemini" viewBox="209 -1 54 54">
+    <path fill="url(#gemini-grad)" d="M234.123 41.2204C235.489 44.3354 236.172 47.6638 236.172 51.2055C236.172 47.6638 236.833 44.3354 238.156 41.2204C239.521 38.1054 241.356 35.3958 243.66 33.0916C245.965 30.7873 248.674 28.9738 251.789 27.651C254.904 26.2855 258.233 25.6028 261.774 25.6028C258.233 25.6028 254.904 24.9414 251.789 23.6185C248.674 22.2531 245.965 20.4182 243.66 18.114C241.356 15.8097 239.521 13.1001 238.156 9.98507C236.833 6.87007 236.172 3.54171 236.172 0C236.172 3.54171 235.489 6.87007 234.123 9.98507C232.801 13.1001 230.987 15.8097 228.683 18.114C226.379 20.4182 223.669 22.2531 220.554 23.6185C217.439 24.9414 214.111 25.6028 210.569 25.6028C214.111 25.6028 217.439 26.2855 220.554 27.651C223.669 28.9738 226.379 30.7873 228.683 33.0916C230.987 35.3958 232.801 38.1054 234.123 41.2204Z"/>
+  </symbol>
+</svg>
+
+<!-- ============================================================
+     Progress Dots
+     ============================================================ -->
+<nav class="progress" aria-label="Slide navigation"></nav>
+<div class="slide-counter" aria-live="polite"></div>
+
+<!-- ============================================================
+     SLIDE 1 — Title
+     ============================================================ -->
+<section class="slide slide--dark title-slide" id="slide-1">
+  <div class="title-slide__gradient"></div>
+  <!-- Watermark: large faded checkmark-A logo -->
+  <svg class="title-slide__watermark" viewBox="0.0 0.0 74.361 70.87" xmlns="http://www.w3.org/2000/svg"><path fill="white" fill-opacity="0.04" d="M40.953 51.001L74.361 51.001L52.425 0.0L41.958 0.0L18.727 53.974L12.498 39.522L0.0 39.522L13.511 70.87L23.952 70.87L47.19 16.882L56.928 39.522L40.953 39.522L40.953 51.001Z"/></svg>
+  <div class="slide__inner title-slide__content">
+    <!-- Ascential Technologies Horizontal Logo -->
+    <div class="title-slide__logo">
+      <svg class="brand-logo" viewBox="0 0 342.0622 89.0327" xmlns="http://www.w3.org/2000/svg" aria-label="Ascential Technologies"><title>Ascential Technologies</title><g fill="#5522DD"><path d="M109.24 23.916L99.669 24.491C99.421 23.296 98.756 22.265 97.674 21.397C96.591 20.529 95.137 20.095 93.311 20.095C91.688 20.095 90.329 20.433 89.236 21.109C88.142 21.786 87.596 22.688 87.596 23.815C87.596 24.717 87.951 25.489 88.661 26.132C89.371 26.774 90.594 27.276 92.331 27.636L99.196 28.989C102.87 29.733 105.609 30.94 107.413 32.608C109.217 34.277 110.119 36.475 110.119 39.202C110.119 41.705 109.397 43.887 107.955 45.747C106.511 47.607 104.528 49.061 102.002 50.109C99.477 51.158 96.58 51.682 93.311 51.682C88.306 51.682 84.321 50.633 81.356 48.537C78.391 46.44 76.661 43.599 76.165 40.014L86.412 39.473C86.75 41.007 87.516 42.168 88.712 42.957C89.907 43.746 91.44 44.14 93.311 44.14C95.137 44.14 96.619 43.78 97.758 43.058C98.897 42.337 99.466 41.424 99.466 40.318C99.466 38.448 97.843 37.185 94.597 36.531L88.069 35.178C84.394 34.434 81.655 33.16 79.851 31.356C78.047 29.553 77.146 27.242 77.146 24.424C77.146 21.989 77.811 19.892 79.141 18.134C80.471 16.375 82.337 15.022 84.738 14.075C87.139 13.128 89.951 12.655 93.176 12.655C97.955 12.655 101.715 13.664 104.454 15.682C107.194 17.7 108.789 20.445 109.24 23.916Z"/><path d="M134.263 51.682C130.408 51.682 127.094 50.853 124.32 49.196C121.547 47.539 119.417 45.251 117.928 42.331C116.441 39.411 115.696 36.035 115.696 32.202C115.696 28.325 116.446 24.92 117.945 21.989C119.445 19.058 121.581 16.77 124.354 15.124C127.127 13.478 130.429 12.655 134.263 12.655C137.554 12.655 140.434 13.252 142.904 14.447C145.372 15.643 147.328 17.322 148.771 19.486C150.213 21.651 151.003 24.198 151.138 27.129L141.263 27.129C141.082 25.867 140.699 24.762 140.114 23.815C139.527 22.868 138.749 22.136 137.78 21.617C136.81 21.098 135.683 20.839 134.398 20.839C132.775 20.839 131.359 21.273 130.154 22.141C128.947 23.009 128.012 24.283 127.347 25.963C126.681 27.642 126.349 29.677 126.349 32.067C126.349 34.457 126.681 36.509 127.347 38.222C128.012 39.935 128.947 41.243 130.154 42.145C131.359 43.047 132.775 43.498 134.398 43.498C136.202 43.498 137.723 42.929 138.964 41.79C140.203 40.651 140.97 39.079 141.263 37.072L151.138 37.072C150.98 39.958 150.203 42.5 148.805 44.698C147.406 46.896 145.479 48.61 143.022 49.839C140.564 51.067 137.644 51.682 134.263 51.682Z"/><path d="M171.216 21.651C172.401 20.863 173.847 20.466 175.561 20.466C177.272 20.466 178.714 20.856 179.875 21.635C181.036 22.414 181.909 23.513 182.494 24.932C182.883 25.875 182.946 27.09 183.078 28.244L167.807 28.244C167.931 27.051 168.037 25.843 168.493 24.861C169.124 23.513 170.032 22.438 171.216 21.651ZM193.315 31.86C193.315 28.641 192.867 25.828 191.963 23.427C191.062 21.027 189.8 19.032 188.175 17.442C186.554 15.852 184.66 14.652 182.494 13.857C180.331 13.054 177.997 12.657 175.495 12.657C171.793 12.657 168.578 13.475 165.839 15.12C163.099 16.772 160.98 19.055 159.479 21.993C157.983 24.924 157.231 28.322 157.231 32.203C157.231 36.193 157.983 39.646 159.479 42.568C160.98 45.491 163.138 47.735 165.956 49.317C168.777 50.892 172.124 51.679 176.002 51.679C179.111 51.679 181.851 51.203 184.22 50.245C186.585 49.286 188.518 47.946 190.018 46.215C191.518 44.493 192.504 42.475 192.976 40.152L183.304 39.505C182.969 40.433 182.455 41.22 181.769 41.875C181.079 42.529 180.261 43.02 179.314 43.363C178.367 43.698 177.307 43.87 176.134 43.87C174.443 43.87 172.95 43.48 171.653 42.701C170.359 41.921 169.35 40.807 168.629 39.357C167.99 38.071 167.748 36.458 167.67 34.705L193.315 34.705L193.315 31.86Z"/><path d="M210.654 29.091L210.654 50.938L200.204 50.938L200.204 13.128L210.485 13.128L210.485 19.858L210.857 19.858C211.713 17.626 213.077 15.867 214.949 14.582C216.82 13.297 219.164 12.655 221.983 12.655C224.598 12.655 226.881 13.23 228.831 14.38C230.781 15.529 232.298 17.164 233.38 19.284C234.462 21.403 235.003 23.939 235.003 26.893L235.003 50.938L224.553 50.938L224.553 28.753C224.553 26.453 223.955 24.644 222.761 23.324C221.566 22.006 219.92 21.346 217.823 21.346C216.425 21.346 215.186 21.657 214.103 22.276C213.021 22.897 212.175 23.781 211.567 24.931C210.958 26.081 210.654 27.467 210.654 29.091Z"/><path d="M271.319 50.938L271.319 32.033L271.319 13.128L276.544 13.128L281.769 13.128L281.769 32.033L281.769 50.938L276.544 50.938L271.319 50.938Z"/><path d="M304.112 44.411C305.645 44.411 307.004 44.101 308.188 43.481C309.371 42.861 310.295 42.027 310.96 40.978C311.625 39.93 311.958 38.752 311.958 37.444L311.958 33.42C311.642 33.622 311.197 33.814 310.622 33.995C310.048 34.175 309.41 34.333 308.712 34.468C308.012 34.603 307.313 34.721 306.615 34.823C305.915 34.925 305.284 35.02 304.721 35.111C303.481 35.291 302.399 35.579 301.474 35.973C300.55 36.368 299.834 36.898 299.327 37.562C298.82 38.228 298.566 39.056 298.566 40.048C298.566 41.468 299.084 42.551 300.121 43.295C301.158 44.038 302.489 44.411 304.112 44.411ZM301.102 51.648C298.712 51.648 296.565 51.225 294.66 50.379C292.755 49.534 291.261 48.278 290.179 46.609C289.097 44.94 288.555 42.867 288.555 40.386C288.555 38.267 288.939 36.503 289.705 35.094C290.472 33.685 291.52 32.54 292.85 31.661C294.181 30.782 295.691 30.117 297.382 29.665C299.073 29.215 300.866 28.899 302.759 28.719C304.946 28.516 306.705 28.313 308.035 28.11C309.365 27.907 310.34 27.598 310.96 27.18C311.58 26.763 311.89 26.16 311.89 25.371L311.89 25.202C311.89 23.646 311.4 22.44 310.419 21.583C309.438 20.726 308.058 20.298 306.277 20.298C304.405 20.298 302.911 20.71 301.796 21.532C300.68 22.356 299.941 23.398 299.581 24.66L289.874 23.883C290.37 21.583 291.34 19.593 292.783 17.913C294.226 16.234 296.091 14.938 298.38 14.025C300.668 13.111 303.323 12.655 306.344 12.655C308.441 12.655 310.447 12.903 312.364 13.399C314.28 13.895 315.988 14.656 317.488 15.682C318.987 16.708 320.176 18.032 321.055 19.655C321.934 21.279 322.374 23.206 322.374 25.438L322.374 50.938L312.397 50.938L312.397 45.662L312.127 45.662C311.518 46.857 310.707 47.9 309.692 48.79C308.677 49.681 307.46 50.379 306.04 50.887C304.619 51.394 302.974 51.648 301.102 51.648Z"/><path d="M342.062 0.034L342.062 25.486L342.062 50.938L336.837 50.938L331.613 50.938L331.613 25.486L331.613 0.034L336.837 0.034L342.062 0.034Z"/><path d="M281.632 0.075L276.475 0.075L271.318 0.075L271.318 4.411L271.318 8.746L276.475 8.746L281.632 8.746L281.632 4.411L281.632 0.075Z"/><path d="M262.344 42.653C261.983 42.742 261.553 42.822 261.058 42.889C260.562 42.956 260.111 42.991 259.706 42.991C258.465 42.991 257.563 42.693 257.0 42.093C256.436 41.497 256.155 40.567 256.155 39.303L256.155 21.041L263.29 21.041L263.29 13.129L256.155 13.129L256.155 9.259L256.162 9.259L256.162 3.344L245.731 3.344L245.731 4.132L245.704 4.132L245.704 13.129L240.531 13.129L240.531 21.041L245.704 21.041L245.704 40.691C245.704 44.118 246.73 46.773 248.782 48.656C250.833 50.538 253.743 51.478 257.507 51.478C258.544 51.478 259.599 51.399 260.669 51.242C261.74 51.083 262.851 50.837 264.0 50.498L262.344 42.653Z"/><path d="M40.953 51.001L74.361 51.001L52.425 0.0L41.958 0.0L18.727 53.974L12.498 39.522L0.0 39.522L13.511 70.87L23.952 70.87L47.19 16.882L56.928 39.522L40.953 39.522L40.953 51.001Z"/></g><g fill="#ffffff"><path d="M54.052 66.808L40.385 66.808L40.385 69.407L45.688 69.407L45.688 83.948L48.76 83.948L48.76 69.407L54.052 69.407L54.052 66.808Z"/><path d="M57.561 73.744C58.02 73.438 58.577 73.284 59.228 73.284C59.88 73.284 60.425 73.438 60.862 73.744C61.299 74.051 61.629 74.475 61.852 75.016C62.009 75.398 62.09 75.845 62.136 76.321L56.196 76.321C56.236 75.841 56.327 75.387 56.514 74.981C56.752 74.463 57.1 74.051 57.561 73.744ZM63.341 72.479C62.793 71.95 62.164 71.559 61.455 71.306C60.745 71.052 59.995 70.926 59.206 70.926C57.978 70.926 56.912 71.206 56.007 71.766C55.103 72.326 54.401 73.106 53.902 74.107C53.404 75.107 53.154 76.272 53.154 77.598C53.154 78.94 53.406 80.106 53.908 81.095C54.41 82.084 55.129 82.85 56.065 83.39C57.001 83.931 58.113 84.201 59.401 84.201C60.398 84.201 61.282 84.05 62.053 83.747C62.824 83.444 63.456 83.015 63.951 82.459C64.445 81.902 64.785 81.252 64.969 80.509L62.139 80.175C62.001 80.543 61.803 80.852 61.546 81.101C61.29 81.351 60.983 81.537 60.627 81.659C60.27 81.782 59.877 81.843 59.447 81.843C58.788 81.843 58.211 81.697 57.716 81.406C57.221 81.115 56.837 80.691 56.566 80.135C56.322 79.637 56.205 79.036 56.179 78.357L65.107 78.357L65.107 77.414C65.107 76.287 64.95 75.314 64.635 74.498C64.321 73.681 63.889 73.008 63.341 72.479Z"/><path d="M72.152 73.865C72.616 73.532 73.159 73.365 73.78 73.365C74.27 73.365 74.694 73.46 75.051 73.652C75.408 73.844 75.697 74.105 75.919 74.434C76.142 74.764 76.291 75.136 76.368 75.55L79.267 75.55C79.198 74.623 78.924 73.811 78.445 73.117C77.965 72.423 77.323 71.885 76.518 71.501C75.712 71.118 74.785 70.926 73.734 70.926C72.484 70.926 71.398 71.207 70.478 71.772C69.558 72.335 68.849 73.116 68.35 74.112C67.852 75.109 67.602 76.264 67.602 77.575C67.602 78.871 67.848 80.018 68.338 81.015C68.829 82.012 69.535 82.792 70.455 83.356C71.376 83.919 72.476 84.201 73.757 84.201C74.831 84.201 75.766 84.004 76.564 83.609C77.361 83.214 77.994 82.667 78.462 81.97C78.93 81.272 79.198 80.466 79.267 79.554L76.368 79.554C76.238 80.244 75.941 80.785 75.477 81.176C75.013 81.567 74.447 81.763 73.78 81.763C73.151 81.763 72.603 81.592 72.135 81.251C71.667 80.91 71.307 80.422 71.053 79.79C70.8 79.157 70.674 78.403 70.674 77.529C70.674 76.663 70.804 75.918 71.065 75.297C71.326 74.676 71.688 74.199 72.152 73.865Z"/><path d="M91.345 71.49C90.682 71.114 89.905 70.926 89.016 70.926C88.026 70.926 87.217 71.137 86.588 71.559C85.96 71.98 85.496 72.556 85.196 73.284L85.035 73.284L85.035 66.808L82.079 66.808L82.079 83.948L85.105 83.948L85.105 76.425C85.105 75.796 85.223 75.265 85.461 74.832C85.699 74.398 86.026 74.066 86.444 73.836C86.862 73.606 87.34 73.491 87.876 73.491C88.674 73.491 89.295 73.731 89.74 74.21C90.185 74.689 90.408 75.366 90.408 76.241L90.408 83.948L93.444 83.948L93.444 75.769C93.444 74.734 93.261 73.855 92.893 73.135C92.524 72.414 92.008 71.865 91.345 71.49Z"/><path d="M105.704 71.49C105.044 71.114 104.27 70.926 103.38 70.926C102.414 70.926 101.618 71.139 100.993 71.564C100.368 71.99 99.91 72.563 99.618 73.284L99.469 73.284L99.469 71.087L96.501 71.087L96.501 83.948L99.526 83.948L99.526 76.425C99.526 75.796 99.643 75.265 99.877 74.832C100.111 74.398 100.433 74.066 100.843 73.836C101.253 73.606 101.723 73.491 102.252 73.491C103.035 73.491 103.648 73.735 104.093 74.222C104.538 74.709 104.76 75.382 104.76 76.241L104.76 83.948L107.786 83.948L107.786 75.769C107.786 74.741 107.604 73.865 107.239 73.141C106.875 72.415 106.363 71.865 105.704 71.49Z"/><path d="M119.424 79.692C119.198 80.329 118.858 80.832 118.406 81.205C117.953 81.577 117.378 81.763 116.68 81.763C115.998 81.763 115.426 81.577 114.966 81.205C114.506 80.832 114.163 80.329 113.937 79.692C113.71 79.055 113.597 78.35 113.597 77.575C113.597 76.785 113.71 76.072 113.937 75.436C114.163 74.799 114.506 74.295 114.966 73.923C115.426 73.551 115.998 73.365 116.68 73.365C117.378 73.365 117.953 73.551 118.406 73.923C118.858 74.295 119.198 74.799 119.424 75.436C119.65 76.072 119.763 76.785 119.763 77.575C119.763 78.35 119.65 79.055 119.424 79.692ZM119.947 71.754C119.027 71.202 117.938 70.926 116.68 70.926C115.422 70.926 114.334 71.202 113.413 71.754C112.493 72.306 111.781 73.083 111.279 74.084C110.777 75.084 110.525 76.249 110.525 77.575C110.525 78.894 110.777 80.052 111.279 81.049C111.781 82.046 112.493 82.821 113.413 83.373C114.334 83.925 115.422 84.201 116.68 84.201C117.938 84.201 119.027 83.925 119.947 83.373C120.868 82.821 121.581 82.046 122.087 81.049C122.593 80.052 122.846 78.894 122.846 77.575C122.846 76.249 122.593 75.084 122.087 74.084C121.581 73.083 120.868 72.306 119.947 71.754Z"/><path d="M125.692 66.808L125.692 75.378L125.692 83.948L127.205 83.948L128.718 83.948L128.718 75.378L128.718 66.808L127.205 66.808L125.692 66.808Z"/><path d="M140.474 79.692C140.248 80.329 139.908 80.832 139.456 81.205C139.003 81.577 138.428 81.763 137.73 81.763C137.047 81.763 136.476 81.577 136.016 81.205C135.556 80.832 135.212 80.329 134.986 79.692C134.76 79.055 134.647 78.35 134.647 77.575C134.647 76.785 134.76 76.072 134.986 75.436C135.212 74.799 135.556 74.295 136.016 73.923C136.476 73.551 137.047 73.365 137.73 73.365C138.428 73.365 139.003 73.551 139.456 73.923C139.908 74.295 140.248 74.799 140.474 75.436C140.7 76.072 140.813 76.785 140.813 77.575C140.813 78.35 140.7 79.055 140.474 79.692ZM140.997 71.754C140.077 71.202 138.988 70.926 137.73 70.926C136.472 70.926 135.383 71.202 134.463 71.754C133.542 72.306 132.831 73.083 132.329 74.084C131.827 75.084 131.575 76.249 131.575 77.575C131.575 78.894 131.827 80.052 132.329 81.049C132.831 82.046 133.542 82.821 134.463 83.373C135.383 83.925 136.472 84.201 137.73 84.201C138.988 84.201 140.077 83.925 140.997 83.373C141.917 82.821 142.63 82.046 143.137 81.049C143.643 80.052 143.896 78.894 143.896 77.575C143.896 76.249 143.643 75.084 143.137 74.084C142.63 73.083 141.917 72.306 140.997 71.754Z"/><path d="M154.453 80.342C153.927 81.036 153.181 81.383 152.215 81.383C151.555 81.383 150.998 81.22 150.541 80.894C150.085 80.568 149.742 80.11 149.512 79.519C149.282 78.929 149.167 78.242 149.167 77.46C149.167 76.686 149.28 75.993 149.506 75.384C149.732 74.774 150.071 74.293 150.524 73.94C150.977 73.587 151.54 73.411 152.215 73.411C152.867 73.411 153.419 73.58 153.872 73.917C154.324 74.254 154.666 74.726 154.896 75.332C155.126 75.938 155.241 76.647 155.241 77.46C155.241 78.687 154.978 79.648 154.453 80.342ZM155.264 73.215L155.103 73.215C154.941 72.909 154.715 72.577 154.424 72.22C154.132 71.863 153.741 71.559 153.251 71.306C152.759 71.052 152.138 70.926 151.387 70.926C150.397 70.926 149.5 71.179 148.695 71.685C147.89 72.191 147.251 72.932 146.779 73.905C146.308 74.879 146.072 76.072 146.072 77.483C146.072 78.879 146.308 80.041 146.779 80.969C147.251 81.897 147.888 82.595 148.689 83.062C149.49 83.53 150.382 83.764 151.364 83.764C152.107 83.764 152.723 83.651 153.21 83.425C153.697 83.199 154.09 82.922 154.389 82.597C154.688 82.27 154.911 81.954 155.057 81.647L155.229 81.647L155.229 84.075C155.229 85.018 154.947 85.699 154.383 86.117C153.82 86.535 153.108 86.744 152.25 86.744C151.644 86.744 151.141 86.661 150.743 86.497C150.344 86.332 150.025 86.124 149.788 85.875C149.55 85.626 149.37 85.374 149.247 85.122L146.532 85.789C146.8 86.686 147.402 87.451 148.338 88.084C149.274 88.717 150.559 89.033 152.192 89.033C153.35 89.033 154.383 88.855 155.292 88.498C156.201 88.142 156.916 87.603 157.438 86.882C157.959 86.161 158.22 85.252 158.22 84.155L158.22 71.087L155.264 71.087L155.264 73.215Z"/><path d="M161.865 71.087L161.865 77.517L161.865 83.948L163.378 83.948L164.891 83.948L164.891 77.517L164.891 71.087L163.378 71.087L161.865 71.087Z"/><path d="M163.384 65.979C162.901 65.979 162.487 66.14 162.142 66.462C161.796 66.785 161.624 67.176 161.624 67.636C161.624 68.088 161.796 68.476 162.142 68.798C162.487 69.12 162.901 69.281 163.384 69.281C163.859 69.281 164.27 69.12 164.615 68.798C164.96 68.476 165.132 68.084 165.132 67.624C165.132 67.172 164.96 66.785 164.615 66.462C164.27 66.14 163.859 65.979 163.384 65.979Z"/><path d="M172.272 73.744C172.732 73.438 173.289 73.284 173.94 73.284C174.592 73.284 175.137 73.438 175.574 73.744C176.011 74.051 176.341 74.475 176.563 75.016C176.721 75.398 176.802 75.845 176.848 76.321L170.907 76.321C170.948 75.841 171.039 75.387 171.226 74.981C171.463 74.463 171.812 74.051 172.272 73.744ZM178.053 72.479C177.505 71.95 176.876 71.559 176.167 71.306C175.457 71.052 174.707 70.926 173.917 70.926C172.69 70.926 171.624 71.206 170.719 71.766C169.814 72.326 169.113 73.106 168.614 74.107C168.116 75.107 167.866 76.272 167.866 77.598C167.866 78.94 168.118 80.106 168.62 81.095C169.122 82.084 169.841 82.85 170.777 83.39C171.712 83.931 172.825 84.201 174.113 84.201C175.11 84.201 175.994 84.05 176.765 83.747C177.536 83.444 178.168 83.015 178.663 82.459C179.157 81.902 179.497 81.252 179.681 80.509L176.851 80.175C176.713 80.543 176.515 80.852 176.258 81.101C176.001 81.351 175.695 81.537 175.338 81.659C174.981 81.782 174.588 81.843 174.159 81.843C173.5 81.843 172.922 81.697 172.428 81.406C171.933 81.115 171.549 80.691 171.277 80.135C171.034 79.637 170.916 79.036 170.891 78.357L179.819 78.357L179.819 77.414C179.819 76.287 179.662 75.314 179.347 74.498C179.033 73.681 178.601 73.008 178.053 72.479Z"/><path d="M192.273 77.863C191.675 77.288 190.774 76.874 189.57 76.62L187.373 76.16C186.721 76.015 186.255 75.821 185.975 75.579C185.695 75.337 185.555 75.029 185.555 74.653C185.555 74.224 185.768 73.871 186.193 73.595C186.619 73.319 187.146 73.181 187.775 73.181C188.473 73.181 189.014 73.344 189.397 73.669C189.781 73.996 190.03 74.37 190.145 74.791L192.895 74.503C192.688 73.415 192.153 72.546 191.29 71.898C190.427 71.25 189.24 70.926 187.73 70.926C186.702 70.926 185.797 71.087 185.015 71.409C184.232 71.731 183.623 72.184 183.186 72.767C182.748 73.35 182.53 74.04 182.53 74.837C182.53 75.773 182.825 76.541 183.416 77.144C184.006 77.746 184.918 78.181 186.153 78.449L188.351 78.91C189.501 79.17 190.076 79.661 190.076 80.382C190.076 80.811 189.857 81.174 189.42 81.469C188.983 81.765 188.404 81.912 187.683 81.912C186.993 81.912 186.427 81.765 185.986 81.469C185.545 81.174 185.26 80.739 185.129 80.163L182.173 80.439C182.365 81.621 182.938 82.543 183.893 83.206C184.848 83.87 186.111 84.201 187.683 84.201C188.757 84.201 189.706 84.029 190.531 83.684C191.355 83.338 192.001 82.855 192.469 82.234C192.937 81.613 193.171 80.9 193.171 80.094C193.171 79.182 192.872 78.438 192.273 77.863Z"/></g></svg>
+    </div>
+    <div class="title-slide__accent-line"></div>
+    <h1>Getting Started with AI</h1>
+    <p class="title-slide__subtitle">AI Training Workshop</p>
+    <div class="title-slide__meta">
+      <span class="title-slide__meta-name">John Reep</span><br>
+      <span class="title-slide__meta-date">Principal Electrical Engineer &middot; 06 MAR 2026</span>
+    </div>
+  </div>
+  <span class="slide__number">1 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 2 — Agenda
+     ============================================================ -->
+<section class="slide slide--dark" id="slide-2">
+  <div class="slide__inner">
+    <h2>Today's Agenda</h2>
+    <p style="opacity:0.7; margin-bottom:1.5rem;">~40 minutes of learning + 20 minutes for your questions</p>
+    <div class="timeline">
+      <div class="timeline__item">
+        <span class="timeline__dot" style="background: var(--purple);"></span>
+        <div class="timeline__text">
+          <span class="timeline__label">What Is AI?</span>
+          <span class="timeline__time">&mdash; 3 min</span>
+          <div class="timeline__desc">Simple foundations: what it does, how LLMs work, what it cannot do</div>
+        </div>
+      </div>
+      <div class="timeline__item">
+        <span class="timeline__dot" style="background: var(--purple-light);"></span>
+        <div class="timeline__text">
+          <span class="timeline__label">Meet Your AI Tools + Live Demo</span>
+          <span class="timeline__time">&mdash; 5 min</span>
+          <div class="timeline__desc">See Copilot and Claude, then write your first prompt</div>
+        </div>
+      </div>
+      <div class="timeline__item">
+        <span class="timeline__dot" style="background: var(--orange);"></span>
+        <div class="timeline__text">
+          <span class="timeline__label">The 5 Building Blocks</span>
+          <span class="timeline__time">&mdash; 6 min</span>
+          <div class="timeline__desc">A simple framework for writing better prompts</div>
+        </div>
+      </div>
+      <div class="timeline__item">
+        <span class="timeline__dot" style="background: var(--green);"></span>
+        <div class="timeline__text">
+          <span class="timeline__label">Hands-On Practice</span>
+          <span class="timeline__time">&mdash; 7 min</span>
+          <div class="timeline__desc">Build and improve prompts in Copilot &mdash; together</div>
+        </div>
+      </div>
+      <div class="timeline__item">
+        <span class="timeline__dot" style="background: var(--yellow);"></span>
+        <div class="timeline__text">
+          <span class="timeline__label">Wrap-Up + Advanced Preview</span>
+          <span class="timeline__time">&mdash; 7 min</span>
+          <div class="timeline__desc">Take-home prompts, trust guidelines, next steps, and a look ahead</div>
+        </div>
+      </div>
+      <div class="timeline__item">
+        <span class="timeline__dot" style="background: var(--orange);"></span>
+        <div class="timeline__text">
+          <span class="timeline__label">Claude Primer</span>
+          <span class="timeline__time">&mdash; 12 min</span>
+          <div class="timeline__desc">LLM vs. Agentic AI, real project results, and getting started with Claude</div>
+        </div>
+      </div>
+      <div class="timeline__item">
+        <span class="timeline__dot" style="background: rgba(255,255,255,0.3);"></span>
+        <div class="timeline__text">
+          <span class="timeline__label">Q&amp;A</span>
+          <span class="timeline__time">&mdash; 20 min</span>
+          <div class="timeline__desc">Your questions answered</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide__number">2 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 3 — What Is AI?
+     ============================================================ -->
+<section class="slide slide--light" id="slide-3">
+  <div class="slide__inner">
+    <h2>What Is AI?</h2>
+    <p style="font-size:1.3rem; margin-bottom:1rem;"><strong>AI is a tool</strong>, like a calculator or a spreadsheet. You do not need any technical background to use it.</p>
+
+    <div class="callout callout--info">
+      <div class="callout__title">The Intern Analogy</div>
+      <p>Think of AI as a <strong>well-read intern</strong>: fast, eager, and capable of great work &mdash; but it makes mistakes, needs clear instructions, and always requires you to review its output.</p>
+    </div>
+
+    <div class="flow-diagram">
+      <div class="flow-box">
+        <div class="flow-box__icon">&#9997;&#65039;</div>
+        <div class="flow-box__label">You Type</div>
+        <div class="flow-box__desc">Instructions in plain English</div>
+      </div>
+      <div class="flow-arrow">&#10230;</div>
+      <div class="flow-box">
+        <div class="flow-box__icon">&#9881;&#65039;</div>
+        <div class="flow-box__label">AI Processes</div>
+        <div class="flow-box__desc">Predicts the best response</div>
+      </div>
+      <div class="flow-arrow">&#10230;</div>
+      <div class="flow-box">
+        <div class="flow-box__icon">&#128196;</div>
+        <div class="flow-box__label">You Get Output</div>
+        <div class="flow-box__desc">Text you review &amp; refine</div>
+      </div>
+    </div>
+
+    <p style="text-align:center; font-size:1rem; opacity:0.6;">You are always in control. AI generates &mdash; you decide.</p>
+  </div>
+  <span class="slide__number">3 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 4 — How AI Works: LLMs in 60 Seconds
+     ============================================================ -->
+<section class="slide slide--light-alt" id="slide-4">
+  <div class="slide__inner">
+    <h2>How AI Works: LLMs in 60 Seconds</h2>
+    <p style="font-size:1.15rem; margin-bottom:1.25rem;">The tools we use today are called <strong>Large Language Models (LLMs)</strong>.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-box">
+        <div class="flow-box__icon">&#128218;</div>
+        <div class="flow-box__label">Trained on Text</div>
+        <div class="flow-box__desc">Billions of pages of books, articles, and code</div>
+      </div>
+      <div class="flow-arrow">&#10230;</div>
+      <div class="flow-box">
+        <div class="flow-box__icon">&#9881;&#65039;</div>
+        <div class="flow-box__label">Predicts Next Word</div>
+        <div class="flow-box__desc">Like autocomplete, but vastly more sophisticated</div>
+      </div>
+      <div class="flow-arrow">&#10230;</div>
+      <div class="flow-box">
+        <div class="flow-box__icon">&#128196;</div>
+        <div class="flow-box__label">Generates Response</div>
+        <div class="flow-box__desc">Word by word, building a coherent answer</div>
+      </div>
+    </div>
+
+    <div class="callout callout--info" style="margin-top:1.5rem;">
+      <div class="callout__title">Why This Matters</div>
+      <p>LLMs do <strong>not</strong> look up answers in a database. They predict text based on patterns learned during training. This is why they can be fluent <strong>and</strong> wrong at the same time &mdash; and why your review is always the final step.</p>
+    </div>
+
+    <p style="text-align:center; font-size:0.95rem; opacity:0.55; margin-top:1rem;">Remember this term: <strong>LLM</strong>. We will come back to it later when we explore how AI is evolving.</p>
+  </div>
+  <span class="slide__number">4 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 5 — What AI Can & Cannot Do
+     ============================================================ -->
+<section class="slide slide--light" id="slide-5">
+  <div class="slide__inner">
+    <h2>What AI Can &amp; Cannot Do</h2>
+    <div class="card-grid">
+      <div class="card card--green">
+        <div class="card__title">AI Does Well</div>
+        <ul class="card__list">
+          <li>Draft text and written content</li>
+          <li>Summarize long documents</li>
+          <li>Brainstorm ideas and options</li>
+          <li>Reformat and reorganize data</li>
+          <li>Explain concepts in simple terms</li>
+        </ul>
+      </div>
+      <div class="card card--red">
+        <div class="card__title">AI Cannot Do</div>
+        <ul class="card__list">
+          <li>Browse the internet in real time</li>
+          <li>Access your company's internal systems</li>
+          <li>Guarantee that its facts are correct</li>
+          <li>Make decisions or judgments for you</li>
+          <li>Replace your expertise and context</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout--warning" style="margin-top:1.5rem;">
+      <div class="callout__title">Key Takeaway</div>
+      <p>AI writes <strong>fast first drafts</strong>. Your job is to check the facts, adjust the tone, and add the context that only you know.</p>
+    </div>
+  </div>
+  <span class="slide__number">5 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 6 — Meet Your AI Tools
+     ============================================================ -->
+<section class="slide slide--purple" id="slide-6">
+  <div class="slide__inner">
+    <h2>Meet Your AI Tools</h2>
+
+    <!-- Primary tools: Copilot + Claude side-by-side -->
+    <div class="tool-row" style="align-items:stretch;">
+      <div class="tool-row__primary" style="display:flex; flex-direction:column;">
+        <div style="margin-bottom:0.75rem;">
+          <span class="copilot-badge"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="width:20px; height:20px; vertical-align:middle; margin-right:0.3rem; margin-top:-2px;"><image width="20" height="20" href="data:image/png;base64,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"/></svg> Microsoft Copilot &mdash; Generally Available</span>
+        </div>
+        <div class="card-grid" style="grid-template-columns: 1fr 1fr; gap:0.75rem; margin-top:0; flex:1;">
+          <div class="card" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15); padding:0.75rem 1rem;">
+            <h4 style="font-size:0.95rem;">&#127760; Edge Browser &amp; Web</h4>
+            <p style="font-size:0.85rem;">Visit <a href="https://copilot.microsoft.com" target="_blank" rel="noopener" style="color:var(--purple-light); font-weight:700; text-decoration:underline;">copilot.microsoft.com</a> or use the Edge sidebar. Sign in with your work account.</p>
+          </div>
+          <div class="card" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15); padding:0.75rem 1rem;">
+            <h4 style="font-size:0.95rem;">&#128221; M365 &amp; Taskbar</h4>
+            <p style="font-size:0.85rem;">Available in Word, Excel, Outlook, and Teams. Also from the Windows taskbar (<strong>Win + C</strong>).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-row__primary" style="display:flex; flex-direction:column;">
+        <div style="margin-bottom:0.75rem;">
+          <span class="claude-badge"><svg aria-hidden="true" viewBox="0 0 200 148.18" style="width:20px; height:20px; vertical-align:middle; margin-right:0.3rem; margin-top:-2px; overflow:visible;"><g transform="translate(-75.96,-223.53)"><path fill="white" d="m 105.01,322.07 29.14,-16.35 0.49,-1.42 -0.49,-0.79 h -1.42 l -4.87,-0.3 -16.65,-0.45 -14.44,-0.6 -13.99,-0.75 -3.52,-0.75 -3.3,-4.35 0.34,-2.17 2.96,-1.99 4.24,0.37 9.37,0.64 14.06,0.97 10.2,0.6 15.11,1.57 h 2.4 l 0.34,-0.97 -0.82,-0.6 -0.64,-0.6 -14.55,-9.86 -15.75,-10.42 -8.25,-6 -4.46,-3.04 -2.25,-2.85 -0.97,-6.22 4.05,-4.46 5.44,0.37 1.39,0.37 5.51,4.24 11.77,9.11 15.37,11.32 2.25,1.87 0.9,-0.64 0.11,-0.45 -1.01,-1.69 -8.36,-15.11 -8.92,-15.37 -3.97,-6.37 -1.05,-3.82 c -0.37,-1.57 -0.64,-2.89 -0.64,-4.5 l 4.61,-6.26 2.55,-0.82 6.15,0.82 2.59,2.25 3.82,8.74 6.19,13.76 9.6,18.71 2.81,5.55 1.5,5.14 0.56,1.57 h 0.97 v -0.9 l 0.79,-10.54 1.46,-12.94 1.42,-16.65 0.49,-4.69 2.32,-5.62 4.61,-3.04 3.6,1.72 2.96,4.24 -0.41,2.74 -1.76,11.44 -3.45,17.92 -2.25,12 h 1.31 l 1.5,-1.5 6.07,-8.06 10.2,-12.75 4.5,-5.06 5.25,-5.59 3.37,-2.66 h 6.37 l 4.69,6.97 -2.1,7.2 -6.56,8.32 -5.44,7.05 -7.8,10.5 -4.87,8.4 0.45,0.67 1.16,-0.11 17.62,-3.75 9.52,-1.72 11.36,-1.95 5.14,2.4 0.56,2.44 -2.02,4.99 -12.15,3 -14.25,2.85 -21.22,5.02 -0.26,0.19 0.3,0.37 9.56,0.9 4.09,0.22 h 10.01 l 18.64,1.39 4.87,3.22 2.92,3.94 -0.49,3 -7.5,3.82 -10.12,-2.4 -23.62,-5.62 -8.1,-2.02 h -1.12 v 0.67 l 6.75,6.6 12.37,11.17 15.49,14.4 0.79,3.56 -1.99,2.81 -2.1,-0.3 -13.61,-10.24 -5.25,-4.61 -11.89,-10.01 h -0.79 v 1.05 l 2.74,4.01 14.47,21.75 0.75,6.67 -1.05,2.17 -3.75,1.31 -4.12,-0.75 -8.47,-11.89 -8.74,-13.39 -7.05,-12 -0.86,0.49 -4.16,44.81 -1.95,2.29 -4.5,1.72 -3.75,-2.85 -1.99,-4.61 1.99,-9.11 2.4,-11.89 1.95,-9.45 1.76,-11.74 1.05,-3.9 -0.07,-0.26 -0.86,0.11 -8.85,12.15 -13.46,18.19 -10.65,11.4 -2.55,1.01 -4.42,-2.29 0.41,-4.09 2.47,-3.64 14.74,-18.75 8.89,-11.62 5.74,-6.71 -0.04,-0.97 h -0.34 l -39.15,25.42 -6.97,0.9 -3,-2.81 0.37,-4.61 1.42,-1.5 11.77,-8.1 -0.04,0.04 z"/></g></svg> Claude &mdash; Evaluation in Progress</span>
+        </div>
+        <div class="card" style="background:linear-gradient(135deg, rgba(221,119,34,0.12), rgba(221,119,34,0.04)); border-color:rgba(221,119,34,0.35); border-left:3px solid var(--orange); padding:0.75rem 1rem; flex:1;">
+          <h4 style="font-size:0.95rem;"><svg aria-hidden="true" viewBox="0 0 200 148.18" style="width:18px; height:18px; vertical-align:middle; margin-right:0.3rem; margin-top:-2px; overflow:visible;"><g transform="translate(-75.96,-223.53)"><path fill="#d97757" d="m 105.01,322.07 29.14,-16.35 0.49,-1.42 -0.49,-0.79 h -1.42 l -4.87,-0.3 -16.65,-0.45 -14.44,-0.6 -13.99,-0.75 -3.52,-0.75 -3.3,-4.35 0.34,-2.17 2.96,-1.99 4.24,0.37 9.37,0.64 14.06,0.97 10.2,0.6 15.11,1.57 h 2.4 l 0.34,-0.97 -0.82,-0.6 -0.64,-0.6 -14.55,-9.86 -15.75,-10.42 -8.25,-6 -4.46,-3.04 -2.25,-2.85 -0.97,-6.22 4.05,-4.46 5.44,0.37 1.39,0.37 5.51,4.24 11.77,9.11 15.37,11.32 2.25,1.87 0.9,-0.64 0.11,-0.45 -1.01,-1.69 -8.36,-15.11 -8.92,-15.37 -3.97,-6.37 -1.05,-3.82 c -0.37,-1.57 -0.64,-2.89 -0.64,-4.5 l 4.61,-6.26 2.55,-0.82 6.15,0.82 2.59,2.25 3.82,8.74 6.19,13.76 9.6,18.71 2.81,5.55 1.5,5.14 0.56,1.57 h 0.97 v -0.9 l 0.79,-10.54 1.46,-12.94 1.42,-16.65 0.49,-4.69 2.32,-5.62 4.61,-3.04 3.6,1.72 2.96,4.24 -0.41,2.74 -1.76,11.44 -3.45,17.92 -2.25,12 h 1.31 l 1.5,-1.5 6.07,-8.06 10.2,-12.75 4.5,-5.06 5.25,-5.59 3.37,-2.66 h 6.37 l 4.69,6.97 -2.1,7.2 -6.56,8.32 -5.44,7.05 -7.8,10.5 -4.87,8.4 0.45,0.67 1.16,-0.11 17.62,-3.75 9.52,-1.72 11.36,-1.95 5.14,2.4 0.56,2.44 -2.02,4.99 -12.15,3 -14.25,2.85 -21.22,5.02 -0.26,0.19 0.3,0.37 9.56,0.9 4.09,0.22 h 10.01 l 18.64,1.39 4.87,3.22 2.92,3.94 -0.49,3 -7.5,3.82 -10.12,-2.4 -23.62,-5.62 -8.1,-2.02 h -1.12 v 0.67 l 6.75,6.6 12.37,11.17 15.49,14.4 0.79,3.56 -1.99,2.81 -2.1,-0.3 -13.61,-10.24 -5.25,-4.61 -11.89,-10.01 h -0.79 v 1.05 l 2.74,4.01 14.47,21.75 0.75,6.67 -1.05,2.17 -3.75,1.31 -4.12,-0.75 -8.47,-11.89 -8.74,-13.39 -7.05,-12 -0.86,0.49 -4.16,44.81 -1.95,2.29 -4.5,1.72 -3.75,-2.85 -1.99,-4.61 1.99,-9.11 2.4,-11.89 1.95,-9.45 1.76,-11.74 1.05,-3.9 -0.07,-0.26 -0.86,0.11 -8.85,12.15 -13.46,18.19 -10.65,11.4 -2.55,1.01 -4.42,-2.29 0.41,-4.09 2.47,-3.64 14.74,-18.75 8.89,-11.62 5.74,-6.71 -0.04,-0.97 h -0.34 l -39.15,25.42 -6.97,0.9 -3,-2.81 0.37,-4.61 1.42,-1.5 11.77,-8.1 -0.04,0.04 z"/></g></svg>Anthropic's AI Assistant</h4>
+          <p style="font-size:0.85rem;">Visit <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--purple-light); font-weight:700; text-decoration:underline;">claude.ai</a> in any browser. Particularly strong at analysis, writing, and project-level work. More details later in the session.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout--tip" style="margin-top:1rem; background:rgba(78,128,31,0.15); border-color:rgba(78,128,31,0.6);">
+      <div class="callout__title" style="color:#8fcc5a;">Skills are Transferable</div>
+      <p style="color:rgba(255,255,255,0.85);">Everything you learn today works with <strong>any</strong> of these tools. Master the prompting skill &mdash; then use whichever tool fits best.</p>
+    </div>
+
+    <!-- Secondary tools: ChatGPT + Gemini (reduced emphasis) -->
+    <h4 style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; opacity:0.4; margin:0.75rem 0 0.5rem;">Alternatives</h4>
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:var(--border-radius); padding:0.6rem 1rem; flex:1; min-width:200px;">
+        <h4 style="font-size:0.85rem; margin-bottom:0.15rem; opacity:0.7;"><svg aria-hidden="true" style="width:16px; height:16px; fill:rgba(255,255,255,0.7); vertical-align:middle; margin-right:0.25rem; margin-top:-2px;"><use href="#logo-chatgpt"/></svg> ChatGPT <span style="font-weight:300; font-size:0.8rem; opacity:0.6;">&mdash; Some users</span></h4>
+        <p style="font-size:0.8rem; opacity:0.5;">Already in use by select teams. Same prompting techniques apply.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:var(--border-radius); padding:0.6rem 1rem; flex:1; min-width:200px;">
+        <h4 style="font-size:0.85rem; margin-bottom:0.15rem; opacity:0.7;"><svg aria-hidden="true" viewBox="209 -1 54 54" style="width:16px; height:16px; vertical-align:middle; margin-right:0.25rem; margin-top:-2px;"><path fill="#4285F4" d="M234.123 41.2204C235.489 44.3354 236.172 47.6638 236.172 51.2055C236.172 47.6638 236.833 44.3354 238.156 41.2204C239.521 38.1054 241.356 35.3958 243.66 33.0916C245.965 30.7873 248.674 28.9738 251.789 27.651C254.904 26.2855 258.233 25.6028 261.774 25.6028C258.233 25.6028 254.904 24.9414 251.789 23.6185C248.674 22.2531 245.965 20.4182 243.66 18.114C241.356 15.8097 239.521 13.1001 238.156 9.98507C236.833 6.87007 236.172 3.54171 236.172 0C236.172 3.54171 235.489 6.87007 234.123 9.98507C232.801 13.1001 230.987 15.8097 228.683 18.114C226.379 20.4182 223.669 22.2531 220.554 23.6185C217.439 24.9414 214.111 25.6028 210.569 25.6028C214.111 25.6028 217.439 26.2855 220.554 27.651C223.669 28.9738 226.379 30.7873 228.683 33.0916C230.987 35.3958 232.801 38.1054 234.123 41.2204Z"/></svg> Gemini <span style="font-weight:300; font-size:0.8rem; opacity:0.6;">&mdash; Some users</span></h4>
+        <p style="font-size:0.8rem; opacity:0.5;">Google's AI assistant. Same core prompting skills transfer directly.</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide__number">6 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 7 — Your First Prompt
+     ============================================================ -->
+<section class="slide slide--light" id="slide-7">
+  <div class="slide__inner">
+    <h2>Your First Prompt</h2>
+    <p>See the difference that adding <strong>structure</strong> makes to AI output.</p>
+
+    <div class="comparison">
+      <div class="comparison__col comparison__col--before">
+        <div class="comparison__label comparison__label--before">Simple Prompt</div>
+        <blockquote>
+          <p>What can you help me with at work?</p>
+        </blockquote>
+        <p style="font-size:0.9rem; opacity:0.6; margin-top:0.5rem;">Generic response &mdash; not specific to you</p>
+      </div>
+      <div class="comparison__col comparison__col--after">
+        <div class="comparison__label comparison__label--after">Structured Prompt</div>
+        <blockquote>
+          <p>I work in [your department] at a manufacturing company. List 5 specific tasks you can help me with in my daily work. Keep each to one sentence.</p>
+        </blockquote>
+        <p style="font-size:0.9rem; opacity:0.6; margin-top:0.5rem;">Targeted, actionable suggestions</p>
+      </div>
+    </div>
+
+    <div class="callout callout--tip" style="margin-top:1rem;">
+      <div class="callout__title">What Happens Next</div>
+      <p>The <strong>simple prompt</strong> returns generic advice. The <strong>structured prompt</strong> gives you targeted, department-specific suggestions. Same AI, same question &mdash; the difference is how you ask.</p>
+    </div>
+  </div>
+  <span class="slide__number">7 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 8 — The 5 Building Blocks
+     ============================================================ -->
+<section class="slide slide--light-alt" id="slide-8">
+  <div class="slide__inner">
+    <h2>The 5 Building Blocks</h2>
+    <p>A simple framework for writing prompts that produce useful output.</p>
+
+    <div class="blocks-grid">
+      <div class="block-card block-card--role">
+        <div class="block-card__icon">&#128100;</div>
+        <div class="block-card__name">Role</div>
+        <div class="block-card__desc">Who should the AI be?</div>
+      </div>
+      <div class="block-card block-card--task">
+        <div class="block-card__icon">&#9998;</div>
+        <div class="block-card__name">Task</div>
+        <div class="block-card__desc">What should it do?</div>
+      </div>
+      <div class="block-card block-card--context">
+        <div class="block-card__icon">&#128218;</div>
+        <div class="block-card__name">Context</div>
+        <div class="block-card__desc">What background does it need?</div>
+      </div>
+      <div class="block-card block-card--format">
+        <div class="block-card__icon">&#128203;</div>
+        <div class="block-card__name">Format</div>
+        <div class="block-card__desc">How should output look?</div>
+      </div>
+      <div class="block-card block-card--constraints">
+        <div class="block-card__icon">&#128295;</div>
+        <div class="block-card__name">Constraints</div>
+        <div class="block-card__desc">What limits apply?</div>
+      </div>
+    </div>
+
+    <div class="callout callout--tip" style="margin-top:1rem;">
+      <div class="callout__title">Not Every Prompt Needs All 5</div>
+      <p>Simple questions work fine on their own. Reach for the building blocks when your output falls short.</p>
+    </div>
+
+    <h3 style="margin-top:1.5rem; font-size:1.15rem; border-top:2px solid rgba(85,34,221,0.2); padding-top:1rem;">Building Blocks in Action</h3>
+    <p style="font-size:1rem;">See how adding structure transforms a vague request into a useful prompt.</p>
+
+    <div class="comparison">
+      <div class="comparison__col comparison__col--before">
+        <div class="comparison__label comparison__label--before">Before</div>
+        <p style="font-size:1.15rem; font-style:italic;">"Help me with my presentation"</p>
+        <p style="font-size:0.85rem; opacity:0.6; margin-top:0.5rem;">Vague &mdash; AI has to guess everything</p>
+      </div>
+      <div class="comparison__col comparison__col--after">
+        <div class="comparison__label comparison__label--after">After</div>
+        <p style="font-size:1.05rem;">
+          <strong>You are an executive communications coach.</strong>
+          <span class="block-label block-label--role">Role</span><br>
+          <strong>Create a 5-slide outline with key talking points</strong>
+          <span class="block-label block-label--task">Task</span><br>
+          for presenting Q1 results to senior leadership.
+          <span class="block-label block-label--context">Context</span><br>
+          <strong>Use bullet points, not paragraphs.</strong>
+          <span class="block-label block-label--format">Format</span><br>
+          Keep it under 10 minutes of speaking time.
+          <span class="block-label block-label--constraints">Constraints</span>
+        </p>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin-top:1rem; font-size:1.05rem;"><strong>More structure in</strong> = <strong>better output out.</strong></p>
+  </div>
+  <span class="slide__number">8 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 9 — Hands-On: Build Your Prompt
+     ============================================================ -->
+<section class="slide slide--light" id="slide-9">
+  <div class="slide__inner">
+    <h2>Hands-On: Build Your Prompt</h2>
+
+    <div class="hands-on-columns">
+      <!-- LEFT: Round 1 — Make It Better -->
+      <div class="hands-on-left">
+        <h3 style="margin-top:0; font-size:1.05rem;"><strong>Round 1:</strong> Make It Better</h3>
+        <p style="font-size:0.95rem;">Here is a <strong>weak prompt</strong>. Copy it into Copilot, see what you get. Then apply at least 2 building blocks and try again.</p>
+
+        <blockquote style="font-size:1.15rem; margin:0.75rem 0;">
+          <p>Help me pick a microcontroller for my project.</p>
+        </blockquote>
+
+        <details>
+          <summary>See an example improvement</summary>
+          <div class="details-content">
+            <blockquote style="font-size:0.9rem; line-height:1.6;">
+              <p><span class="block-hl block-hl--role">You are an embedded systems architect.</span> <span class="block-hl block-hl--task">Recommend a microcontroller for a battery-powered IoT sensor node.</span> <span class="block-hl block-hl--context">Requirements: ultra-low-power sleep mode (&lt;2&micro;A), at least 2 SPI peripherals, 256KB+ flash, operating range -40&deg;C to 85&deg;C, and available in QFN package.</span> <span class="block-hl block-hl--format">Compare 3 options in a table with columns for part number, power consumption, flash size, price, and lead time.</span> <span class="block-hl block-hl--constraints">Prioritize parts with automotive-grade qualification.</span></p>
+            </blockquote>
+            <p style="margin-top:0.4rem; font-size:0.8rem;">
+              <span class="block-label block-label--role">Role</span>
+              <span class="block-label block-label--task">Task</span>
+              <span class="block-label block-label--context">Context</span>
+              <span class="block-label block-label--format">Format</span>
+              <span class="block-label block-label--constraints">Constraints</span>
+              &mdash; all 5 blocks, color-coded above
+            </p>
+          </div>
+        </details>
+
+        <div class="callout callout--tip" style="margin-top:0.75rem;">
+          <div class="callout__title">Iteration Is the Skill</div>
+          <p>No one writes the perfect prompt on the first try. The ability to <strong>improve your prompt based on what you get back</strong> is what separates good from great.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Round 2 — Prompt Builder -->
+      <div class="hands-on-right">
+        <h3><strong>Round 2:</strong> Build Your Own</h3>
+        <p style="font-size:0.95rem;">Fill in the fields, then copy and paste into Copilot.</p>
+        <div class="prompt-builder" data-template="You are a {role}.
+
+{task}
+
+Context: {context}
+
+Format: {format}
+
+Constraints: {constraints}">
+          <div class="prompt-builder__fields">
+            <label>Role <input type="text" data-field="role" placeholder="e.g. embedded firmware engineer" value="embedded firmware engineer"></label>
+            <label>Task <input type="text" data-field="task" placeholder="e.g. Write a design review checklist for a new sensor interface module" value="Write a design review checklist for a new sensor interface module"></label>
+            <label>Context <input type="text" data-field="context" placeholder="e.g. STM32-based system, SPI communication, temperature sensor with 4-20mA output" value="STM32-based system, SPI communication, temperature sensor with 4-20mA output"></label>
+            <label>Format <input type="text" data-field="format" placeholder="e.g. Numbered checklist grouped by category (hardware, firmware, testing)" value="Numbered checklist grouped by category (hardware, firmware, testing)"></label>
+            <label>Constraints <input type="text" data-field="constraints" placeholder="e.g. Keep under 20 items, flag safety-critical items with [SAFETY]" value="Keep under 20 items, flag safety-critical items with [SAFETY]"></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide__number">9 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 10 — 5 Prompts You Can Use Today
+     ============================================================ -->
+<section class="slide slide--light-alt" id="slide-10">
+  <div class="slide__inner">
+    <h2>5 Prompts You Can Use Today</h2>
+    <p>Copy any of these into Copilot and replace the [brackets] with your details.</p>
+
+    <div class="prompt-cards">
+      <div class="prompt-card">
+        <div class="prompt-card__title"><span class="prompt-card__number">1</span> Email Draft</div>
+        <div class="prompt-card__text">"Write a professional email to [recipient] about [topic]. Keep it under 150 words and use a [tone] tone."</div>
+        <button class="prompt-card__copy" type="button" data-prompt="Write a professional email to [recipient] about [topic]. Keep it under 150 words and use a [tone] tone.">Copy</button>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-card__title"><span class="prompt-card__number">2</span> Meeting Summary</div>
+        <div class="prompt-card__text">"Summarize these meeting notes into 3 sections: decisions made, action items with owners, and open questions. [paste notes]"</div>
+        <button class="prompt-card__copy" type="button" data-prompt="Summarize these meeting notes into 3 sections: decisions made, action items with owners, and open questions. [paste notes]">Copy</button>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-card__title"><span class="prompt-card__number">3</span> Brainstorm</div>
+        <div class="prompt-card__text">"Give me 10 ideas for [topic]. For each idea, write one sentence explaining why it could work."</div>
+        <button class="prompt-card__copy" type="button" data-prompt="Give me 10 ideas for [topic]. For each idea, write one sentence explaining why it could work.">Copy</button>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-card__title"><span class="prompt-card__number">4</span> Checklist</div>
+        <div class="prompt-card__text">"Create a checklist for [task] with 8-10 items in order of priority."</div>
+        <button class="prompt-card__copy" type="button" data-prompt="Create a checklist for [task] with 8-10 items in order of priority.">Copy</button>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-card__title"><span class="prompt-card__number">5</span> Simplify</div>
+        <div class="prompt-card__text">"Rewrite the following paragraph at an 8th-grade reading level without losing the key points. [paste text]"</div>
+        <button class="prompt-card__copy" type="button" data-prompt="Rewrite the following paragraph at an 8th-grade reading level without losing the key points. [paste text]">Copy</button>
+      </div>
+    </div>
+  </div>
+  <span class="slide__number">10 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 11 — What to Trust, What to Verify
+     ============================================================ -->
+<section class="slide slide--light" id="slide-11">
+  <div class="slide__inner">
+    <h2>What to Trust, What to Verify</h2>
+    <p style="font-size:1.15rem; margin-bottom:1.5rem;">Read AI output like you would <strong>review a colleague's draft</strong>.</p>
+
+    <div class="two-col">
+      <div class="card card--green">
+        <div class="card__title">Generally Reliable</div>
+        <ul class="card__list">
+          <li>Identifying patterns and themes</li>
+          <li>Formatting and restructuring</li>
+          <li>Tone adjustment and rewording</li>
+          <li>Brainstorming and ideation</li>
+          <li>First drafts and outlines</li>
+        </ul>
+      </div>
+      <div class="card card--red">
+        <div class="card__title">Always Verify</div>
+        <ul class="card__list">
+          <li>Specific numbers and calculations</li>
+          <li>Dates, names, and citations</li>
+          <li>Causal claims and conclusions</li>
+          <li>Technical or regulatory accuracy</li>
+          <li>Anything you would not say yourself</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout callout--warning" style="margin-top:1.5rem;">
+      <div class="callout__title">Data Privacy</div>
+      <p>Follow your organization's data policy. When in doubt, <strong>don't paste anything you wouldn't email to a colleague</strong>.</p>
+    </div>
+  </div>
+  <span class="slide__number">11 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 12 — Your Next Steps
+     ============================================================ -->
+<section class="slide slide--purple" id="slide-12">
+  <div class="slide__inner">
+    <h2>What's Next?</h2>
+
+    <div style="font-size:1.3rem; margin:1.5rem 0 2rem; line-height:1.7; text-align:center;">
+      <strong style="font-size:1.4rem;">Your action item:</strong> Go try it.<br>
+      Use one of today's prompts in Copilot before your next meeting.
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <div>
+        <h3 style="color:var(--purple-light); font-size:1.15rem; margin-bottom:0.75rem;">&#127891; A Training Program Is Taking Shape</h3>
+        <p style="font-size:0.95rem; opacity:0.85; line-height:1.6;">We're building a structured AI training program for Ascential Technologies. Today's workshop is the first step. Here's what we envision:</p>
+        <ul style="font-size:0.9rem; opacity:0.8; line-height:1.8; margin-top:0.5rem; padding-left:1.25rem;">
+          <li>Beginner &rarr; Intermediate &rarr; Advanced tiers</li>
+          <li>Department-specific prompt libraries</li>
+          <li>Hands-on workshops with real work tasks</li>
+          <li>Best practices for data handling &amp; privacy</li>
+          <li>Advanced project workflows with AI</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--purple-light); font-size:1.15rem; margin-bottom:0.75rem;">&#128161; Topics We Could Cover</h3>
+        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+          <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:0.6rem 1rem;">
+            <strong style="font-size:0.9rem;">Prompt Engineering Deep-Dive</strong>
+            <p style="font-size:0.8rem; opacity:0.7; margin:0;">Advanced techniques, few-shot prompting, chain-of-thought</p>
+          </div>
+          <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:0.6rem 1rem;">
+            <strong style="font-size:0.9rem;">AI for Your Department</strong>
+            <p style="font-size:0.8rem; opacity:0.7; margin:0;">Tailored workshops for Accounting, Engineering, HR, Production</p>
+          </div>
+          <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:0.6rem 1rem;">
+            <strong style="font-size:0.9rem;">Data &amp; Document Workflows</strong>
+            <p style="font-size:0.8rem; opacity:0.7; margin:0;">Summaries, comparisons, report generation from real data</p>
+          </div>
+          <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:0.6rem 1rem;">
+            <strong style="font-size:0.9rem;">Building with AI</strong>
+            <p style="font-size:0.8rem; opacity:0.7; margin:0;">Using AI to build software, create tools, and manage full projects</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin-top:1.5rem; font-size:1rem; opacity:0.6;">Your feedback from this session helps shape the program. Let us know what matters most to your work.</p>
+  </div>
+  <span class="slide__number">12 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 13 — Quick Reference Card
+     ============================================================ -->
+<section class="slide slide--light-alt" id="slide-13">
+  <div class="slide__inner">
+    <h2>Quick Reference Card</h2>
+    <p style="margin-bottom:1rem;">Screenshot this slide or print the page for a handy reference.</p>
+
+    <div class="ref-card">
+      <div class="ref-card__section">
+        <div class="ref-card__section-title">The 5 Building Blocks</div>
+        <div class="blocks-grid" style="margin:0.5rem 0;">
+          <div class="block-card block-card--role" style="padding:0.75rem 0.5rem;">
+            <div class="block-card__name" style="font-size:0.9rem;">Role</div>
+            <div class="block-card__desc" style="font-size:0.75rem;">Who should AI be?</div>
+          </div>
+          <div class="block-card block-card--task" style="padding:0.75rem 0.5rem;">
+            <div class="block-card__name" style="font-size:0.9rem;">Task</div>
+            <div class="block-card__desc" style="font-size:0.75rem;">What should it do?</div>
+          </div>
+          <div class="block-card block-card--context" style="padding:0.75rem 0.5rem;">
+            <div class="block-card__name" style="font-size:0.9rem;">Context</div>
+            <div class="block-card__desc" style="font-size:0.75rem;">Background info</div>
+          </div>
+          <div class="block-card block-card--format" style="padding:0.75rem 0.5rem;">
+            <div class="block-card__name" style="font-size:0.9rem;">Format</div>
+            <div class="block-card__desc" style="font-size:0.75rem;">Output structure</div>
+          </div>
+          <div class="block-card block-card--constraints" style="padding:0.75rem 0.5rem;">
+            <div class="block-card__name" style="font-size:0.9rem;">Constraints</div>
+            <div class="block-card__desc" style="font-size:0.75rem;">Limits &amp; rules</div>
+          </div>
+        </div>
+      </div>
+      <div class="ref-card__section">
+        <div class="ref-card__section-title">5 Ready-to-Use Prompts</div>
+        <ol style="padding-left:1.25rem; font-size:0.9rem; line-height:1.7; margin:0;">
+          <li><strong>Email:</strong> "Write a professional email to [recipient] about [topic]. Under 150 words, [tone] tone."</li>
+          <li><strong>Summary:</strong> "Summarize these notes into: decisions, action items, open questions."</li>
+          <li><strong>Brainstorm:</strong> "Give me 10 ideas for [topic]. One sentence each on why it works."</li>
+          <li><strong>Checklist:</strong> "Create a [task] checklist, 8-10 items, priority order."</li>
+          <li><strong>Simplify:</strong> "Rewrite at 8th-grade reading level without losing key points."</li>
+        </ol>
+      </div>
+      <div class="ref-card__section" style="margin-bottom:0;">
+        <div class="ref-card__section-title">Remember</div>
+        <p style="font-size:0.9rem; margin:0;">AI writes fast first drafts. <strong>You</strong> check facts, adjust tone, add context. When in doubt about data &mdash; don't paste it.</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide__number">13 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 14 — Advanced Preview (consolidated)
+     ============================================================ -->
+<section class="slide slide--dark" id="slide-14">
+  <div class="slide__inner">
+    <h2 style="color:var(--purple-light);">Advanced Preview: Beyond Single Prompts</h2>
+    <p style="opacity:0.7; margin-bottom:1.5rem;">The building blocks you learned today are the foundation. Here's where AI is headed for power users.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1rem; margin-bottom:2rem;">
+      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:1rem; text-align:center;">
+        <div style="font-size:2rem; margin-bottom:0.35rem;">&#128221;</div>
+        <div style="font-size:0.95rem; font-weight:700; color:var(--orange);">Document Generation</div>
+        <div style="font-size:0.75rem; opacity:0.55; margin-top:0.25rem;">Reports, specs, analyses</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:1rem; text-align:center;">
+        <div style="font-size:2rem; margin-bottom:0.35rem;">&#128736;</div>
+        <div style="font-size:0.95rem; font-weight:700; color:var(--orange);">Software &amp; Tools</div>
+        <div style="font-size:0.75rem; opacity:0.55; margin-top:0.25rem;">Formulas, dashboards, apps</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:1rem; text-align:center;">
+        <div style="font-size:2rem; margin-bottom:0.35rem;">&#128202;</div>
+        <div style="font-size:0.95rem; font-weight:700; color:var(--orange);">Data Analysis</div>
+        <div style="font-size:0.75rem; opacity:0.55; margin-top:0.25rem;">Compare, calculate, visualize</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:var(--border-radius); padding:1rem; text-align:center;">
+        <div style="font-size:2rem; margin-bottom:0.35rem;">&#127919;</div>
+        <div style="font-size:0.95rem; font-weight:700; color:var(--orange);">Multi-Step Projects</div>
+        <div style="font-size:0.75rem; opacity:0.55; margin-top:0.25rem;">Days and weeks, not minutes</div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap; justify-content:center;">
+      <div style="background:var(--purple); color:white; padding:0.5rem 1.1rem; border-radius:2rem; font-weight:700; font-size:0.85rem;">1. Conceive</div>
+      <div style="font-size:1.25rem; opacity:0.3; line-height:2;">&#8594;</div>
+      <div style="background:var(--purple); color:white; padding:0.5rem 1.1rem; border-radius:2rem; font-weight:700; font-size:0.85rem;">2. Architect</div>
+      <div style="font-size:1.25rem; opacity:0.3; line-height:2;">&#8594;</div>
+      <div style="background:var(--purple); color:white; padding:0.5rem 1.1rem; border-radius:2rem; font-weight:700; font-size:0.85rem;">3. Build</div>
+      <div style="font-size:1.25rem; opacity:0.3; line-height:2;">&#8594;</div>
+      <div style="background:var(--purple); color:white; padding:0.5rem 1.1rem; border-radius:2rem; font-weight:700; font-size:0.85rem;">4. Evolve</div>
+      <div style="font-size:1.25rem; opacity:0.3; line-height:2;">&#8594;</div>
+      <div style="background:var(--purple); color:white; padding:0.5rem 1.1rem; border-radius:2rem; font-weight:700; font-size:0.85rem;">5. Deliver</div>
+    </div>
+
+    <div class="callout callout--tip" style="margin-top:0.5rem; background:rgba(221,119,34,0.1); border-color:rgba(221,119,34,0.4);">
+      <div class="callout__title" style="color:var(--orange);">Real Example</div>
+      <p style="color:rgba(255,255,255,0.85); font-size:0.9rem;">This presentation was built entirely with AI &mdash; HTML, CSS, JavaScript, and SVG assets generated from a single instruction file across multiple sessions.</p>
+    </div>
+
+    <p style="text-align:center; margin-top:1rem; font-size:0.85rem; opacity:0.45;">Available today in Claude, ChatGPT, and Gemini. Copilot is adding similar features over time.</p>
+  </div>
+  <span class="slide__number">14 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 15 — LLM vs. Agentic AI
+     ============================================================ -->
+<section class="slide slide--dark" id="slide-15">
+  <div class="slide__inner">
+    <h2 style="color:var(--purple-light);">LLM vs. Agentic AI</h2>
+    <p style="opacity:0.7; margin-bottom:1.25rem;">Two ways to work with AI &mdash; you have already seen both today.</p>
+
+    <div class="card-grid" style="grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem;">
+      <div class="card" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-left:4px solid var(--purple);">
+        <h3 style="font-size:1.1rem; color:var(--purple-light); margin-bottom:0.75rem;">&#128172; LLM / Chat Mode</h3>
+        <ul style="font-size:0.9rem; opacity:0.8; line-height:1.8; list-style:none; padding:0;">
+          <li>&#8226; You type a prompt, AI responds</li>
+          <li>&#8226; One question at a time</li>
+          <li>&#8226; No memory between conversations</li>
+          <li>&#8226; AI cannot take actions or use tools</li>
+          <li>&#8226; Best for: drafts, brainstorming, Q&amp;A</li>
+        </ul>
+        <span class="card-footer-label">What you practiced today</span>
+      </div>
+      <div class="card" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-left:4px solid var(--orange);">
+        <h3 style="font-size:1.1rem; color:var(--orange); margin-bottom:0.75rem;">&#128736; Agentic AI</h3>
+        <ul style="font-size:0.9rem; opacity:0.8; line-height:1.8; list-style:none; padding:0;">
+          <li>&#8226; AI plans multi-step workflows</li>
+          <li>&#8226; Reads files, writes files, runs tests</li>
+          <li>&#8226; Maintains context across sessions</li>
+          <li>&#8226; Uses tools: search, code execution, file I/O</li>
+          <li>&#8226; Best for: projects, codebases, research</li>
+        </ul>
+        <span class="card-footer-label" style="background:rgba(221,119,34,0.15); color:var(--orange);">Where AI is heading</span>
+      </div>
+    </div>
+
+    <div class="spectrum-bar">
+      <div class="spectrum-bar__point">Single prompt</div>
+      <div class="spectrum-bar__point">Multi-turn chat</div>
+      <div class="spectrum-bar__point spectrum-bar__point--active">Multi-step project</div>
+      <div class="spectrum-bar__point">Autonomous workflow</div>
+    </div>
+
+    <div class="callout callout--tip" style="margin-top:1rem; background:rgba(221,119,34,0.1); border-color:rgba(221,119,34,0.4);">
+      <div class="callout__title" style="color:var(--orange);">You Are Already Doing This</div>
+      <p style="color:rgba(255,255,255,0.85); font-size:0.9rem;">When you refined your prompt in the hands-on exercise, you were iterating &mdash; the first step toward agentic thinking. The next step is giving AI a project folder, an instruction file, and letting it work across files.</p>
+    </div>
+  </div>
+  <span class="slide__number">15 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 16 — Real Projects, Real Results
+     ============================================================ -->
+<section class="slide slide--purple" id="slide-16">
+  <div class="slide__inner">
+    <h2 style="color:var(--white);">Real Projects, Real Results</h2>
+    <p style="opacity:0.7; margin-bottom:1.25rem;">Built with Claude Code at Ascential Technologies</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div class="project-card" style="border-left-color:var(--purple);">
+        <h3 style="font-size:1.05rem; color:var(--purple-light); margin-bottom:0.15rem;">&#128421; EmbeddedStudio</h3>
+        <div class="project-card__subtitle">C# / .NET Diagnostic Platform</div>
+        <div class="project-card__stats">
+          <span>30 projects</span>
+          <span>&#183; 272 files</span>
+          <span>&#183; 333 tests</span>
+        </div>
+        <div class="project-card__stats">
+          <span>12 tracked tasks</span>
+          <span>&#183; 20 lessons learned</span>
+        </div>
+        <p class="project-card__summary">Desktop diagnostic platform for embedded systems. AI managed the full development lifecycle from architecture to test coverage.</p>
+      </div>
+
+      <div class="project-card" style="border-left-color:var(--green);">
+        <h3 style="font-size:1.05rem; color:var(--green); margin-bottom:0.15rem;">&#129518; CoreSDK</h3>
+        <div class="project-card__subtitle">C++17 Embedded Firmware Library</div>
+        <div class="project-card__stats">
+          <span>460 files</span>
+          <span>&#183; 1,216 tests</span>
+          <span>&#183; 8 arch docs</span>
+        </div>
+        <div class="project-card__stats">
+          <span>CRTP patterns</span>
+          <span>&#183; STM32 + ThreadX</span>
+        </div>
+        <p class="project-card__summary">Hardware abstraction layer for embedded devices. AI wrote tests, maintained complex template patterns, and managed architecture documentation.</p>
+      </div>
+
+      <div class="project-card" style="border-left-color:var(--orange);">
+        <h3 style="font-size:1.05rem; color:var(--orange); margin-bottom:0.15rem;">&#128300; Hemodialysis</h3>
+        <div class="project-card__subtitle">Medical Device Trade Study</div>
+        <div class="project-card__stats">
+          <span>39 LaTeX files</span>
+          <span>&#183; 25 research PDFs</span>
+        </div>
+        <div class="project-card__stats">
+          <span>IEC 60601</span>
+          <span>&#183; IEC 61010</span>
+          <span>&#183; IEC 62304</span>
+        </div>
+        <p class="project-card__summary">Regulatory trade study for blood purification technology. AI synthesized research, built comparison frameworks, and wrote the full report.</p>
+      </div>
+
+      <div class="project-card" style="border-left-color:var(--yellow);">
+        <h3 style="font-size:1.05rem; color:var(--yellow); margin-bottom:0.15rem;">&#9881;&#65039; CoupledMotion</h3>
+        <div class="project-card__subtitle">Python + C++20 Servo Testing Framework</div>
+        <div class="project-card__stats">
+          <span>11 packages</span>
+          <span>&#183; 291 modules</span>
+          <span>&#183; 858 C++ tests</span>
+        </div>
+        <div class="project-card__stats">
+          <span>TMC4671 FOC</span>
+          <span>&#183; SPI simulation</span>
+          <span>&#183; Cross-platform</span>
+        </div>
+        <p class="project-card__summary">Multi-axis servo testing framework. AI built the complete C++ port with hardware abstraction, YAML config validation, and SPI bus simulation for field-oriented control drivers.</p>
+      </div>
+    </div>
+
+    <div class="callout callout--tip" style="margin-top:1.25rem; background:rgba(85,34,221,0.12); border-color:rgba(85,34,221,0.4);">
+      <div class="callout__title" style="color:var(--purple-light);">The Common Thread</div>
+      <p style="color:rgba(255,255,255,0.85); font-size:0.9rem;">None of these were built in a single conversation. Each used an <strong>instruction file</strong>, structured <strong>task tracking</strong>, iterative <strong>review</strong>, and both <strong>software unit tests</strong> and <strong>hardware verification testing</strong> (where applicable) across multiple sessions &mdash; the same workflow framework from the Advanced Preview.</p>
+    </div>
+  </div>
+  <span class="slide__number">16 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 17 — Getting Started with Claude
+     ============================================================ -->
+<section class="slide slide--dark" id="slide-17">
+  <div class="slide__inner">
+    <h2 style="color:var(--purple-light);">Getting Started with Claude</h2>
+
+    <div style="text-align:center; margin:1rem 0 1.5rem;">
+      <span class="claude-badge" style="font-size:1.15rem; padding:0.6rem 1.5rem;"><svg aria-hidden="true" viewBox="0 0 200 148.18" style="width:24px; height:24px; vertical-align:middle; margin-right:0.3rem; margin-top:-2px; overflow:visible;"><g transform="translate(-75.96,-223.53)"><path fill="white" d="m 105.01,322.07 29.14,-16.35 0.49,-1.42 -0.49,-0.79 h -1.42 l -4.87,-0.3 -16.65,-0.45 -14.44,-0.6 -13.99,-0.75 -3.52,-0.75 -3.3,-4.35 0.34,-2.17 2.96,-1.99 4.24,0.37 9.37,0.64 14.06,0.97 10.2,0.6 15.11,1.57 h 2.4 l 0.34,-0.97 -0.82,-0.6 -0.64,-0.6 -14.55,-9.86 -15.75,-10.42 -8.25,-6 -4.46,-3.04 -2.25,-2.85 -0.97,-6.22 4.05,-4.46 5.44,0.37 1.39,0.37 5.51,4.24 11.77,9.11 15.37,11.32 2.25,1.87 0.9,-0.64 0.11,-0.45 -1.01,-1.69 -8.36,-15.11 -8.92,-15.37 -3.97,-6.37 -1.05,-3.82 c -0.37,-1.57 -0.64,-2.89 -0.64,-4.5 l 4.61,-6.26 2.55,-0.82 6.15,0.82 2.59,2.25 3.82,8.74 6.19,13.76 9.6,18.71 2.81,5.55 1.5,5.14 0.56,1.57 h 0.97 v -0.9 l 0.79,-10.54 1.46,-12.94 1.42,-16.65 0.49,-4.69 2.32,-5.62 4.61,-3.04 3.6,1.72 2.96,4.24 -0.41,2.74 -1.76,11.44 -3.45,17.92 -2.25,12 h 1.31 l 1.5,-1.5 6.07,-8.06 10.2,-12.75 4.5,-5.06 5.25,-5.59 3.37,-2.66 h 6.37 l 4.69,6.97 -2.1,7.2 -6.56,8.32 -5.44,7.05 -7.8,10.5 -4.87,8.4 0.45,0.67 1.16,-0.11 17.62,-3.75 9.52,-1.72 11.36,-1.95 5.14,2.4 0.56,2.44 -2.02,4.99 -12.15,3 -14.25,2.85 -21.22,5.02 -0.26,0.19 0.3,0.37 9.56,0.9 4.09,0.22 h 10.01 l 18.64,1.39 4.87,3.22 2.92,3.94 -0.49,3 -7.5,3.82 -10.12,-2.4 -23.62,-5.62 -8.1,-2.02 h -1.12 v 0.67 l 6.75,6.6 12.37,11.17 15.49,14.4 0.79,3.56 -1.99,2.81 -2.1,-0.3 -13.61,-10.24 -5.25,-4.61 -11.89,-10.01 h -0.79 v 1.05 l 2.74,4.01 14.47,21.75 0.75,6.67 -1.05,2.17 -3.75,1.31 -4.12,-0.75 -8.47,-11.89 -8.74,-13.39 -7.05,-12 -0.86,0.49 -4.16,44.81 -1.95,2.29 -4.5,1.72 -3.75,-2.85 -1.99,-4.61 1.99,-9.11 2.4,-11.89 1.95,-9.45 1.76,-11.74 1.05,-3.9 -0.07,-0.26 -0.86,0.11 -8.85,12.15 -13.46,18.19 -10.65,11.4 -2.55,1.01 -4.42,-2.29 0.41,-4.09 2.47,-3.64 14.74,-18.75 8.89,-11.62 5.74,-6.71 -0.04,-0.97 h -0.34 l -39.15,25.42 -6.97,0.9 -3,-2.81 0.37,-4.61 1.42,-1.5 11.77,-8.1 -0.04,0.04 z"/></g></svg> Claude by Anthropic &mdash; Evaluation in Progress</span>
+    </div>
+
+    <div class="card-grid" style="grid-template-columns:1fr 1fr; gap:1.25rem;">
+      <div class="card" style="background:rgba(255,255,255,0.06); border-color:rgba(85,34,221,0.35); border-left:3px solid var(--purple);">
+        <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">&#127760; Claude Web &amp; Desktop</h4>
+        <span class="card-footer-label" style="margin-top:0; margin-bottom:0.5rem; background:rgba(85,34,221,0.2); color:var(--purple-light);">LLM / Chat Mode</span>
+        <p style="font-size:0.85rem; opacity:0.6; margin-bottom:0.5rem; font-weight:700;">For everyone</p>
+        <ul style="font-size:0.9rem; opacity:0.8; line-height:1.8; list-style:none; padding:0;">
+          <li>&#8226; Visit <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--purple-light); font-weight:700; text-decoration:underline;">claude.ai</a> in any browser or desktop app</li>
+          <li>&#8226; Sign in with your work or personal email</li>
+          <li>&#8226; Free tier available, Pro for higher limits</li>
+          <li>&#8226; Same prompting skills from today's workshop</li>
+        </ul>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg, rgba(221,119,34,0.08), rgba(221,119,34,0.02)); border-color:rgba(221,119,34,0.35); border-left:3px solid var(--orange);">
+        <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">&#128187; Claude Code</h4>
+        <span class="card-footer-label" style="margin-top:0; margin-bottom:0.5rem; background:rgba(221,119,34,0.2); color:var(--orange);">Agentic AI</span>
+        <p style="font-size:0.85rem; opacity:0.6; margin-bottom:0.5rem; font-weight:700;">For developers &amp; power users</p>
+        <ul style="font-size:0.9rem; opacity:0.8; line-height:1.8; list-style:none; padding:0;">
+          <li>&#8226; Terminal app or integrated in VS Code, JetBrains IDEs</li>
+          <li>&#8226; Reads your files, writes code, runs tests</li>
+          <li>&#8226; Multi-agent coordination across complex tasks</li>
+          <li>&#8226; Requires API key or Max subscription</li>
+          <li>&#8226; The tool behind the Real Projects slide</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="text-align:center; font-size:0.9rem; opacity:0.5; margin-top:1.25rem;">Already using Copilot? Great &mdash; keep using it. Claude adds project-level capabilities when you need more.</p>
+
+    <div class="callout callout--info" style="margin-top:1rem; background:rgba(85,34,221,0.12); border-color:rgba(85,34,221,0.4);">
+      <div class="callout__title" style="color:var(--purple-light);">What Comes Next</div>
+      <p style="color:rgba(255,255,255,0.85); font-size:0.9rem;">Watch for the Claude rollout announcement from IT. In the meantime, you can explore <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--purple-light); text-decoration:underline;">claude.ai</a> with a personal account to build familiarity.</p>
+    </div>
+  </div>
+  <span class="slide__number">17 / 18</span>
+</section>
+
+<!-- ============================================================
+     SLIDE 18 — Q&A
+     ============================================================ -->
+<section class="slide slide--dark" id="slide-18">
+  <div class="slide__inner" style="text-align:center;">
+    <h2 style="font-size:2.75rem; margin-bottom:0.5rem;">Q&amp;A</h2>
+    <p style="opacity:0.6; margin-bottom:2rem;">Open Discussion Forum</p>
+
+    <div style="text-align:left; max-width:700px; margin:0 auto;">
+      <details>
+        <summary>"Is it safe to paste company data?"</summary>
+        <div class="details-content">
+          <p>Follow your organization's data policy. As a general rule: don't paste anything you wouldn't email to a colleague. Avoid personally identifiable information, financial account numbers, and classified project details unless your policy explicitly allows it.</p>
+        </div>
+      </details>
+
+      <details data-no-print-expand>
+        <summary>"What if the output is wrong?"</summary>
+        <div class="details-content">
+          <p>AI output is always a draft, never a final answer. Read it critically. Check numbers against source data. Verify names and dates. If something sounds wrong, it might be &mdash; AI can present incorrect information confidently. Your review is always the final step.</p>
+        </div>
+      </details>
+
+      <details data-no-print-expand>
+        <summary>"Can I use it for [my specific task]?"</summary>
+        <div class="details-content">
+          <p>Probably yes! The best way to find out is to try it. Use the 5 building blocks to write a clear prompt, and see what you get. If the first result isn't great, iterate &mdash; that's normal. The champion office hours are a great place to get help with specific use cases.</p>
+        </div>
+      </details>
+
+      <details data-no-print-expand>
+        <summary>"Will AI replace my job?"</summary>
+        <div class="details-content">
+          <p>No. AI handles the tedious parts &mdash; first drafts, reformatting, brainstorming. You provide the judgment, expertise, and relationships that AI cannot replicate. Think of it as a tool that makes you faster, not a replacement.</p>
+        </div>
+      </details>
+    </div>
+
+    <div style="margin-top:2.5rem; opacity:0.4; font-size:0.9rem;">
+      <p>&copy; 2026 Ascential Technologies &middot; AI Training Program</p>
+      <p>Author: John Reep, Principal Electrical Engineer</p>
+    </div>
+  </div>
+  <span class="slide__number">18 / 18</span>
+</section>
+
+<!-- ============================================================
+     JavaScript
+     ============================================================ -->
+<script>
+/* ============================================================
+   Clipboard Helpers
+   ============================================================ */
+function copyToClipboard(text, btn, originalLabel) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = "Copied!";
+      setTimeout(function () { btn.textContent = originalLabel; }, 2000);
+    }).catch(function () {
+      fallbackCopy(text, btn, originalLabel);
+    });
+  } else {
+    fallbackCopy(text, btn, originalLabel);
+  }
+}
+
+function fallbackCopy(text, btn, originalLabel) {
+  var textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand("copy");
+    btn.textContent = "Copied!";
+  } catch (e) {
+    btn.textContent = "Copy failed";
+  }
+  document.body.removeChild(textarea);
+  setTimeout(function () { btn.textContent = originalLabel; }, 2000);
+}
+
+/* ============================================================
+   Prompt Builder (ported from standalone)
+   ============================================================ */
+function initPromptBuilders() {
+  document.querySelectorAll(".prompt-builder").forEach(function (builder) {
+    var template = builder.getAttribute("data-template") || "";
+    if (!template) return;
+
+    var output = document.createElement("div");
+    output.className = "prompt-builder__output";
+
+    var outputLabel = document.createElement("div");
+    outputLabel.className = "prompt-builder__output-label";
+    outputLabel.textContent = "Generated Prompt";
+
+    var pre = document.createElement("pre");
+    pre.className = "prompt-builder__preview";
+
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "prompt-builder__copy";
+    copyBtn.textContent = "Copy Prompt";
+    copyBtn.setAttribute("type", "button");
+    copyBtn.addEventListener("click", function () {
+      copyToClipboard(pre.textContent, copyBtn, "Copy Prompt");
+    });
+
+    output.appendChild(outputLabel);
+    output.appendChild(pre);
+    output.appendChild(copyBtn);
+    builder.appendChild(output);
+
+    // Initial render with pre-filled values
+    updatePromptBuilder(builder, template, pre);
+
+    var inputs = builder.querySelectorAll("[data-field]");
+    inputs.forEach(function (input) {
+      input.addEventListener("input", function () {
+        updatePromptBuilder(builder, template, pre);
+      });
+    });
+
+    // Store references for department chip integration
+    builder._template = template;
+    builder._pre = pre;
+  });
+}
+
+function updatePromptBuilder(builder, template, pre) {
+  var result = template;
+  builder.querySelectorAll("[data-field]").forEach(function (input) {
+    var field = input.getAttribute("data-field");
+    var value = input.value.trim() || "{" + field + "}";
+    result = result.replace(new RegExp("\\{" + field + "\\}", "g"), value);
+  });
+  pre.textContent = result;
+}
+
+/* ============================================================
+   Department Chip Click Handler
+   ============================================================ */
+function initDeptChips() {
+  document.querySelectorAll(".dept-chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      var builder = document.querySelector(".prompt-builder");
+      if (!builder) return;
+
+      var fields = {
+        role: chip.getAttribute("data-val") || "",
+        task: chip.getAttribute("data-task") || "",
+        context: chip.getAttribute("data-context") || "",
+        format: chip.getAttribute("data-format") || "",
+        constraints: chip.getAttribute("data-constraints") || ""
+      };
+
+      Object.keys(fields).forEach(function (key) {
+        var input = builder.querySelector("[data-field='" + key + "']");
+        if (input && fields[key]) {
+          input.value = fields[key];
+        }
+      });
+
+      // Trigger update
+      if (builder._template && builder._pre) {
+        updatePromptBuilder(builder, builder._template, builder._pre);
+      }
+
+      // Scroll to builder
+      builder.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+}
+
+/* ============================================================
+   Blockquote Copy Buttons
+   ============================================================ */
+function initBlockquoteCopy() {
+  document.querySelectorAll("blockquote").forEach(function (bq) {
+    var text = bq.textContent.trim();
+    if (text.length < 30) return;
+    if (bq.querySelector(".blockquote-copy")) return;
+
+    bq.style.position = "relative";
+
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "blockquote-copy";
+    copyBtn.textContent = "Copy";
+    copyBtn.setAttribute("type", "button");
+    copyBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      copyToClipboard(text, copyBtn, "Copy");
+    });
+
+    bq.appendChild(copyBtn);
+  });
+}
+
+/* ============================================================
+   Prompt Card Copy Buttons
+   ============================================================ */
+function initPromptCardCopy() {
+  document.querySelectorAll(".prompt-card__copy").forEach(function (btn) {
+    var promptText = btn.getAttribute("data-prompt");
+    if (!promptText) return;
+    btn.addEventListener("click", function () {
+      copyToClipboard(promptText, btn, "Copy");
+    });
+  });
+}
+
+/* ============================================================
+   Slide Navigation Engine
+   ============================================================ */
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  var progressNav = document.querySelector(".progress");
+  var counter = document.querySelector(".slide-counter");
+  var currentSlide = 0;
+  var dots = [];
+
+  // Build progress dots
+  slides.forEach(function (slide, i) {
+    var dot = document.createElement("button");
+    dot.className = "progress__dot" + (i === 0 ? " progress__dot--active" : "");
+    dot.setAttribute("type", "button");
+    dot.setAttribute("aria-label", "Go to slide " + (i + 1));
+    dot.setAttribute("title", "Slide " + (i + 1));
+    dot.addEventListener("click", function () {
+      slides[i].scrollIntoView({ behavior: "smooth" });
+    });
+    dots.push(dot);
+    progressNav.appendChild(dot);
+  });
+
+  // Update counter
+  function updateUI(index) {
+    currentSlide = index;
+    dots.forEach(function (d, i) {
+      d.classList.toggle("progress__dot--active", i === index);
+    });
+
+    counter.textContent = (index + 1) + " / " + slides.length;
+
+    // Light/dark counter color
+    var slide = slides[index];
+    if (slide.classList.contains("slide--light") || slide.classList.contains("slide--light-alt")) {
+      counter.classList.add("slide-counter--light");
+      progressNav.querySelectorAll(".progress__dot").forEach(function (d) {
+        d.style.borderColor = d.classList.contains("progress__dot--active") ? "var(--purple)" : "rgba(0,0,0,0.2)";
+      });
+    } else {
+      counter.classList.remove("slide-counter--light");
+      progressNav.querySelectorAll(".progress__dot").forEach(function (d) {
+        d.style.borderColor = d.classList.contains("progress__dot--active") ? "var(--purple)" : "rgba(255,255,255,0.4)";
+      });
+    }
+  }
+
+  // IntersectionObserver for current slide detection
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        var index = Array.prototype.indexOf.call(slides, entry.target);
+        if (index >= 0) {
+          updateUI(index);
+        }
+      }
+    });
+  }, {
+    threshold: 0.5
+  });
+
+  slides.forEach(function (slide) {
+    observer.observe(slide);
+  });
+
+  // Keyboard navigation
+  document.addEventListener("keydown", function (e) {
+    // Don't intercept if user is typing in an input
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+    var next = currentSlide;
+
+    if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+      e.preventDefault();
+      next = Math.min(currentSlide + 1, slides.length - 1);
+    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageUp") {
+      e.preventDefault();
+      next = Math.max(currentSlide - 1, 0);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      next = 0;
+    } else if (e.key === "End") {
+      e.preventDefault();
+      next = slides.length - 1;
+    }
+
+    if (next !== currentSlide) {
+      slides[next].scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
+  // Initial state
+  updateUI(0);
+  slides[0].classList.add("is-visible");
+})();
+
+/* ============================================================
+   Init on DOMContentLoaded
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", function () {
+  initPromptBuilders();
+  initBlockquoteCopy();
+  initPromptCardCopy();
+  initDeptChips();
+
+  /* Print support: force <details> open before print, restore after.
+     Skip elements with data-no-print-expand (e.g. Round 2 on slide 9). */
+  var detailsState = [];
+  window.addEventListener("beforeprint", function () {
+    detailsState = [];
+    document.querySelectorAll("details").forEach(function (d) {
+      detailsState.push(d.open);
+      if (!d.hasAttribute("data-no-print-expand")) d.open = true;
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    document.querySelectorAll("details").forEach(function (d, i) {
+      if (i < detailsState.length) d.open = detailsState[i];
+    });
+  });
+});
+</script>
+
+</body>
+</html>
