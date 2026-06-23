@@ -9,7 +9,7 @@ export async function analyzeDocument(
   onStatusChange('Uploading…')
   const uploadResult = await uploadFile(file)
 
-  onStatusChange('Analysing clauses with Claude Opus — this takes 30–60 seconds…')
+  onStatusChange('Analysing clauses with Claude Opus. Estimated time: 3 minutes…')
   const reviewResult = await reviewDocument(uploadResult.document_id)
 
   return reviewResult
@@ -65,10 +65,6 @@ export async function updateFinding(
 
 export function getReportDownloadUrl(reviewId: number): string {
   return `${API_BASE}/download/${reviewId}/report`;
-}
-
-export function getNegotiationDownloadUrl(reviewId: number): string {
-  return `${API_BASE}/download/${reviewId}/negotiation`;
 }
 
 export async function downloadCleanCopy(reviewId: number, filename: string): Promise<void> {

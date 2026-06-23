@@ -757,7 +757,7 @@ function renderResults(review) {
       gh.className = 'group-heading';
       gh.innerHTML = {
         Red:   '<span style="color:var(--red-bar)">●</span> Red — Must resolve',
-        Amber: '<span style="color:var(--amber-bar)">●</span> Amber — Push back if possible',
+        Amber: '<span style="color:var(--amber-bar)">●</span> Amber — Change at discretion',
         Green: '<span style="color:var(--green-bar)">●</span> Green — Acceptable as written',
       }[f.rag_rating] || escHtml(f.rag_rating);
       findingsList.appendChild(gh);

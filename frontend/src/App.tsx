@@ -45,21 +45,25 @@ export default function App() {
   return (
     <div className="app-content">
       <main>
-        <UploadZone
-          onFileSelect={handleFileSelect}
-          selectedFile={selectedFile}
-          disabled={isAnalyzing}
-        />
+        {!results && (
+          <>
+            <UploadZone
+              onFileSelect={handleFileSelect}
+              selectedFile={selectedFile}
+              disabled={isAnalyzing}
+            />
 
-        <div className="options-row">
-          <button
-            className="btn-primary"
-            onClick={handleAnalyze}
-            disabled={!selectedFile || isAnalyzing}
-          >
-            Analyze NDA
-          </button>
-        </div>
+            <div className="options-row">
+              <button
+                className="btn-primary"
+                onClick={handleAnalyze}
+                disabled={!selectedFile || isAnalyzing}
+              >
+                Analyze NDA
+              </button>
+            </div>
+          </>
+        )}
 
         {statusMessage && (
           <div className="status-message">

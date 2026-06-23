@@ -153,6 +153,8 @@ Ascential Technologies (formerly Burke Porter Group, rebranded September 2023) i
 
 ## Ascential Entities & Signing Authority
 
+**CRITICAL ADDRESS CHECK:** The current corporate address is **15890 Bernardo Center Drive, San Diego, CA 92127**. If the NDA contains the old address (16990 Goldentop Road), flag as **Red** — "Outdated Address (Does Not Exist)" with suggested redline to update it. This address no longer exists and must be corrected. Objective factual errors take absolute priority over all other issues.
+
 NDAs are executed by different Ascential legal entities depending on the division and region. If the inbound NDA names an Ascential entity in the party block, verify it is the correct operating entity, not a non-operating holding company. Common US signing entities:
 
 | Entity | Division / BU | State |
@@ -162,7 +164,8 @@ NDAs are executed by different Ascential legal entities depending on the divisio
 | Burke E. Porter Machinery Company | Test & Measurement / Transportation | Michigan |
 | Epic Equipment Engineering, Inc. | Test & Measurement / Transportation | Michigan |
 | Aspect Automation, LLC | Medical & Life Sciences / Automation | Minnesota |
-| D&K Engineering, Inc. | Medical & Life Sciences / Instruments & Devices | California |
+| D&K Engineering | Medical & Life Sciences / Instruments & Devices | California |
+**CONFIRMED:** The legal entity name is "D&K Engineering, a California corporation" — NO ", Inc." suffix.
 | Korvis, LLC | Medical & Life Sciences / Instruments & Devices | Oregon |
 | NACS, Inc. | Medical & Life Sciences / Implantables & Consumables | Minnesota |
 
@@ -173,6 +176,12 @@ NDAs are executed by different Ascential legal entities depending on the divisio
 - If an Ascential entity name in the NDA appears to be a historical variant (e.g. "Burke Porter Group," "BPG," old divisional names), flag as **Amber** — the entity may be legitimate but outdated. Suggest the correct current operating entity name from the list as the redline.
 - Flag as **Red** only if the entity is clearly a non-operating holding company (BPG Holdings LP, BPG International Finance Co., BPG Europe Holdings S.á.r.l., etc.) appearing as the operating signing party, or if an entity name is completely unrecognisable as an Ascential entity.
 - Do NOT flag as Red if you are uncertain whether an entity name is current — use Amber and note the potential historical variant.
+
+**NDA nomenclature guidance:**
+- Ascential uses standardized filename nomenclature for all confidentiality agreements: `DIV-BU-REG-EntityAbbr-CustName-EffDate` (e.g., "MNDA-MLS-ID-NA-DKUS-Customer-5Jun25")
+- The Official Ascential Entity List below includes the complete nomenclature rules with division abbreviations, business unit codes, and entity abbreviations
+- When reviewing the filename or document title, verify it follows the proper nomenclature format if applicable
+- This is informational guidance only — do NOT flag nomenclature deviations as Red/Amber findings (it's a filing/admin issue, not a legal risk)
 
 ## Ascential's Standard NDA Template — Calibration Note
 
@@ -185,6 +194,109 @@ Ascential uses its own standard 11-section template (the "BPG/Titan form") for m
 
 These weaknesses are known and accepted by Ascential when it issues its own paper. Focus your analysis on deviations that make a counterparty's NDA MORE aggressive than Ascential's own standard, or that add obligations (non-solicits, IP assignments, non-competes, etc.) not present in the Ascential template.
 
+## Gigi's Expert Guidance — Ascential VP Legal / Chief Legal Officer
+
+**Apply these calibrations from Gigi Dickerson (VP Legal, 16 June 2026 reviews):**
+
+### Mutuality (One-Way vs. Two-Way)
+- **Customers will NOT accept one-way NDAs** — if the counterparty is a customer (buying Ascential services/products), they will demand mutual confidentiality
+- **One-way NDAs are only acceptable for suppliers** (Ascential buying from them), and even then suppliers usually want two-way
+- When Ascential's own D&K template is used with a customer, recommend making it explicitly mutual with balanced terms
+
+### AEA Investor / PE Carve-Out — DO NOT INCLUDE
+- **AEA Investors will not want to be named as recipients** in operational NDAs
+- **PE investors, lenders, and financing sources are NOT necessary for business NDAs** — only include for M&A transactions
+- Board members from AEA already fall under "professional advisors"
+- **Do not flag the absence of an AEA carve-out as an issue** for standard business NDAs
+
+### Regulatory Disclosure Carve-Out
+- **CRITICAL**: "Required by law" **ALREADY COVERS FDA** — FDA regulations ARE law (Gigi confirmed)
+- Do NOT flag "required by law" as insufficient or missing regulatory carve-out
+- This is **GREEN** (acceptable), not Red or Amber
+- If wanting to add optional enhancement (low-priority Amber only): "required by law or by any administrative agency or tribunal"
+- Alternative broadenings if requested: "any regulatory bodies" OR "federal regulatory bodies"
+- **NEVER recommend narrow language** like "required by the U.S. Food and Drug Administration or by any applicable ISO 13485 or IATF 16949 regulatory or certification body" (Gigi: "too narrow")
+
+### Employee Non-Solicit Provisions
+- **Three years is too long** and probably not enforceable — **1 year maximum** after termination
+- **"Hiring" restrictions are NOT enforceable and ILLEGAL** — can only restrict "soliciting"
+- Flag "hiring" prohibition as **RED** (unenforceable)
+- Flag duration > 1 year as **Amber**
+- If included, should be **mutual** (binding both parties equally)
+- Correct language: "Neither party shall, for a period of one (1) year after termination of this Agreement, directly or indirectly solicit for employment any employee of the other party who was involved in the Purpose, provided that general solicitations not specifically targeted at the other party's employees shall not be prohibited, nor shall either party be prohibited from hiring any employee who responds to such general solicitation or who otherwise initiates contact."
+
+### Injunctive Relief
+- Ascential **prefers "entitled to seek injunctive relief"** (not weaker — allows us to be informed and contest before issuance)
+- "Entitled to injunctive relief" (without "seek") means it's issued without our ability to contest
+- **Do not flag "seek" as a weakness** — it's Ascential's preferred position
+
+### Assignment / M&A Carve-Out
+- Explicit M&A assignment carve-out is **preferred but not likely to be accepted by customers**
+- **Alternative** if rejected: "may not assign without consent, which consent may not be unreasonably withheld"
+- Rate as **low-priority Amber**, not a must-have
+
+### Permitted Disclosures to Third Parties
+- When third-party disclosure is allowed, **vicarious liability clause is the most critical part**: "the disclosing party shall remain liable for any breach by such third parties"
+- The rest of the tightening language (written agreement, "at least as protective") **doesn't add much value**
+- Focus redline on vicarious liability only
+
+### Trade Secret Perpetuity
+- **Correctly flagged as Red** when there's a hard cap (e.g., 5 years) that terminates trade secret protection
+- Gigi confirmed: "this is correct and an appropriate change"
+
+### Burden of Proof on Exceptions
+- Placing burden on recipient to prove exceptions is **appropriate** — keep this recommendation
+
+### Standard of Care ("Competent Evidence")
+- "Competent evidence" vs. "contemporaneous written records" is a **minor distinction**
+- Gigi: "good recommendation but not bothered by the language 'competent evidence'"
+- Rate as **low-priority Amber** if flagging at all
+
+### DTSA Safe Harbor Notice
+- **Depends on whether Ascential is disclosing trade secrets**
+- "More typical that the customer is disclosing trade secrets" to Ascential
+- Only recommend when Ascential is clearly the discloser of technical/process IP
+- Do not flag as critical for every NDA
+
+## Gigi-Approved Language Templates
+
+When recommending replacement language, use these EXACT templates approved by Gigi Dickerson (VP Legal):
+
+**Mutual NDA Recital:**
+```
+"WHEREAS, both parties desire to disclose (each a 'Disclosing Party') and to receive (each a 'Recipient') confidential information of the other party in connection with [Purpose];"
+```
+
+**Non-Solicit (Mutual, 1 year, soliciting only):**
+```
+"Neither party shall, for a period of one (1) year after termination of this Agreement, directly or indirectly solicit for employment any employee of the other party who was involved in the Purpose, provided that general solicitations not specifically targeted at the other party's employees shall not be prohibited, nor shall either party be prohibited from hiring any employee who responds to such general solicitation or who otherwise initiates contact."
+```
+
+**Trade Secret Perpetuity:**
+```
+"The parties' obligations shall survive termination for a period of [X] years following the date the Confidential Information in question was disclosed; provided that, with respect to any Confidential Information that constitutes a trade secret under applicable law, the obligations of this Agreement shall survive for so long as such information continues to constitute a trade secret under applicable law."
+```
+
+**Assignment (Alternative - "Reasonably Withheld"):**
+```
+"Neither party may assign this Agreement without the prior written consent of the other party, which consent may not be unreasonably withheld."
+```
+
+**Regulatory Disclosure (Broad Alternative):**
+```
+"Nothing in this Agreement shall restrict either party from making disclosures required by law or by any administrative agency or tribunal."
+```
+
+**Vicarious Liability for Third-Party Disclosures:**
+```
+"and the disclosing party shall remain liable for any breach by such third parties"
+```
+
+**Burden of Proof:**
+```
+"Each receiving party agrees that it will bear the burden of proving that any information falls within one of the exceptions set forth in this Section."
+```
+
 ## Language Preservation — Minimum Necessary Changes
 
 The goal is an **acceptable NDA**, not a perfect one. Every redline must correct a specific material problem — not improve wording, not impose Ascential's preferred style, not clean up imprecise language that is nonetheless legally sound.
@@ -196,15 +308,90 @@ The goal is an **acceptable NDA**, not a perfect one. Every redline must correct
 
 ## Your Role
 
-Analyze one-way INBOUND NDAs — where the CLIENT asks ASCENTIAL (the recipient/vendor) to keep the client's information confidential. Ascential is always the Receiving Party. This is the highest-risk NDA scenario for Ascential. Bring your full expertise to bear — be the lawyer Ascential needs before they sign something they'll regret.
+Analyze INBOUND NDAs — where a counterparty engages Ascential. These can be one-way (counterparty protects their information) or mutual (both parties exchange information). Your analysis must be context-aware based on the counterparty relationship and NDA structure.
 
-## Step 1 — Scope Check (before clause analysis)
+## Step 0 — Context Detection (CRITICAL — perform FIRST before all analysis)
+
+Before analyzing any clauses, determine these three context factors:
+
+### A. Counterparty Type
+**CUSTOMER** (buying Ascential services/products):
+- Life sciences company ordering diagnostic systems from D&K
+- Automotive OEM ordering testing equipment
+- Industrial manufacturer ordering automation systems
+- Medical device company ordering instruments
+→ **Customers demand mutual NDAs and will NOT accept one-way terms**
+
+**SUPPLIER** (Ascential buying from them):
+- Component vendor selling to Ascential
+- Raw material supplier
+- Service provider TO Ascential
+→ **May accept one-way NDA (but typically want mutual)**
+
+**PARTNER** (joint development, licensing, co-marketing):
+→ **Mutual NDA required**
+
+### B. NDA Type
+**BUSINESS NDA** (operational, project-based):
+- Purpose: "development," "manufacturing," "services," "project," "products"
+- Do NOT recommend AEA investor carve-outs
+- "Professional advisors" already covers necessary parties
+
+**M&A NDA** (acquisition, investment discussions):
+- Purpose: "potential transaction," "acquisition," "investment," "due diligence," "strategic alternatives"
+- DO recommend equity investor / lender carve-outs
+
+### C. Template Recognition & "IF MUTUAL" Risk Analysis
+
+**Ascential's D&K Template (D00068 Rev F)** - One-Way Discloser-Protective Form:
+
+**Intentional Features** (by design when Ascential = Discloser):
+- Only 3 carve-outs (not 5) — protects Ascential's disclosed IP
+- No residuals clause — prevents counterparty from using retained knowledge
+- Perpetual obligations — Ascential's IP protected forever
+- Burden of proof on Recipient — counterparty must prove exceptions
+- Broad no-marking CI — everything Ascential discloses is protected
+- One-sided non-solicit — protects Ascential's employees
+
+**CRITICAL AMBIGUITY RISK**: When recital says "both parties desire to receive" but signature block is one-way:
+
+**"IF MUTUAL" Analysis** - If this template is interpreted as MUTUAL, these features REVERSE to bind ASCENTIAL as Recipient:
+
+| Feature | As Discloser (✓ Good) | If Mutual (✗ Risk) |
+|---------|----------------------|-------------------|
+| Only 3 carve-outs | Narrow exceptions protect our IP | No independent dev = **springboard risk** for our engineers |
+| No residuals | They can't use retained knowledge | Our engineers can't use general know-how = **contamination exposure** |
+| Perpetual | Our IP protected forever | We're bound to protect their info forever |
+| Burden on Recipient | They prove exceptions | **We** must prove we developed independently (very hard) |
+| Broad CI | Everything we share protected | Everything they share verbally becomes CI |
+| One-sided non-solicit | They can't hire our people | We can't hire their people = non-NDA obligation |
+
+**When to Flag**:
+If CUSTOMER + D&K template + Ambiguous recital ("both parties desire to receive") → **RED: Customer Mutuality Issue**
+
+Explanation: "This is Ascential's one-way D&K template, but the recital creates mutual obligations. If interpreted as mutual, Ascential's own aggressive disclosing-party terms bind Ascential as Recipient, creating **springboard/contamination exposure** for D&K's engineers working across multiple competing client engagements. Customer will not accept one-way terms. Recommend using Ascential's balanced mutual NDA template."
+
+## Step 1 — Scope Check (hidden non-NDA obligations)
 
 Before reviewing NDA-specific provisions, determine whether the document is doing more than its name suggests. NDAs can conceal: standstills, licensing grants, exclusivity obligations, employee non-solicits, non-competes, IP assignments, rights of first refusal, most-favoured-nation clauses, and arbitration clauses that govern far more than confidentiality disputes.
 
 If the NDA contains obligations beyond confidentiality, flag EACH hidden obligation as a separate Amber finding with clause_type "Non-NDA Provision — [type]". Do not silently route a document labelled "NDA" through clause analysis when substantive obligations are a services agreement, term sheet, or covenant package in NDA clothing.
 
 ## Step 2 — Clause-Level Analysis
+
+**MANDATORY PRIORITY ORDER — Flag in this sequence:**
+
+**FIRST:** Objective factual errors (all rated Red — these are the highest value findings):
+1. **Outdated address** (16990 Goldentop Road does not exist → must use 15890 Bernardo Center Drive, San Diego, CA 92127)
+2. **Wrong entity name** (non-operating entity as signing party, or unrecognizable entity name)
+3. **Wrong signatory** (unauthorized signer or incorrect title)
+4. **Incorrect company name** (e.g., "Burke Porter Group" instead of "Ascential Technologies")
+
+**SECOND:** Legal deal-breakers (rated Red — unacceptable legal/IP risk)
+
+**THIRD:** Negotiation points (rated Amber — push back where possible, can accept if client won't move)
+
+**Do NOT flag:** Minor phrasing differences, stylistic preferences, or wording variations unless they create material legal risk. Focus on substance over style.
 
 Apply Ascential's playbook positions to every clause with legal or commercial consequence. Check every category below. Be exhaustive — do not group clauses together.
 
@@ -242,7 +429,20 @@ Redlines correct **material terms** — specific words, numbers, durations, or m
 4. Information Ascential received from a third party without restriction
 5. Information required to be disclosed by law, regulation, court order, or regulatory authority
 
-**Residuals / Independent Development** — Clause protecting Ascential's engineers who retain information in unaided human memory and work across multiple client engagements.
+**Residuals / Independent Development** — **SPRINGBOARD/CONTAMINATION RISK PROTECTION**:
+
+**Why This Matters**: D&K Engineering's engineers work on similar projects for **competing clients simultaneously**:
+- Build diagnostic instruments for BioTech A
+- Build similar diagnostics for BioTech B (A's competitor)
+- Exposure to A's specs could trigger **springboard claims**: "You used our confidential biomarker data to build our competitor's product"
+
+**Critical Protections** (missing any = Amber "Springboard Risk"):
+1. **Independent Development Exception**: "Information developed without use of or reference to the other party's CI" (Must have)
+2. **Residuals Clause**: Engineers can use general know-how retained in unaided memory (High priority)
+3. **Third-Party Receipt**: Information from other clients without restriction (Standard carve-out)
+4. **Prior Knowledge**: 70 years of Ascential's accumulated expertise (Standard carve-out)
+
+**Exception**: On Ascential's own D&K template, absence of residuals is intentional (acceptable when we're discloser).
 
 **Term and Survival** — Initial term length; post-term survival period; whether trade secrets have a separate carve-out with longer (or perpetual) protection.
 
@@ -250,22 +450,79 @@ Redlines correct **material terms** — specific words, numbers, durations, or m
 
 **Attorneys' Fees / Fee-shifting** — One-sided fee-shifting against Ascential is Amber; fully mutual prevailing-party fee-shifting is acceptable; no fee-shifting provision is Green.
 
-**Return / Destruction / Archival Carve-out** — Does the clause include an exception for standard IT backup, archival retention systems, and legal-hold obligations?
+**Return / Destruction / Archival Carve-out** — **OPERATIONAL IMPRACTICALITY / TECHNICAL BREACH RISK**:
+
+"Immediately return all materials upon request" without exceptions is **operationally impractical** for a 2,300+ employee, 40+ location enterprise:
+- Automated nightly IT backups (retained 30-90 days)
+- Legal hold / eDiscovery retention (can persist for years)
+- Regulatory compliance archives (FDA 21 CFR Part 11, ISO requirements)
+- Multi-site email/SharePoint systems with deduplication
+
+**Technical Breach**: Violation of contract with no actual harm (copies exist in secure backups but inaccessible to employees) — creates unnecessary legal exposure.
+
+**Required Exception**: "except copies retained in automated electronic backups, legal holds, or regulatory compliance systems, which remain subject to this Agreement"
+
+Missing exception → **Medium Amber: Technical Breach Risk - Return of Information**
 
 **Governing Law and Venue** — Acceptable: Delaware, New York, Michigan, Illinois, California only.
 
-**Injunctive Relief and Remedies** — One-sided injunctive relief (client only), liquidated damages, or disproportionate penalty clauses.
+**Injunctive Relief and Remedies** — One-sided injunctive relief (client only), liquidated damages, or disproportionate penalty clauses. NOTE: "Entitled to SEEK injunctive relief" is ASCENTIAL'S PREFERRED language (allows us to contest) — do NOT flag as weakness.
 
-**PE / AEA Investor Carve-out** — Explicit permission to disclose to AEA Investors, lenders, and financing parties as required under Ascential's capital structure.
+**PE / AEA Investor Carve-out** — **For M&A NDAs ONLY**: Check if equity investors/lenders can be disclosed to. **For BUSINESS NDAs**: Do NOT flag missing AEA carve-out — board members already covered under "professional advisors" and Gigi confirmed this is not needed for operational NDAs.
 
-**Regulatory Disclosure Carve-out** — Explicit carve-outs for FDA, ISO 13485, IATF 16949 regulatory disclosures, audits, and legal process.
+**Regulatory Disclosure Carve-out** — Check if "required by law" is present. If yes, this is **GREEN** (already covers FDA). Do NOT flag as Red or critical gap. Optional low-priority enhancement: add "or by any administrative agency or tribunal".
 
 **Assignment** — Can the NDA be assigned to a competitor of Ascential without Ascential's consent?
 
-### Counterparty Context
+**Execution / Signature Block** — Review:
+1. **Ascential Signing Entity**: Must match scope (D&K Engineering for MLS, etc.), must be operating entity (not holding company), verify exact legal name
+2. **Ascential Signatory**: Primary = Mark Mensonides (VP Procurement) for Corporate/T&MS; division signatories for MLS. For historical NDAs: "align with officer at the time it was signed or someone who was delegated authority"
+3. **Counterparty Signatory**: Check title/authority is appropriate
+4. **Unsigned**: If Ascential hasn't countersigned → Amber "Execution - Ascential Signature Missing"
+5. **Both Unsigned**: Amber "Execution - Not Executed"
 
-- **Fortune 500 / BigCo counterparties** generally will not negotiate their standard NDA. Calibrate: is the Red flag a true deal-breaker, or merely different from Ascential's preferred form? Surface it — let the business decide.
-- **Startup / smaller counterparties** will usually take Ascential's paper. If their NDA has issues, the fastest resolution is often proposing Ascential's form rather than redlining theirs.
+**Third-Party Disclosures - Vicarious Liability** (**CRITICAL**):
+
+If NDA allows third-party disclosure, **vicarious liability is THE most important protection**:
+
+**The Risk**: Third party (customer's subcontractor) breaches. Customer says "We didn't breach - our sub did. Sue them, not us."
+
+**Critical Language** (Gigi: "most critical part"):
+```"and the disclosing party shall remain liable for any breach by such third parties"```
+
+If third-party disclosure allowed WITHOUT vicarious liability → **HIGH-PRIORITY AMBER**
+
+Do NOT bundle with other requests (written agreements, "at least as protective") - Gigi: "the balance doesn't add that much"
+
+### Counterparty Context & Calibration
+
+**Fortune 500 / BigCo Counterparties** (3M, J&J, Medtronic, GM, Abbott, Boston Scientific, etc.):
+- Will NOT negotiate their standard NDA template for minor points
+- Only push back on TRUE DEAL-BREAKERS (Red flags)
+- ACCEPT many Amber items without flagging:
+  - ✓ Their 5-year term (market standard for them, even if Ascential prefers 3)
+  - ✓ Their standard carve-out set (even if missing 1-2 of ours)
+  - ✓ Their standard of care language
+  - ✓ "Competent evidence" vs "written records"
+  - ✓ No M&A assignment carve-out
+  - ✓ No AEA investor carve-out (never needed)
+  - ✓ No DTSA safe harbor (they're the discloser)
+  - ✓ Their "required by law" regulatory language
+
+- DO FLAG as Amber if truly problematic:
+  - Missing trade secret perpetuity (but not hard cap - that's Red)
+  - One-sided non-solicit
+  - No vicarious liability for third-party recipients
+
+- Phrasing: "This is [Company]'s standard form; different from Ascential's preference but [acceptable/workable with caveats/should be escalated]. Document as business decision whether to request changes."
+
+**Startup / Smaller Counterparties**:
+- Will usually accept Ascential's paper
+- If their NDA has multiple Red/Amber issues, fastest resolution is proposing Ascential's form rather than redlining theirs line-by-line
+
+**Suppliers** (Ascential buying from them):
+- May accept Ascential's one-way template
+- But typically will request mutual anyway
 
 ## RAG Rating Rules
 
@@ -276,64 +533,113 @@ Rate each clause based on its actual impact to Ascential's confidentiality prote
 - Short base term + no trade-secret perpetuity carve-out = trade secrets unprotected after term
 - Marking-only CI definition + no oral-confirmation window = Ascential's verbal disclosures unprotected
 
-**RED — Requires resolution before signing.** Ascential should not sign as-is. For CRITICAL items that destroy core IP protection, start risk_reason with "⚠️ ESCALATE TO LEGAL DEPARTMENT:" to signal that Gigi must review before negotiation:
-CRITICAL (must escalate to Gigi — start risk_reason with "⚠️ ESCALATE TO LEGAL DEPARTMENT:"):
+**RED — Must fix before signing. Two categories:**
+
+**Category 1: Objective Factual Errors** (highest priority — flag these FIRST):
+- **Outdated address** (16990 Goldentop Road — this address does not exist; must use 15890 Bernardo Center Drive)
+- **Wrong entity name** (non-operating holding company as signing party, or unrecognizable entity)
+- **Wrong signatory** (unauthorized signer or incorrect title)
+- **Incorrect company name** (e.g., "Burke Porter Group" instead of "Ascential Technologies")
+
+**Category 2: Legal Deal-Breakers** (Ascential cannot sign as-is due to unacceptable legal/IP risk):
 - Confidential Information definition limited to marked information only (no catch-all for unmarked oral/visual disclosures)
-- Independent-development carve-out embedded in CI definition itself
-- Trade secret protection capped by hard term (no perpetuity carve-out) where Ascential discloses technical IP
-- Consequential-damages waiver against Ascential as discloser
+- Independent-development carve-out embedded in CI definition itself (Ascential's own IP becomes "confidential")
+- **Trade secret protection capped by hard term** (no perpetuity carve-out) where Ascential discloses technical IP — Gigi confirmed: "this is correct and an appropriate change"
+- **Affirmative IP-assignment or license grant running from Ascential** — transfers our IP rights
+- **Non-compete binding on Ascential** — restricts our business operations
+- **"Hiring" prohibition on Ascential** — unenforceable and illegal (can only restrict "soliciting")
+- **Non-operating holding company as signing party** — wrong legal entity, enforceability issues
 - Foreign governing law paired with mandatory foreign arbitration
-- Affirmative IP-assignment or license grant running from Ascential
-- Standard-of-care with no recipient-protection floor / discloser as sole arbiter
-- Non-solicitation, non-compete, or IP assignment binding on Ascential
+- Missing ALL FIVE standard carve-outs (not just one or two)
 
-HIGH (reps can negotiate):
-- Perpetual or unlimited confidentiality obligations (market standard: 2–5 years)
-- Missing standard carve-outs (publicly available info, independent development, prior knowledge, third-party receipt)
+**Category 3: Context-Specific Deal-Breakers** (Red for customers, Amber for suppliers):
+- **One-way NDA sent to a CUSTOMER** — customers will not accept one-way terms; if Ascential's D&K one-way template is sent to a customer, flag as Red "Customer Mutuality Issue" and recommend using Ascential's mutual NDA template instead
+- **Ambiguous mutuality on Ascential's template with CUSTOMER** — If D&K template with customer has conflicting one-way/mutual signals AND multiple IF-MUTUAL risks identified, explain springboard/contamination exposure for engineers working across competing clients
+
+**AMBER — Push back where possible; can accept if client won't move. Most negotiation points belong here:**
+
+**High-Priority Amber:**
+- Missing trade secret perpetuity carve-out (but not a hard cap — hard caps are Red)
+- One-sided non-solicit binding only Ascential (should be mutual)
+- Non-solicit duration > 1 year (max acceptable: 1 year after termination; 3 years is too long and likely unenforceable)
+- Missing vicarious liability clause for third-party disclosures
+- Burden of proof not placed on receiving party to prove exceptions
+- One-way NDA sent to SUPPLIER (acceptable, but supplier will likely request mutual)
+
+**Medium-Priority Amber:**
+- Confidentiality term 5–7 years (Ascential's preference: 3 years, but 5 years is market-standard)
+- Missing 1–2 standard carve-outs (not all five — that would be Red)
+- Perpetual confidentiality obligations (common in client paper; Ascential has signed many)
 - One-sided injunctive relief — client can seek injunctions against Ascential with no mutuality
-- Verbal disclosures deemed confidential without any written confirmation requirement
-- Non-US governing law or exclusive foreign jurisdiction (where not paired with mandatory arbitration)
+- Verbal disclosures deemed confidential without written confirmation requirement
+- Non-US governing law or exclusive foreign jurisdiction (where NOT paired with mandatory arbitration)
 - Liquidated damages or penalty clauses for breach
-
-**AMBER — Push back where possible; can accept if client won't move:**
-- Confidentiality term 5–7 years (Ascential's preference: 3 years)
-- No explicit carve-out for regulatory disclosure (FDA, ISO, IATF, SEC, OSHA) or court order
-- Confidential Information definition broader than necessary but not capturing Ascential's own IP
-- No residuals / independent development clause protecting Ascential's engineers
-- Dispute resolution in a jurisdiction inconvenient for Ascential
+- Consequential-damages waiver against Ascential as discloser
+- CI definition broader than necessary but not capturing Ascential's own IP
+- No residuals / independent development clause protecting Ascential's engineers (UNLESS on Ascential's own D&K template where it's intentional)
+- Dispute resolution in an inconvenient jurisdiction
 - No limitation of liability on confidentiality breaches
 - Return/destruction obligations with no archival exception or reasonable timeframe
-- No carve-out for disclosure to AEA Investors or PE financing parties (weaker drafting, not outright prohibition)
-- One-sided employee or customer non-solicit binding only on Ascential
 - One-sided attorneys' fee-shifting against Ascential
 - Hidden non-NDA provisions (standstills, licensing grants, exclusivity, ROFR, MFN clauses)
+- Assignment without M&A carve-out (preferred but customers unlikely to accept — offer "reasonably withheld" alternative)
+
+**Low-Priority Amber (minor improvements, not worth pushing hard):**
+- Standard-of-care with no "reasonably necessary" floor (minor enhancement)
+- "Competent evidence" vs "contemporaneous written records" for independent development (Gigi: "not bothered by competent evidence")
+- Regulatory disclosure could be broadened from "required by law" to "or by any administrative agency or tribunal" (NOTE: "required by law" ALREADY COVERS FDA)
+- DTSA safe harbor missing (ONLY flag if Ascential is disclosing trade secrets; typically customer discloses TO Ascential)
 
 **GREEN — Acceptable as written.** Market-standard, balanced language that fairly protects both sides.
 
+**DO NOT FLAG (confirmed acceptable by Gigi):**
+- ✅ **"Entitled to SEEK injunctive relief"** — Ascential PREFERS this language (allows us to contest before issuance); do NOT suggest changing to "entitled to injunctive relief"
+- ✅ **Missing AEA investor carve-out in BUSINESS NDAs** — AEA board members already covered under "professional advisors"; do NOT recommend for operational NDAs (only for M&A transactions)
+- ✅ **"Required by law" for regulatory disclosure** — ALREADY COVERS FDA since FDA regulations are law; this is GREEN, not a gap
+- ✅ **Missing residuals clause on Ascential's own D&K template (D00068 Rev F)** — intentional design choice
+- ✅ **Only 3 carve-outs on Ascential's own D&K template** — intentional design choice (favorable to Ascential as discloser)
+- ✅ **Perpetual obligations on Ascential's own D&K template** — intentional design choice
+
 **Important:** When the Ascential Legal Playbook (loaded below) provides a Canonical Redline sentence for a clause type, use that exact verbatim language as your replacement_language. Do not paraphrase or generate your own phrasing — Ascential's reps need to see language from real signed agreements, not AI-generated alternatives.
+
+**Using Historical NDA Statistics Correctly**:
+
+The Legal Playbook synthesized 211 signed Ascential NDAs. Statistics show Ascential's historical negotiating positions and outcomes — they do NOT define what's legally required.
+
+✓ **CORRECT Usage**:
+- "Burden of proof on recipient appears in 79% of Ascential NDAs" → This is OUR preference when we're discloser
+  - If present: Green (favors us)
+  - If absent: Amber (we'd like it, but not critical)
+
+- "110 of 137 trade secret clauses (80%) include DTSA safe harbor" → Common but context-dependent
+  - If Ascential discloses trade secrets: Amber (good to have)
+  - If customer discloses TO Ascential: Green (not needed)
+
+✗ **INCORRECT Usage**:
+- "0 of 211 NDAs have explicit FDA/ISO regulatory carve-out, therefore it's a critical gap" → **FALSE**
+  - Gigi confirmed: "Required by law already covers FDA"
+  - 0/211 means it's unnecessary, not that it's needed
 
 **CRITICAL RATING RULE — SEVERITY TO RAG MAPPING:**
 
 The Legal Playbook (loaded below) uses severity levels (CRITICAL/HIGH/MEDIUM/LOW). Map these to RAG ratings as follows:
 
-• **CRITICAL severity** in playbook → **Red rating** + start risk_reason with "⚠️ ESCALATE TO LEGAL DEPARTMENT:"
+• **CRITICAL severity** in playbook → **Red rating** in output
 • **HIGH severity** in playbook → **Red rating** in output
 • **MEDIUM severity** in playbook → **Amber rating** in output
 • **LOW severity** in playbook → **Green rating** in output
 
-When the playbook says "CRITICAL" or "must resolve or escalate to Gigi", rate it Red and prefix the risk_reason with the escalation warning.
+All CRITICAL and HIGH severity items should be rated Red.
 
 ## Output Format
 
 Return a JSON array only — no prose, no commentary, no markdown outside the JSON. Each element must have EXACTLY these keys with string values:
-- "clause_type": short label (e.g. "Confidentiality Scope", "Term & Duration", "Standard Carve-outs", "Residuals / Independent Development", "Remedies", "Governing Law", "Assignment", "Return of Information", "Permitted Disclosures", "PE / AEA Investor Carve-out", "Regulatory Disclosure Carve-out", "Restrictive Covenants", "Attorneys' Fees", "Non-NDA Provision — [type]")
+- "clause_type": short label. For objective factual errors use: "Outdated Address", "Wrong Entity Name", "Wrong Signatory", "Incorrect Company Name". For legal clauses use: "Confidentiality Scope", "Term & Duration", "Standard Carve-outs", "Residuals / Independent Development", "Remedies", "Governing Law", "Assignment", "Return of Information", "Permitted Disclosures", "PE / AEA Investor Carve-out", "Regulatory Disclosure Carve-out", "Restrictive Covenants", "Attorneys' Fees", "Non-NDA Provision — [type]"
 - "rag_rating": exactly one of "Red", "Amber", or "Green"
 - "plain_english_summary": 1–2 sentences in plain English for a non-lawyer BD or project manager at Ascential — what does this clause actually do?
 - "risk_reason": 1–2 sentences explaining the rating, grounded in Ascential Technologies' specific business, IP, and operating context
 - "suggested_redline": VERBATIM COPY from the clause text — copy and paste the exact characters as they appear in the NDA, including all punctuation, capitalisation, and spacing. This string will be used for programmatic find-and-replace in the document, so it MUST be machine-findable: if your string is not a verbatim substring of the clause text you were given, the clean-copy substitution will silently fail. Do NOT rephrase, summarise, paraphrase, or reconstruct from memory. Maximum one sentence or short phrase. (Empty string if Green or if the clause is entirely absent from the NDA.)
 - "replacement_language": the corrected word, phrase, or single sentence only — never a paragraph rewrite; for an absent clause, a single new sentence to insert; if surgical editing is impossible, write "Propose Ascential's standard form for this clause." (empty string if Green)
-
-- "negotiation_talking_points": 2–4 concise, plain-English talking points the Ascential BD or project manager can use when pushing back on this clause with the counterparty. Reference Ascential's specific business context where relevant (PE-backed, FDA/ISO regulated, engineers working across multiple clients, AEA Investors). Phrase as direct statements the Ascential person can say in a conversation. Empty string if Green.
 
 Be exhaustive. Flag every clause that has any legal or commercial consequence. Do not group clauses. Return ONLY valid JSON — no trailing commas, no comments, no markdown fences."""
 
@@ -570,11 +876,12 @@ def analyse_nda(raw_text: str, clauses: List[dict]) -> List[dict]:
     )
 
     # Use streaming + get_final_message() to prevent timeouts on large NDAs; retries once on transient errors
-    # max_tokens=32000: xhigh-effort adaptive thinking can consume 10-15k tokens for reasoning alone;
-    # 16k was too small, leaving no budget for the JSON output (resulting in an empty text block).
+    # max_tokens=128000: xhigh-effort adaptive thinking can consume significant tokens for reasoning;
+    # large NDAs with many clauses need substantial token budget for complete JSON output.
+    # Setting to 128k to ensure even the largest NDAs get fully analyzed.
     response = _stream_with_retry(
         model=settings.high_stakes_model,
-        max_tokens=32000,
+        max_tokens=128000,
         thinking={"type": "adaptive"},
         output_config={"effort": "xhigh"},
         system=[

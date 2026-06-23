@@ -10,15 +10,52 @@ interface ResultsViewProps {
 export default function ResultsView({ results, onReset }: ResultsViewProps) {
   const [editingField, setEditingField] = useState<{ id: number; field: string } | null>(null)
   const [editValue, setEditValue] = useState('')
+  const [findings, setFindings] = useState(results.findings)
+
+  // Track which findings are selected for clean copy (default: all Red/Amber checked)
+  const [selectedFindings, setSelectedFindings] = useState<Set<number>>(() => {
+    const redAndAmber = results.findings.filter(f => f.rag_rating === 'Red' || f.rag_rating === 'Amber')
+    return new Set(redAndAmber.map(f => f.id))
+  })
 
   const groupedFindings = {
-    Red: results.findings.filter(f => f.rag_rating === 'Red'),
-    Amber: results.findings.filter(f => f.rag_rating === 'Amber'),
-    Green: results.findings.filter(f => f.rag_rating === 'Green'),
+    Red: findings.filter(f => f.rag_rating === 'Red'),
+    Amber: findings.filter(f => f.rag_rating === 'Amber'),
+    Green: findings.filter(f => f.rag_rating === 'Green'),
   }
 
-  const handleDownload = (type: 'report' | 'negotiation' | 'clean') => {
-    window.location.href = `/api/download/${results.id}/${type}`
+  const toggleFinding = (id: number) => {
+    setSelectedFindings(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const handleDownload = async (type: 'report' | 'clean') => {
+    const selectedIds = Array.from(selectedFindings).join(',')
+    const url = `/api/download/${results.id}/${type}?findings=${selectedIds}`
+    try {
+      const response = await fetch(url, { cache: 'no-store' })
+      if (!response.ok) throw new Error(`Server error ${response.status}`)
+      const blob = await response.blob()
+      const dlUrl = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = dlUrl
+      const cd = response.headers.get('Content-Disposition')
+      const match = cd?.match(/filename="([^"]+)"/)
+      a.download = match ? match[1] : `review_${type}.docx`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(dlUrl)
+    } catch (err) {
+      alert(`Download failed: ${err}`)
+    }
   }
 
   return (
@@ -28,9 +65,19 @@ export default function ResultsView({ results, onReset }: ResultsViewProps) {
           <h2>Review complete</h2>
           <div className="filename mono">{results.filename}</div>
         </div>
-        <div className={`overall-badge badge-${results.overall_risk}`}>
-          <span className="ov-label">Overall Risk</span>
-          <span className="ov-value">{results.overall_risk}</span>
+        <div className="rag-key">
+          <div className="rag-key-row">
+            <span className="rag-dot rag-dot-red" />
+            <span className="rag-key-label"><strong>Red</strong> — Must resolve</span>
+          </div>
+          <div className="rag-key-row">
+            <span className="rag-dot rag-dot-amber" />
+            <span className="rag-key-label"><strong>Amber</strong> — Change at discretion</span>
+          </div>
+          <div className="rag-key-row">
+            <span className="rag-dot rag-dot-green" />
+            <span className="rag-key-label"><strong>Green</strong> — Acceptable as written</span>
+          </div>
         </div>
       </div>
 
@@ -41,13 +88,15 @@ export default function ResultsView({ results, onReset }: ResultsViewProps) {
               <div className="group-heading">
                 <span style={{ color: `var(--${rating.toLowerCase()}-bar)`, fontSize: '8px', lineHeight: '1' }}>●</span>
                 {rating === 'Red' && ' Red — Must resolve'}
-                {rating === 'Amber' && ' Amber — Push back if possible'}
+                {rating === 'Amber' && ' Amber — Change at discretion'}
                 {rating === 'Green' && ' Green — Acceptable as written'}
               </div>
               {findings.map(finding => (
                 <FindingCard
                   key={finding.id}
                   finding={finding}
+                  isSelected={selectedFindings.has(finding.id)}
+                  onToggleSelect={() => toggleFinding(finding.id)}
                   editingField={editingField}
                   editValue={editValue}
                   onStartEdit={(field) => {
@@ -63,6 +112,15 @@ export default function ResultsView({ results, onReset }: ResultsViewProps) {
                         body: JSON.stringify({ [editingField!.field]: editValue }),
                       })
                       if (!response.ok) throw new Error('Save failed')
+
+                      // Update local state to reflect the saved changes
+                      setFindings(prevFindings =>
+                        prevFindings.map(f =>
+                          f.id === finding.id
+                            ? { ...f, [editingField!.field]: editValue }
+                            : f
+                        )
+                      )
                       setEditingField(null)
                     } catch (error) {
                       alert(`Save failed: ${error}`)
@@ -88,23 +146,6 @@ export default function ResultsView({ results, onReset }: ResultsViewProps) {
             </div>
             <span className="dl-name">Issues Report</span>
             <span className="dl-desc">Red &amp; amber findings with redlines, sorted by contract position</span>
-            <div className="dl-action">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              {' '}Download DOCX
-            </div>
-          </button>
-          <button className="dl-card negotiation" onClick={() => handleDownload('negotiation')}>
-            <div className="dl-icon icon-container">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-            </div>
-            <span className="dl-name">Negotiation Pack</span>
-            <span className="dl-desc">Redlines + talking points for BD and project managers</span>
             <div className="dl-action">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -145,6 +186,8 @@ export default function ResultsView({ results, onReset }: ResultsViewProps) {
 
 interface FindingCardProps {
   finding: Finding
+  isSelected: boolean
+  onToggleSelect: () => void
   editingField: { id: number; field: string } | null
   editValue: string
   onStartEdit: (field: string) => void
@@ -153,15 +196,25 @@ interface FindingCardProps {
   onEditValueChange: (value: string) => void
 }
 
-function FindingCard({ finding, editingField, editValue, onStartEdit, onCancelEdit, onSaveEdit, onEditValueChange }: FindingCardProps) {
-  const [showTalkingPoints, setShowTalkingPoints] = useState(false)
+function FindingCard({ finding, isSelected, onToggleSelect, editingField, editValue, onStartEdit, onCancelEdit, onSaveEdit, onEditValueChange }: FindingCardProps) {
   const isEditing = (field: string) => editingField?.id === finding.id && editingField?.field === field
+  const showCheckbox = finding.rag_rating === 'Red' || finding.rag_rating === 'Amber'
 
   return (
     <div className={`finding ${finding.rag_rating}`}>
       <div className="finding-bar"></div>
       <div className="finding-body">
         <div className="finding-top">
+          {showCheckbox && (
+            <label className="finding-checkbox" title="Include in clean copy">
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={onToggleSelect}
+              />
+              <span className="checkbox-label">Apply</span>
+            </label>
+          )}
           <span className={`rag-pill ${finding.rag_rating}`}>{finding.rag_rating}</span>
           <span className="finding-title">{finding.clause_type}</span>
         </div>
@@ -211,55 +264,6 @@ function FindingCard({ finding, editingField, editValue, onStartEdit, onCancelEd
           </div>
         )}
 
-        {finding.talking_points && finding.rag_rating !== 'Green' && (
-          <>
-            <button
-              className="tp-toggle"
-              onClick={() => setShowTalkingPoints(!showTalkingPoints)}
-            >
-              {showTalkingPoints ? (
-                <>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
-                    <polyline points="18 15 12 9 6 15" />
-                  </svg>
-                  Hide talking points
-                </>
-              ) : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle' }}>
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                  </svg>
-                  {' '}Talking points
-                </>
-              )}
-            </button>
-            {showTalkingPoints && (
-              <div className="tp-body">
-                {isEditing('talking_points') ? (
-                  <>
-                    <textarea
-                      className="inline-editor edit-tp"
-                      value={editValue}
-                      onChange={(e) => onEditValueChange(e.target.value)}
-                      rows={Math.max(2, Math.ceil(editValue.length / 60) + 1)}
-                    />
-                    <div className="edit-actions">
-                      <button className="btn-xs btn-xs-save" onClick={onSaveEdit}>✓ Save</button>
-                      <button className="btn-xs btn-xs-cancel" onClick={onCancelEdit}>✕ Cancel</button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {finding.talking_points}
-                    <button className="edit-icon-btn" onClick={() => onStartEdit('talking_points')}>
-                      ✎ Edit
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-          </>
-        )}
       </div>
     </div>
   )

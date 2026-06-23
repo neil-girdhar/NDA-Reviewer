@@ -1,4 +1,5 @@
 ﻿"""Generate redline and clean-copy .docx outputs from NDA findings."""
+import copy
 import io
 import logging
 import re
@@ -12,6 +13,7 @@ from docx.shared import RGBColor, Pt, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+from docx.text.run import Run
 
 _PURPLE = RGBColor(0x6B, 0x46, 0xC1)
 _RED    = RGBColor(0xCC, 0x00, 0x00)
@@ -144,6 +146,317 @@ def _extract_raw_text(file_bytes: bytes, filename: str) -> str:
 
 
 # ─────────────────────────────────────────────
+# Shared redline-matching helpers
+# ─────────────────────────────────────────────
+
+def _find_redline_match(text: str, target: str):
+    """
+    Try to find target in text using three passes:
+      1. Exact case-insensitive substring
+      2. Normalized (smart quotes, em-dashes, Unicode variants)
+      3. Whitespace-flexible regex on normalized text
+
+    Returns (before, matched, after) or None.
+    """
+    # Pass 1 — exact, case-insensitive
+    idx = text.lower().find(target.lower())
+    if idx >= 0:
+        return text[:idx], text[idx:idx + len(target)], text[idx + len(target):]
+
+    # Pass 2 — normalized
+    norm_text   = _normalize_text(text)
+    norm_target = _normalize_text(target)
+    idx = norm_text.lower().find(norm_target.lower())
+    if idx >= 0:
+        return norm_text[:idx], norm_text[idx:idx + len(norm_target)], norm_text[idx + len(norm_target):]
+
+    # Pass 3 — whitespace-flexible regex on normalized
+    ws_pat = _ws_pattern(norm_target)
+    if ws_pat:
+        m = re.search(ws_pat, norm_text, re.IGNORECASE)
+        if m:
+            return norm_text[:m.start()], norm_text[m.start():m.end()], norm_text[m.end():]
+
+    return None
+
+
+def _iter_text_runs(para) -> List["Run"]:
+    """
+    Return every text run in a paragraph in document order, INCLUDING runs that
+    live inside hyperlinks.  python-docx's ``para.runs`` omits hyperlink runs,
+    which previously meant redline text inside a hyperlink was never marked up.
+    """
+    runs: List[Run] = []
+    for child in para.iter_inner_content():
+        if isinstance(child, Run):
+            runs.append(child)
+        elif hasattr(child, "runs"):      # Hyperlink
+            runs.extend(child.runs)
+    return runs
+
+
+def _run_spans(runs: List["Run"]):
+    """Return [(run, start, end)] cumulative character offsets across the runs."""
+    spans = []
+    pos = 0
+    for r in runs:
+        n = len(r.text)
+        spans.append((r, pos, pos + n))
+        pos += n
+    return spans
+
+
+def _split_run_at(run: "Run", offset: int):
+    """
+    Split ``run`` at character ``offset`` into (left, right).  The right half is
+    a clone of the run's XML element (so it keeps identical formatting) inserted
+    immediately after the original.  Either half may be None if the split lands
+    on a boundary.
+    """
+    text = run.text
+    if offset <= 0:
+        return None, run
+    if offset >= len(text):
+        return run, None
+    new_el = copy.deepcopy(run._element)
+    run._element.addnext(new_el)
+    right = Run(new_el, run._parent)
+    run.text = text[:offset]
+    right.text = text[offset:]
+    return run, right
+
+
+def _split_at_boundary(para, offset: int) -> None:
+    """Ensure a run boundary exists at the given global char offset in ``para``."""
+    if offset <= 0:
+        return
+    for r, s, e in _run_spans(_iter_text_runs(para)):
+        if s < offset < e:
+            _split_run_at(r, offset - s)
+            return
+        if offset <= s:
+            return
+
+
+def _normalize_with_map(text: str):
+    """
+    Normalize ``text`` the same way ``_normalize_text`` does, but also return an
+    index map so normalized offsets can be translated back to RAW offsets.
+
+    Returns (norm, idx_map) where ``idx_map[i]`` is the index in ``text`` that the
+    i-th normalized character originated from, and ``idx_map[len(norm)]`` == len(text).
+    This lets us match against normalized text (to bridge curly quotes, dashes,
+    special spaces, etc.) yet apply the markup at the correct RAW run positions.
+    """
+    out_chars: List[str] = []
+    out_idx: List[int] = []
+    for i, ch in enumerate(text):
+        for c in unicodedata.normalize('NFKC', ch):
+            cp = ord(c)
+            if cp in (0x2018, 0x2019, 0x2032):       # single quotes / prime
+                rep = chr(0x27)
+            elif cp in (0x201C, 0x201D, 0x2033):     # double quotes / double prime
+                rep = chr(0x22)
+            elif cp == 0x2014:                       # em dash
+                rep = '--'
+            elif cp in (0x2013, 0x2012, 0x2011):     # en / figure / nb hyphen
+                rep = '-'
+            elif cp in (0x00A0, 0x202F, 0x2009, 0x2007, 0x2008, 0x205F):  # special spaces
+                rep = ' '
+            elif cp in (0x2060, 0xFEFF, 0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0x00AD):
+                rep = ''                             # zero-width / soft hyphen → removed
+            else:
+                rep = c
+            for rc in rep:
+                out_chars.append(rc)
+                out_idx.append(i)
+
+    # Collapse runs of regular spaces to one (mirrors the ' {2,}' -> ' ' step),
+    # keeping the source index of the first space in each run.
+    norm_chars: List[str] = []
+    idx_map: List[int] = []
+    j, n = 0, len(out_chars)
+    while j < n:
+        norm_chars.append(out_chars[j])
+        idx_map.append(out_idx[j])
+        if out_chars[j] == ' ':
+            while j < n and out_chars[j] == ' ':
+                j += 1
+        else:
+            j += 1
+    idx_map.append(len(text))
+    return ''.join(norm_chars), idx_map
+
+
+def _locate_in_raw(raw: str, matched: str):
+    """
+    Re-locate ``matched`` inside the RAW run text and return (start, end) RAW
+    offsets, or None.  Three tiers, each returning genuine raw offsets:
+      1. exact case-insensitive substring
+      2. whitespace-flexible regex on raw
+      3. normalized match (curly quotes / dashes / special spaces bridged), with
+         offsets mapped back to raw via _normalize_with_map.
+    A normalized offset is never used directly against raw — it is always
+    translated through the index map first.
+    """
+    idx = raw.lower().find(matched.lower())
+    if idx >= 0:
+        return idx, idx + len(matched)
+
+    pat = _ws_pattern(matched)
+    if pat:
+        m = re.search(pat, raw, re.IGNORECASE)
+        if m:
+            return m.start(), m.end()
+
+    # Tier 3 — match in normalized space, map offsets back to raw.
+    norm_raw, idx_map = _normalize_with_map(raw)
+    norm_matched = _normalize_text(matched)
+    if not norm_matched:
+        return None
+
+    j = norm_raw.lower().find(norm_matched.lower())
+    if j >= 0:
+        return idx_map[j], idx_map[j + len(norm_matched)]
+
+    pat2 = _ws_pattern(norm_matched)
+    if pat2:
+        m2 = re.search(pat2, norm_raw, re.IGNORECASE)
+        if m2:
+            return idx_map[m2.start()], idx_map[m2.end()]
+
+    return None
+
+
+def _recolor_span(para, local_start: int, local_end: int) -> List["Run"]:
+    """
+    Mark the character span [local_start, local_end) of ``para`` as deleted text
+    (red + strikethrough + bold) by splitting runs precisely at the boundaries
+    and recolouring only the runs inside the span.  Runs outside the span — and
+    any earlier red/green markup from a prior edit — are left completely intact.
+    Returns the list of recoloured runs.
+    """
+    if local_end <= local_start:
+        return []
+    # Split end first so the start offset stays valid.
+    _split_at_boundary(para, local_end)
+    _split_at_boundary(para, local_start)
+    matched_runs = [
+        r for (r, s, e) in _run_spans(_iter_text_runs(para))
+        if s >= local_start and e <= local_end and e > s
+    ]
+    for r in matched_runs:
+        r.font.color.rgb = _RED
+        r.font.strike = True
+        r.bold = True
+    return matched_runs
+
+
+def _insert_green_after(last_run: "Run", replacement: str) -> None:
+    """Insert a green replacement run immediately AFTER ``last_run`` (in position,
+    not at the end of the paragraph), cloning its element to inherit base style."""
+    new_el = copy.deepcopy(last_run._element)
+    last_run._element.addnext(new_el)
+    green = Run(new_el, last_run._parent)
+    green.text = " " + replacement + " "
+    green.font.strike = False
+    green.bold = True
+    green.font.color.rgb = _GREEN
+
+
+def _apply_inline_redline_runs(para, matched: str, replacement: str) -> bool:
+    """
+    Single-paragraph redline at the run level.  Locates ``matched`` in the raw
+    run text, marks it red/strikethrough, and inserts ``replacement`` in green
+    right after it — without disturbing any other run.  Returns True on success,
+    False if the text could not be re-located (caller routes to the appendix).
+    """
+    runs = _iter_text_runs(para)
+    if not runs:
+        return False
+    raw = "".join(r.text for r in runs)
+    loc = _locate_in_raw(raw, matched)
+    if not loc:
+        return False
+    matched_runs = _recolor_span(para, loc[0], loc[1])
+    if not matched_runs:
+        return False
+    _insert_green_after(matched_runs[-1], replacement)
+    return True
+
+
+def _apply_cross_paragraph(window: List, matched: str, replacement: str) -> bool:
+    """
+    Cross-paragraph redline at the run level.  ``matched`` spans a paragraph
+    break within ``window``.  Each spanned paragraph has its covered portion
+    marked red/strikethrough IN PLACE (never cleared), trailing text after the
+    match is preserved, and a single green replacement is inserted after the last
+    marked run.  Returns True on success.
+    """
+    sep = " "
+    seg = []           # (para, raw, global_start, global_end)
+    parts = []
+    pos = 0
+    for i, p in enumerate(window):
+        praw = "".join(r.text for r in _iter_text_runs(p))
+        seg.append((p, praw, pos, pos + len(praw)))
+        parts.append(praw)
+        pos += len(praw)
+        if i < len(window) - 1:
+            pos += len(sep)
+    joined = sep.join(parts)
+
+    loc = _locate_in_raw(joined, matched)
+    if not loc:
+        return False
+    gstart, gend = loc
+
+    last_matched_run = None
+    for (p, praw, gs, ge) in seg:
+        if ge <= gstart or gs >= gend:
+            continue   # this paragraph is not part of the matched span
+        local_start = max(0, gstart - gs)
+        local_end = min(len(praw), gend - gs)
+        marked = _recolor_span(p, local_start, local_end)
+        if marked:
+            last_matched_run = marked[-1]
+
+    if last_matched_run is None:
+        return False
+    _insert_green_after(last_matched_run, replacement)
+    return True
+
+
+def _verify_and_collect_failures(docx_bytes: bytes, applied: List[dict]) -> List[dict]:
+    """
+    Re-open the just-saved document and confirm each inline edit actually landed.
+    Returns the list of findings whose ``replacement`` text could NOT be found in
+    the body, so the caller can reroute them into the appendix.  Uses the same
+    tolerance ladder as matching (exact → normalized → whitespace-flexible) to
+    avoid false negatives from Unicode/whitespace differences.
+    """
+    vdoc = DocxDocument(io.BytesIO(docx_bytes))
+    full = "\n".join("".join(r.text for r in _iter_text_runs(p)) for p in vdoc.paragraphs)
+    norm_full = _normalize_text(full)
+
+    missing = []
+    for entry in applied:
+        repl = (entry.get("replacement") or "").strip()
+        if not repl:
+            continue
+        if repl in full:
+            continue
+        nrepl = _normalize_text(repl)
+        if nrepl in norm_full:
+            continue
+        pat = _ws_pattern(nrepl)
+        if pat and re.search(pat, norm_full, re.IGNORECASE):
+            continue
+        missing.append(entry["finding"])
+    return missing
+
+
+# ─────────────────────────────────────────────
 # Download 1 — Issues Report (contract order)
 # ─────────────────────────────────────────────
 
@@ -154,78 +467,149 @@ def generate_issues_report(
     raw_text: str = "",
 ) -> bytes:
     """
-    Standalone DOCX showing only Red and Amber findings in the order
-    they appear in the contract. Each finding shows the original text
-    struck out in red and the replacement in green.
+    Generate a redlined copy of the original NDA with inline markup.
+
+    Uses multi-pass matching (exact → normalized → whitespace-flex → cross-paragraph)
+    so that every selected finding is always applied inline regardless of minor
+    Unicode or whitespace differences between Claude's extracted text and the
+    original document paragraphs.
     """
-    issues = [f for f in findings if f["rag_rating"] in ("Red", "Amber")]
+    ext = filename.rsplit(".", 1)[-1].lower()
+    if ext == "pdf":
+        doc = DocxDocument()
+        title = doc.add_paragraph()
+        title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        _add_run(title, "NDA Redline (converted from PDF)", bold=True).font.size = Pt(14)
+        doc.add_paragraph()
 
-    # Sort by severity (Red → Amber), then by position within each group
-    issues.sort(key=lambda f: (
-        _RAG_ORDER.get(f["rag_rating"], 9),
-        _finding_position(f, raw_text) if raw_text else 0,
-    ))
+        if raw_text:
+            # Split on double-newline to preserve logical paragraph structure;
+            # join any wrapped lines within each paragraph into a single string.
+            for chunk in re.split(r'\n{2,}', raw_text):
+                chunk = re.sub(r'[ \t\n]+', ' ', chunk).strip()
+                if chunk:
+                    doc.add_paragraph(chunk)
+    else:
+        doc = DocxDocument(io.BytesIO(file_bytes))
 
-    doc = DocxDocument()
-
-    # Cover heading
-    title = doc.add_paragraph()
-    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    _add_run(title, "NDA Issues Report", bold=True).font.size = Pt(18)
-
-    sub = doc.add_paragraph()
-    sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    _add_run(sub, f"Document: {filename}", italic=True)
-    doc.add_paragraph()
-
-    # Summary counts
-    red_count   = sum(1 for f in findings if f["rag_rating"] == "Red")
-    amber_count = sum(1 for f in findings if f["rag_rating"] == "Amber")
-    green_count = sum(1 for f in findings if f["rag_rating"] == "Green")
-    summary = doc.add_paragraph()
-    summary.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    _add_run(summary, f"  {red_count} Red  ",   bold=True, color=_RED)
-    _add_run(summary, f"  {amber_count} Amber  ", bold=True, color=_AMBER)
-    _add_run(summary, f"  {green_count} Green  ", bold=True, color=_GREEN)
-    doc.add_paragraph()
+    issues = [f for f in findings if f["rag_rating"] in ("Red", "Amber") and f.get("suggested_redline")]
 
     if not issues:
-        doc.add_paragraph("No Red or Amber issues found — the NDA is acceptable as written.")
+        note = doc.add_paragraph()
+        note.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        _add_run(note, "\n\n✓ No Red or Amber issues found — NDA is acceptable as written.", bold=True, color=_GREEN)
         buf = io.BytesIO()
         doc.save(buf)
         return buf.getvalue()
 
-    for f in issues:
-        rating = f["rag_rating"]
-        color  = _RAG_COLORS[rating]
+    paras = list(doc.paragraphs)
 
-        # Clause heading
-        heading = doc.add_paragraph()
-        _add_run(heading, f"● {rating.upper()}  ", bold=True, color=color)
-        _add_run(heading, f["clause_type"], bold=True)
+    # Track every edit we believe we applied inline, so a post-generation
+    # self-check can confirm the replacement text actually landed in the output.
+    applied: List[dict] = []
 
-        # Plain-English summary
-        s = doc.add_paragraph()
-        _add_run(s, "What it says: ", bold=True)
-        _add_run(s, f["plain_english_summary"])
+    # ── Pass A: single-paragraph matching ────────────────────────────────────
+    for para in paras:
+        if not para.text.strip() or not issues:
+            continue
+        for finding in list(issues):
+            original    = finding.get("suggested_redline",    "").strip()
+            replacement = finding.get("replacement_language", "").strip()
+            if not original or not replacement:
+                continue
+            result = _find_redline_match(para.text, original)
+            # result is (before, matched, after); re-locate matched in raw runs.
+            if result and _apply_inline_redline_runs(para, result[1], replacement):
+                applied.append({"finding": finding, "replacement": replacement})
+                issues.remove(finding)
+                break
 
-        # Risk reason
-        r = doc.add_paragraph()
-        _add_run(r, "Why it matters: ", bold=True)
-        _add_run(r, f["risk_reason"], italic=True, color=_GREY)
+    # ── Pass B: cross-paragraph matching (window of 2 then 3 paragraphs) ─────
+    # Handles the case where Claude's suggested_redline spans a paragraph break.
+    for window_size in [2, 3]:
+        if not issues:
+            break
+        for i in range(len(paras) - window_size + 1):
+            if not issues:
+                break
+            window = paras[i:i + window_size]
+            joined = ' '.join(p.text for p in window)
+            if not joined.strip():
+                continue
+            for finding in list(issues):
+                original    = finding.get("suggested_redline",    "").strip()
+                replacement = finding.get("replacement_language", "").strip()
+                if not original or not replacement:
+                    continue
+                result = _find_redline_match(joined, original)
+                if result and _apply_cross_paragraph(window, result[1], replacement):
+                    applied.append({"finding": finding, "replacement": replacement})
+                    issues.remove(finding)
+                    break
 
-        # Redline
-        if f.get("suggested_redline"):
-            old_p = doc.add_paragraph()
-            _add_run(old_p, "Remove:  ", bold=True, color=_RED)
-            _add_run(old_p, f["suggested_redline"], strike=True, color=_RED)
+    # ── Self-check: confirm each inline edit actually landed in the output ───
+    # Re-open the document as saved and verify every applied replacement is
+    # present.  Any that are missing get rerouted into the appendix below, so the
+    # report can never claim an edit was applied when it was silently lost.
+    buf_check = io.BytesIO()
+    doc.save(buf_check)
+    missing = _verify_and_collect_failures(buf_check.getvalue(), applied)
+    if missing:
+        issue_ids = {f.get("id") for f in issues}
+        for f in missing:
+            if f.get("id") not in issue_ids:
+                issues.append(f)
+                issue_ids.add(f.get("id"))
+        log.warning(
+            "generate_issues_report: %d inline edit(s) failed the self-check and "
+            "were rerouted to the appendix: %s",
+            len(missing),
+            [f.get("clause_type") for f in missing],
+        )
 
-        if f.get("replacement_language"):
-            new_p = doc.add_paragraph()
-            _add_run(new_p, "Replace with:  ", bold=True, color=_GREEN)
-            _add_run(new_p, f["replacement_language"], color=_GREEN)
+    # ── Appendix: findings that could not be matched inline ──────────────────
+    # Never silently drop a finding — if the suggested_redline text could not be
+    # located in the document (e.g. Claude paraphrased rather than quoted verbatim,
+    # or the DOCX uses unusual paragraph structure), show the required change here
+    # so the reviewer can apply it manually.  This is especially important for
+    # findings whose replacement_language has been manually edited by the user.
+    if issues:
+        doc.add_paragraph()
+        warn_h = doc.add_paragraph()
+        _add_run(warn_h, "Additional Required Changes", bold=True, color=_RED)
+        warn_h.runs[0].font.size = Pt(12)
 
-        doc.add_paragraph("─" * 80)
+        note = doc.add_paragraph()
+        _add_run(
+            note,
+            "The following clause(s) could not be located automatically in the document. "
+            "Apply each replacement to the relevant clause before sending to the counterparty.",
+            italic=True,
+            color=_GREY,
+        )
+
+        for f in issues:
+            color = _RAG_COLORS.get(f.get("rag_rating", ""), _GREY)
+            heading = doc.add_paragraph()
+            _add_run(heading, f"● {f.get('rag_rating', '').upper()}  ", bold=True, color=color)
+            _add_run(heading, f.get("clause_type", "Unknown Clause"), bold=True)
+
+            if f.get("suggested_redline"):
+                old_p = doc.add_paragraph()
+                _add_run(old_p, "Remove:  ", bold=True, color=_RED)
+                _add_run(old_p, f["suggested_redline"], strike=True, color=_RED)
+
+            if f.get("replacement_language"):
+                new_p = doc.add_paragraph()
+                _add_run(new_p, "Replace with:  ", bold=True, color=_GREEN)
+                _add_run(new_p, f["replacement_language"], color=_GREEN)
+
+        log.warning(
+            "generate_issues_report: %d finding(s) could not be matched inline "
+            "and were appended as required changes: %s",
+            len(issues),
+            [f.get("clause_type") for f in issues],
+        )
 
     buf = io.BytesIO()
     doc.save(buf)
@@ -473,6 +857,45 @@ def _generate_clean_copy_docx(
                         break
 
         if not matched:
+            # Pass 4 — cross-paragraph matching (windows of 2 then 3 paragraphs).
+            # Handles the common case where Claude's suggested_redline spans a
+            # paragraph break in the source document.
+            all_paras = list(doc.paragraphs)
+            for window_size in [2, 3]:
+                if matched:
+                    break
+                for i in range(len(all_paras) - window_size + 1):
+                    if matched:
+                        break
+                    window = all_paras[i:i + window_size]
+                    joined = ' '.join(_normalize_text(p.text) for p in window)
+                    if not joined.strip():
+                        continue
+
+                    if norm_original.lower() in joined.lower():
+                        new_joined = re.sub(
+                            re.escape(norm_original), repl, joined,
+                            count=1, flags=re.IGNORECASE,
+                        )
+                        _replace_paragraph_text(window[0], new_joined)
+                        for p in window[1:]:
+                            _replace_paragraph_text(p, "")
+                        matched = True
+                        log.debug("finding '%s': Pass 4 (cross-para exact) windows[%d:%d]",
+                                  f.get("clause_type"), i, i + window_size)
+                    else:
+                        ws_pat = _ws_pattern(norm_original)
+                        if ws_pat:
+                            result = re.sub(ws_pat, repl, joined, count=1, flags=re.IGNORECASE)
+                            if result != joined:
+                                _replace_paragraph_text(window[0], result)
+                                for p in window[1:]:
+                                    _replace_paragraph_text(p, "")
+                                matched = True
+                                log.debug("finding '%s': Pass 4 (cross-para ws-flex) windows[%d:%d]",
+                                          f.get("clause_type"), i, i + window_size)
+
+        if not matched:
             log.warning(
                 "finding '%s' (rag=%s): NOT matched in DOCX paragraphs — "
                 "appending as REQUIRED CHANGE. suggested_redline[:80]=%r",
@@ -480,26 +903,28 @@ def _generate_clean_copy_docx(
             )
             failed.append(f)
 
-    # Append failed substitutions as clearly labeled sections + summary table
+    # Append unmatched findings — these are changes the user selected but
+    # whose original text could not be located in the document.  Always include
+    # them so no selected edit is ever silently dropped.
     if failed:
         doc.add_paragraph()
         warn_h = doc.add_paragraph()
-        _add_run(warn_h, "REQUIRED CHANGES — MANUAL REVIEW NEEDED", bold=True, color=_RED)
-        warn_h.runs[0].font.size = Pt(13)
+        _add_run(warn_h, "Additional Required Changes", bold=True, color=_RED)
+        warn_h.runs[0].font.size = Pt(12)
 
         note = doc.add_paragraph()
         _add_run(
             note,
-            "The following change(s) could not be placed automatically. "
-            "Locate each clause in the document and apply the replacement language below "
-            "before sending this copy to the counterparty.",
-            color=_RED,
+            "The following clause(s) could not be located automatically in the document. "
+            "Apply each replacement below to the relevant clause before sending to the counterparty.",
+            italic=True,
+            color=_GREY,
         )
 
         for f in failed:
             entry_h = doc.add_paragraph()
-            _add_run(entry_h, f"REQUIRED CHANGE — {f.get('clause_type', 'Unknown')}: ",
-                     bold=True, color=_RED)
+            _add_run(entry_h, f"{f.get('clause_type', 'Unknown Clause')} — Replacement Language:",
+                     bold=True)
             entry_b = doc.add_paragraph()
             entry_b.add_run(f.get("replacement_language", ""))
 
@@ -884,17 +1309,16 @@ def _build_docx_from_clauses(
         doc.add_page_break()
 
         h = doc.add_paragraph()
-        _add_run(h, "UNRESOLVED CHANGES — MANUAL REVIEW REQUIRED", bold=True, color=_RED)
-        h.runs[0].font.size = Pt(13)
+        _add_run(h, "Additional Required Changes", bold=True, color=_RED)
+        h.runs[0].font.size = Pt(12)
 
         sub = doc.add_paragraph()
         _add_run(
             sub,
-            "The following clause(s) could not be automatically placed in context. "
-            "Each has been appended at the end of the main document body under a "
-            "‘REQUIRED CHANGE’ heading — move each to the correct clause location "
-            "before sending this document to the counterparty.",
-            color=_RED,
+            "The following clause(s) could not be located automatically in the document. "
+            "Apply each replacement to the relevant clause before sending to the counterparty.",
+            italic=True,
+            color=_GREY,
         )
         sub.runs[0].font.size = Pt(10)
 
